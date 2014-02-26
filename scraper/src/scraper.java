@@ -1,23 +1,13 @@
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.cert.Certificate; 
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLPeerUnverifiedException;
-
 import org.jsoup.Jsoup;
 import org.jsoup.Connection;
-import org.jsoup.helper.Validate;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import sun.net.www.protocol.https.HttpsURLConnectionImpl;
+import java.io.IOException;
 
-public class scraper {	
+public class scraper {
+		
 	private static void runScanner(String website) {
 		String webURL = "the internet.";
 		try {
@@ -26,17 +16,32 @@ public class scraper {
 				scanBoilerLink(webURL);
 			}
 		} catch (IOException e) {
-			System.out.println("ERROR: Unable to connect to " + webURL);
+			System.out.println("ERROR: Unable to connect to "+website+" at "+webURL);
 			e.printStackTrace();
 		}
 	}
+	
 	private static void scanBoilerLink(String url) throws IOException {
-		Connection com = Jsoup.connect(url)
-			.userAgent("Mozilla")
-			.timeout(3000);
+		Connection com = Jsoup.connect(url);
 		Document scan_homepage = com.get();
-		Elements eventBlocks = scan_homepage.select("a[class='modal' href]");
+		Elements links = scan_homepage.select("a[href]");
+		for (Element link : links) {
+			if (link.hasClass("modal") && link.hasAttr("target")) {
+				String page_url = link.absUrl("href");
+				//TODO DEBUG
+				System.out.println("Grabbing data from: " + page_url);
+				getBoilerPageData(page_url);
+			}
+		}
 	}
+	
+	private static void getBoilerPageData(String url) throws IOException {
+		Connection com_page = Jsoup.connect(url);
+		Document scan_page = com_page.get();
+		Elements links = scan_page.select("h2");
+		System.out.println(links.get(0).select("span").text());
+	}
+	
 	public static void main(String[] args) {
 		runScanner("BoilerLink");
 	}
