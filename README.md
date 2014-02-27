@@ -1,5 +1,12 @@
 CampusFeedv2
 ============
+
+To view the Android app progress, see the screenshots posted at:
+
+https://drive.google.com/folderview?id=0B7ckqIbbmIG8b1liNldweFlsREk&usp=sharing
+
+
+
 chmod 600 CampusFeed.pem<br>
 ssh ec2-user@54.213.17.69 -i CampusFeed.pem<br>
 MySQL<br>
@@ -11,6 +18,3 @@ MySQL<br>
 
 
 
-To view the Android app progress, see the screenshots posted at:
-
-https://drive.google.com/folderview?id=0B7ckqIbbmIG8b1liNldweFlsREk&usp=sharing
