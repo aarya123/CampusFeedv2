@@ -12,7 +12,7 @@ download the SDK here (from part 2):
 
 https://developers.facebook.com/docs/android/getting-started
 
-You only have to run the commands in part 2 if you are deciding to run the app on an emulator
+You only have to run the commands in part 2 if you decide to run the app on an emulator
 
 -----------------------------------------------------------------------------------------------------------------------
 
