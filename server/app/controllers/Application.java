@@ -151,11 +151,11 @@ public class Application extends Controller {
         			//check expires against the current time
         			long expires = rs.getLong("expires");
         			if(expires > System.currentTimeMillis() / 1000L) {
-        				throw new AuthorizationException("Login expired!");
+        				throw new AuthorizationException("Login expired");
         			}
         		}
         		else {
-        			throw new AuthorizationException("No such login!");
+        			throw new AuthorizationException("No such login");
         		}
         		
         	}
@@ -172,8 +172,7 @@ public class Application extends Controller {
     		checkReqValid(request);
     	}
     	catch(AuthorizationException e) {
-    		e.printStackTrace();
-    		return unauthorized();
+    		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
     	}
     	catch(SQLException e) {
     		e.printStackTrace();
