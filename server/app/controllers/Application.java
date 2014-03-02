@@ -51,46 +51,6 @@ public class Application extends Controller {
     	}
     }
     
-    private static final String VERIFY_USER_SQL = "SELECT expires FROM user WHERE fb_user_id = ? AND access_token = ?";
-    public static boolean isUserLoggedIn(String userId, String accessToken) {
-    	try(Connection connection = DB.getConnection()) {
-    		//try to retrieve expires given the user id and access token
-    		PreparedStatement stmt = connection.prepareStatement(VERIFY_USER_SQL);
-    		stmt.setString(1, userId);
-    		stmt.setString(2, accessToken);
-    		stmt.execute();
-    		ResultSet rs = stmt.getResultSet();
-    		//if there is a row with such a user id and access token
-    		if(rs.next()) {
-    			//check expires against the current time
-    			long expires = rs.getLong("expires");
-    			return expires <= System.currentTimeMillis() / 1000L;
-    		}
-    		else {
-    			return false;
-    		}
-    		
-    	}
-    	catch(SQLException e) {
-    		e.printStackTrace();
-    		return false;
-    	}
-    }
-    
-    public static boolean isUserLoggedIn(JsonNode authObj) {
-    	return isUserLoggedIn(authObj.get("fb_user_id").asText(), authObj.get("access_token").asText());
-    }
-    
-    public static JsonNode getAuth(JsonNode req) {
-    	if(req.has("auth")) {
-    		JsonNode auth = req.get("auth");
-    		if(auth.has("fb_user_id") && auth.has("access_token")) {
-    			return auth;
-    		}
-    	}
-    	return null;
-    }
-    
     private static final String LOGIN_USER_SQL = "INSERT INTO user (fb_user_id, first_name, last_name, access_token, expires) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?)) ON DUPLICATE KEY UPDATE access_token=?, expires=FROM_UNIXTIME(?)";
     public static Result login() {
     	RequestBody request = request().body();
@@ -173,22 +133,58 @@ public class Application extends Controller {
     	return Application.ok(resp);
     }
     
-    private static final String CREATE_GROUP_SQL = "INSERT INTO `group` (`name`) VALUES (?)";
-    public static Result createGroup() {
-    	JsonNode request = request().body().asJson();
-    	//check params
-    	String groupName;
-    	JsonNode auth = getAuth(request);
-    	if(!request.has("group_name") || auth == null) {
-    		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: auth, group_name"));
+    private static final String VERIFY_USER_SQL = "SELECT expires FROM user WHERE fb_user_id = ? AND access_token = ?";
+    public static void checkReqValid(JsonNode req) throws AuthorizationException, SQLException {
+    	JsonNode auth = req.get("auth");
+    	if(auth != null && auth.has("fb_user_id") && auth.has("access_token")) {
+    		String userId = auth.get("fb_user_id").textValue();
+    		String accessToken = auth.get("access_token").textValue();
+    		try(Connection connection = DB.getConnection()) {
+        		//try to retrieve expires given the user id and access token
+        		PreparedStatement stmt = connection.prepareStatement(VERIFY_USER_SQL);
+        		stmt.setString(1, userId);
+        		stmt.setString(2, accessToken);
+        		stmt.execute();
+        		ResultSet rs = stmt.getResultSet();
+        		//if there is a row with such a user id and access token
+        		if(rs.next()) {
+        			//check expires against the current time
+        			long expires = rs.getLong("expires");
+        			if(expires > System.currentTimeMillis() / 1000L) {
+        				throw new AuthorizationException("Login expired!");
+        			}
+        		}
+        		else {
+        			throw new AuthorizationException("No such login!");
+        		}
+        		
+        	}
     	}
     	else {
-    		//check log in
-    		if(!isUserLoggedIn(auth)) {
-    			return badRequest(JsonNodeFactory.instance.objectNode().put("error", "log in"));
-    		}
-    		groupName = request.get("group_name").textValue();
+    		throw new AuthorizationException("No auth");
     	}
+    }
+    
+    private static final String CREATE_GROUP_SQL = "INSERT INTO `group` (name) VALUES (?)";
+    public static Result createGroup() {
+    	JsonNode request = request().body().asJson();
+    	try {
+    		checkReqValid(request);
+    	}
+    	catch(AuthorizationException e) {
+    		e.printStackTrace();
+    		return unauthorized();
+    	}
+    	catch(SQLException e) {
+    		e.printStackTrace();
+    		return internalServerError();
+    	}
+    	//check params
+    	String groupName;
+    	if(!request.has("group_name")) {
+    		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: group_name"));
+    	}
+    	groupName = request.get("group_name").textValue();
     	try(Connection conn = DB.getConnection()) {
     		//run sql
     		PreparedStatement stmt = conn.prepareStatement(CREATE_GROUP_SQL, Statement.RETURN_GENERATED_KEYS);
