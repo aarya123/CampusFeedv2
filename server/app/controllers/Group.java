@@ -14,8 +14,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class Group extends Controller {
-	private static final String CREATE_GROUP_SQL = "INSERT INTO `group` (name) VALUES (?)";
-	private static final String JOIN_GROUP_ADMIN_SQL = "INSERT INTO group_has_user (userid, groupid, isadmin) VALUES (?, ?, 1)";
     public static Result createGroup() {
     	JsonNode request = request().body().asJson();
     	try {
@@ -42,7 +40,7 @@ public class Group extends Controller {
     		conn = DB.getConnection();
     		conn.setAutoCommit(false);
     		//run sql
-    		stmt = conn.prepareStatement(CREATE_GROUP_SQL, Statement.RETURN_GENERATED_KEYS);
+    		stmt = conn.prepareStatement("INSERT INTO `group` (name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
     		stmt.setString(1, groupName);
     		stmt.execute();
     		ResultSet rs = stmt.getGeneratedKeys();
@@ -51,7 +49,7 @@ public class Group extends Controller {
         		long groupId = rs.getLong(1);
         		stmt.close();
     			//add user who created group as admin
-    			stmt = conn.prepareStatement(JOIN_GROUP_ADMIN_SQL);
+    			stmt = conn.prepareStatement("INSERT INTO group_has_user (userid, groupid, isadmin) VALUES (?, ?, 1)");
     			stmt.setLong(1, userId);
     			stmt.setLong(2, groupId);
     			stmt.execute();
@@ -91,7 +89,6 @@ public class Group extends Controller {
     	return internalServerError();
     }
     
-    private static final String JOIN_GROUP_SQL = "INSERT IGNORE INTO group_has_user (userid, groupid) VALUES (?, ?)";
     public static Result joinGroup() {
     	//check auth
     	JsonNode request = request().body().asJson();
@@ -114,7 +111,7 @@ public class Group extends Controller {
     	groupId = request.get("group_id").intValue();
     	userId = Application.getUserId(request);
     	try(Connection conn = DB.getConnection()) {
-    		try(PreparedStatement stmt = conn.prepareStatement(JOIN_GROUP_SQL)) {
+    		try(PreparedStatement stmt = conn.prepareStatement("INSERT IGNORE INTO group_has_user (userid, groupid) VALUES (?, ?)")) {
 	    		stmt.setLong(1, userId);
 	    		stmt.setLong(2, groupId);
 	    		stmt.execute();
