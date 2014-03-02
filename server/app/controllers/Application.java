@@ -166,46 +166,37 @@ public class Application extends Controller {
     		throw new AuthorizationException("No auth");
     	}
     }
-    
-    private static final String CREATE_GROUP_SQL = "INSERT INTO `group` (name) VALUES (?)";
-    public static Result createGroup() {
-    	JsonNode request = request().body().asJson();
-    	try {
-    		checkReqValid(request);
-    	}
-    	catch(AuthorizationException e) {
-    		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
-    	}
-    	catch(SQLException e) {
-    		e.printStackTrace();
-    		return internalServerError();
-    	}
-    	//check params
-    	String groupName;
-    	if(!request.has("group_name")) {
-    		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: group_name"));
-    	}
-    	groupName = request.get("group_name").textValue();
-    	try(Connection conn = DB.getConnection()) {
-    		//run sql
-    		PreparedStatement stmt = conn.prepareStatement(CREATE_GROUP_SQL, Statement.RETURN_GENERATED_KEYS);
-    		stmt.setString(1, groupName);
-    		stmt.execute();
-    		long groupId;
-    		ResultSet rs = stmt.getGeneratedKeys();
-    		if(rs.next()) {
-    			//return id
-    			groupId = rs.getLong(1);
-    			return ok(JsonNodeFactory.instance.objectNode().put("group_id", groupId));
-    		}
-    		else {
-    			return internalServerError();
-    		}
-    	}
-    	catch(SQLException e) {
-    		e.printStackTrace();
-    		return internalServerError();
-    	}
-    }
+
+    private static final String GET_USER_ID_SQL = "SELECT id FROM user WHERE fb_user_id = ?";
+    /**
+     * Helper method to get user id from database using any authorized request
+     * @param req the request
+     * @return id of user who made the request, -1 if invalid request
+     */
+	public static long getUserId(JsonNode req) {
+		JsonNode auth = req.get("auth");
+		if(auth != null && auth.has("fb_user_id")) {
+			String userId = auth.get("fb_user_id").textValue();
+			try(Connection conn = DB.getConnection()) {
+				PreparedStatement stmt = conn.prepareStatement(GET_USER_ID_SQL);
+				stmt.setString(1, userId);
+				stmt.execute();
+				ResultSet rs = stmt.getResultSet();
+				if(rs.next()) {
+					return rs.getLong("id");
+				}
+				else {
+					return -1;
+				}
+			}
+			catch(SQLException e) {
+				e.printStackTrace();
+				return -1;
+			}
+		}
+		else {
+			return -1;
+		}
+	}
 
 }
