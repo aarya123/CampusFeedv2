@@ -57,14 +57,15 @@ public class Application extends Controller {
     	//retrieve access token param
     	JsonNode obj = request.asJson();
     	String accessToken = null;
-    	if(obj != null) {
+    	String userId = null;
+    	if(obj.has("access_token") && obj.has("fb_user_id")) {
     		accessToken = obj.get("access_token").textValue();
+    		userId = obj.get("fb_user_id").textValue();
     	}
-    	if(accessToken == null) {
-    		return badRequest("usage: json object with access_token");
+    	else {
+    		return badRequest("usage: json object with fb_user_id, access_token");
     	}
     	//retrieve user id, first name, last name
-    	String userId;
     	String firstName;
     	String lastName;
     	try {
@@ -75,7 +76,9 @@ public class Application extends Controller {
         			.get(FB_TIMEOUT)
         			.asJson();
     		if(userInfo.has("id") && userInfo.has("first_name") && userInfo.has("last_name")) {
-    			userId = userInfo.get("id").textValue();
+    			if(!userId.equals(userInfo.get("id").textValue())) {
+    				return badRequest(JsonNodeFactory.instance.objectNode().put("error", "invalid user id for access token"));
+    			}
     			firstName = userInfo.get("first_name").textValue();
     			lastName = userInfo.get("last_name").textValue();
     		}
