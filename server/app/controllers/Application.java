@@ -99,7 +99,6 @@ public class Application extends Controller {
     	try(InputStream in = accessTokenResp.getBodyAsStream()) {
     		Map<String, String >respVals = queryToMap(in);
     		if(!respVals.containsKey("access_token") || !respVals.containsKey("expires")) {
-    			System.err.println("Access token or expires not present!");
     			return internalServerError();
     		}
     		else {
@@ -133,7 +132,7 @@ public class Application extends Controller {
     	return Application.ok(resp);
     }
     
-    private static final String VERIFY_USER_SQL = "SELECT expires FROM user WHERE fb_user_id = ? AND access_token = ?";
+    private static final String VERIFY_USER_SQL = "SELECT UNIX_TIMESTAMP(expires) FROM user WHERE fb_user_id = ? AND access_token = ?";
     public static void checkReqValid(JsonNode req) throws AuthorizationException, SQLException {
     	JsonNode auth = req.get("auth");
     	if(auth != null && auth.has("fb_user_id") && auth.has("access_token")) {
@@ -149,8 +148,8 @@ public class Application extends Controller {
         		//if there is a row with such a user id and access token
         		if(rs.next()) {
         			//check expires against the current time
-        			long expires = rs.getLong("expires");
-        			if(expires > System.currentTimeMillis() / 1000L) {
+        			long expires = rs.getLong("UNIX_TIMESTAMP(expires)");
+        			if(expires <= System.currentTimeMillis() / 1000L) {
         				throw new AuthorizationException("Login expired");
         			}
         		}
