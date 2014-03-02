@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -48,6 +50,32 @@ public class Application extends Controller {
     	return query;
     }
     
+    private static final String VERIFY_USER_SQL = "SELECT expires FROM user WHERE fb_user_id = ? AND access_token = ?";
+    public static boolean isUserLoggedIn(String userId, String accessToken) {
+    	try(Connection connection = DB.getConnection()) {
+    		//try to retrieve expires given the user id and access token
+    		PreparedStatement stmt = connection.prepareStatement(VERIFY_USER_SQL);
+    		stmt.setString(1, userId);
+    		stmt.setString(2, accessToken);
+    		stmt.execute();
+    		ResultSet rs = stmt.getResultSet();
+    		//if there is a row with such a user id and access token
+    		if(rs.next()) {
+    			//check expires against the current time
+    			long expires = rs.getLong("expires");
+    			return expires <= System.currentTimeMillis() / 1000L;
+    		}
+    		else {
+    			return false;
+    		}
+    		
+    	}
+    	catch(SQLException e) {
+    		e.printStackTrace();
+    		return false;
+    	}
+    }
+    
     private static final String LOGIN_USER_SQL = "INSERT INTO user (fb_user_id, first_name, last_name, access_token, expires) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?)) ON DUPLICATE KEY UPDATE access_token=?, expires=FROM_UNIXTIME(?)";
     public static Result login() {
     	RequestBody request = request().body();
@@ -61,7 +89,7 @@ public class Application extends Controller {
     		return badRequest("usage: json object with access_token");
     	}
     	//retrieve user id, first name, last name
-    	long userId;
+    	String userId;
     	String firstName;
     	String lastName;
     	try {
@@ -72,7 +100,7 @@ public class Application extends Controller {
         			.get(FB_TIMEOUT)
         			.asJson();
     		if(userInfo.has("id") && userInfo.has("first_name") && userInfo.has("last_name")) {
-    			userId = userInfo.get("id").asLong();
+    			userId = userInfo.get("id").textValue();
     			firstName = userInfo.get("first_name").textValue();
     			lastName = userInfo.get("last_name").textValue();
     		}
@@ -111,7 +139,7 @@ public class Application extends Controller {
     	//write new info or updated info to db
     	try(Connection connection = DB.getConnection()) {
     		PreparedStatement stmt = connection.prepareStatement(LOGIN_USER_SQL);
-    		stmt.setLong(1, userId);
+    		stmt.setString(1, userId);
     		stmt.setString(2, firstName);
     		stmt.setString(3, lastName);
     		stmt.setString(4, accessToken);
@@ -128,6 +156,43 @@ public class Application extends Controller {
     	//return long lived access token to use as auth
     	JsonNode resp = JsonNodeFactory.instance.objectNode().put("access_token", accessToken);
     	return Application.ok(resp);
+    }
+    
+    private static final String CREATE_GROUP_SQL = "INSERT INTO `group` (`name`) VALUES (?)";
+    public static Result createGroup() {
+    	JsonNode request = request().body().asJson();
+    	//check params
+    	String groupName;
+    	if(!request.has("group_name") || !request.has("fb_user_id") || !request.has("access_token")) {
+    		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: fb_user_id, access_token, group_name"));
+    	}
+    	else {
+    		//check log in
+    		if(!isUserLoggedIn(request.get("fb_user_id").textValue(), request.get("access_token").textValue())) {
+    			return badRequest(JsonNodeFactory.instance.objectNode().put("error", "log in"));
+    		}
+    		groupName = request.get("group_name").textValue();
+    	}
+    	try(Connection conn = DB.getConnection()) {
+    		//run sql
+    		PreparedStatement stmt = conn.prepareStatement(CREATE_GROUP_SQL, Statement.RETURN_GENERATED_KEYS);
+    		stmt.setString(1, groupName);
+    		stmt.execute();
+    		long groupId;
+    		ResultSet rs = stmt.getGeneratedKeys();
+    		if(rs.next()) {
+    			//return id
+    			groupId = rs.getLong(1);
+    			return ok(JsonNodeFactory.instance.objectNode().put("group_id", groupId));
+    		}
+    		else {
+    			return internalServerError();
+    		}
+    	}
+    	catch(SQLException e) {
+    		e.printStackTrace();
+    		return internalServerError();
+    	}
     }
 
 }

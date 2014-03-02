@@ -8,5 +8,8 @@ GET     /                           controllers.Application.index()
 # Login
 POST	/login				controllers.Application.login()
 
+# Create Group
+POST	/create_group		controllers.Application.createGroup()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
