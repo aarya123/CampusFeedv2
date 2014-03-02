@@ -39,15 +39,16 @@ public class Application extends Controller {
      * @return the map
      */
     public static Map<String, String> queryToMap(InputStream stream) {
-    	Scanner in = new Scanner(stream);
-    	Map<String, String> query = new HashMap<>();
-    	in.useDelimiter("[=&]");
-    	while(in.hasNext()) {
-    		String key = in.next();
-    		String val = in.next();
-    		query.put(key, val);
+    	try(Scanner in = new Scanner(stream)) {
+	    	Map<String, String> query = new HashMap<>();
+	    	in.useDelimiter("[=&]");
+	    	while(in.hasNext()) {
+	    		String key = in.next();
+	    		String val = in.next();
+	    		query.put(key, val);
+	    	}
+	    	return query;
     	}
-    	return query;
     }
     
     private static final String VERIFY_USER_SQL = "SELECT expires FROM user WHERE fb_user_id = ? AND access_token = ?";
@@ -74,6 +75,20 @@ public class Application extends Controller {
     		e.printStackTrace();
     		return false;
     	}
+    }
+    
+    public static boolean isUserLoggedIn(JsonNode authObj) {
+    	return isUserLoggedIn(authObj.get("fb_user_id").asText(), authObj.get("access_token").asText());
+    }
+    
+    public static JsonNode getAuth(JsonNode req) {
+    	if(req.has("auth")) {
+    		JsonNode auth = req.get("auth");
+    		if(auth.has("fb_user_id") && auth.has("access_token")) {
+    			return auth;
+    		}
+    	}
+    	return null;
     }
     
     private static final String LOGIN_USER_SQL = "INSERT INTO user (fb_user_id, first_name, last_name, access_token, expires) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?)) ON DUPLICATE KEY UPDATE access_token=?, expires=FROM_UNIXTIME(?)";
@@ -163,12 +178,13 @@ public class Application extends Controller {
     	JsonNode request = request().body().asJson();
     	//check params
     	String groupName;
-    	if(!request.has("group_name") || !request.has("fb_user_id") || !request.has("access_token")) {
-    		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: fb_user_id, access_token, group_name"));
+    	JsonNode auth = getAuth(request);
+    	if(!request.has("group_name") || auth == null) {
+    		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: auth, group_name"));
     	}
     	else {
     		//check log in
-    		if(!isUserLoggedIn(request.get("fb_user_id").textValue(), request.get("access_token").textValue())) {
+    		if(!isUserLoggedIn(auth)) {
     			return badRequest(JsonNodeFactory.instance.objectNode().put("error", "log in"));
     		}
     		groupName = request.get("group_name").textValue();
