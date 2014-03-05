@@ -1,6 +1,12 @@
 CampusFeedv2
 ============
 
+To find out how to send requests to the <b>server api</b>, look at the wiki, button on the right. Or click this link:<br>
+https://github.com/aarya123/CampusFeedv2/wiki/_pages
+
+-----------------------------------------------------------------------------------------------------------------------
+
+
 To view the Android app progress, see the screenshots posted at:
 
 https://drive.google.com/folderview?id=0B7ckqIbbmIG8b1liNldweFlsREk&usp=sharing
