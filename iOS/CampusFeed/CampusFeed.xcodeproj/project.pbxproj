@@ -13,15 +13,23 @@
 		960DF98118BDB2C90081229F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 960DF97F18BDB2C90081229F /* InfoPlist.strings */; };
 		960DF98318BDB2C90081229F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 960DF98218BDB2C90081229F /* main.m */; };
 		960DF98718BDB2C90081229F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 960DF98618BDB2C90081229F /* AppDelegate.m */; };
-		960DF98A18BDB2C90081229F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 960DF98818BDB2C90081229F /* Main.storyboard */; };
 		960DF98D18BDB2C90081229F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 960DF98C18BDB2C90081229F /* ViewController.m */; };
-		960DF98F18BDB2C90081229F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 960DF98E18BDB2C90081229F /* Images.xcassets */; };
 		960DF99618BDB2C90081229F /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DF99518BDB2C90081229F /* XCTest.framework */; };
 		960DF99718BDB2C90081229F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DF97618BDB2C90081229F /* Foundation.framework */; };
 		960DF99818BDB2C90081229F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 960DF97A18BDB2C90081229F /* UIKit.framework */; };
 		960DF9A018BDB2C90081229F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 960DF99E18BDB2C90081229F /* InfoPlist.strings */; };
 		960DF9A218BDB2C90081229F /* CampusFeedTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 960DF9A118BDB2C90081229F /* CampusFeedTests.m */; };
 		960DF9AD18BDB2E10081229F /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 960DF9AC18BDB2E10081229F /* User.m */; };
+		9668EF6018BEE62100A68B09 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9668EF5F18BEE62100A68B09 /* FacebookSDK.framework */; };
+		9668EF6518BEEFBA00A68B09 /* IIViewDeckController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9668EF6418BEEFBA00A68B09 /* IIViewDeckController.m */; };
+		9668EF6818BEF00D00A68B09 /* IIWrapController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9668EF6718BEF00D00A68B09 /* IIWrapController.m */; };
+		9668EF6B18BEF06800A68B09 /* IISideController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9668EF6A18BEF06800A68B09 /* IISideController.m */; };
+		9668EF6D18BEF0C000A68B09 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9668EF6C18BEF0C000A68B09 /* QuartzCore.framework */; };
+		9668EF8218C009C200A68B09 /* Event.m in Sources */ = {isa = PBXBuildFile; fileRef = 9668EF8118C009C200A68B09 /* Event.m */; };
+		9668EF8818C00E8E00A68B09 /* EventTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9668EF8718C00E8E00A68B09 /* EventTableViewController.m */; };
+		9668EF8B18C00EF200A68B09 /* EventCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9668EF8A18C00EF200A68B09 /* EventCell.m */; };
+		9668EF8D18C015F400A68B09 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9668EF8C18C015F400A68B09 /* MainStoryboard.storyboard */; };
+		96B5C0FF18C18C290080BA78 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 96B5C0FE18C18C290080BA78 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,10 +53,8 @@
 		960DF98418BDB2C90081229F /* CampusFeed-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CampusFeed-Prefix.pch"; sourceTree = "<group>"; };
 		960DF98518BDB2C90081229F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		960DF98618BDB2C90081229F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		960DF98918BDB2C90081229F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		960DF98B18BDB2C90081229F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		960DF98C18BDB2C90081229F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		960DF98E18BDB2C90081229F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		960DF99418BDB2C90081229F /* CampusFeedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CampusFeedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		960DF99518BDB2C90081229F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		960DF99D18BDB2C90081229F /* CampusFeedTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CampusFeedTests-Info.plist"; sourceTree = "<group>"; };
@@ -56,6 +62,22 @@
 		960DF9A118BDB2C90081229F /* CampusFeedTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CampusFeedTests.m; sourceTree = "<group>"; };
 		960DF9AB18BDB2E10081229F /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
 		960DF9AC18BDB2E10081229F /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
+		9668EF5F18BEE62100A68B09 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		9668EF6318BEEFBA00A68B09 /* IIViewDeckController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIViewDeckController.h; sourceTree = "<group>"; };
+		9668EF6418BEEFBA00A68B09 /* IIViewDeckController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IIViewDeckController.m; sourceTree = "<group>"; };
+		9668EF6618BEF00D00A68B09 /* IIWrapController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IIWrapController.h; sourceTree = "<group>"; };
+		9668EF6718BEF00D00A68B09 /* IIWrapController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IIWrapController.m; sourceTree = "<group>"; };
+		9668EF6918BEF06800A68B09 /* IISideController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IISideController.h; sourceTree = "<group>"; };
+		9668EF6A18BEF06800A68B09 /* IISideController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IISideController.m; sourceTree = "<group>"; };
+		9668EF6C18BEF0C000A68B09 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		9668EF8018C009C200A68B09 /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		9668EF8118C009C200A68B09 /* Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Event.m; sourceTree = "<group>"; };
+		9668EF8618C00E8E00A68B09 /* EventTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTableViewController.h; sourceTree = "<group>"; };
+		9668EF8718C00E8E00A68B09 /* EventTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventTableViewController.m; sourceTree = "<group>"; };
+		9668EF8918C00EF200A68B09 /* EventCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCell.h; sourceTree = "<group>"; };
+		9668EF8A18C00EF200A68B09 /* EventCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventCell.m; sourceTree = "<group>"; };
+		9668EF8C18C015F400A68B09 /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
+		96B5C0FE18C18C290080BA78 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,7 +85,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9668EF6D18BEF0C000A68B09 /* QuartzCore.framework in Frameworks */,
 				960DF97918BDB2C90081229F /* CoreGraphics.framework in Frameworks */,
+				9668EF6018BEE62100A68B09 /* FacebookSDK.framework in Frameworks */,
 				960DF97B18BDB2C90081229F /* UIKit.framework in Frameworks */,
 				960DF97718BDB2C90081229F /* Foundation.framework in Frameworks */,
 			);
@@ -104,6 +128,8 @@
 		960DF97518BDB2C90081229F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9668EF6C18BEF0C000A68B09 /* QuartzCore.framework */,
+				9668EF5F18BEE62100A68B09 /* FacebookSDK.framework */,
 				960DF97618BDB2C90081229F /* Foundation.framework */,
 				960DF97818BDB2C90081229F /* CoreGraphics.framework */,
 				960DF97A18BDB2C90081229F /* UIKit.framework */,
@@ -115,15 +141,19 @@
 		960DF97C18BDB2C90081229F /* CampusFeed */ = {
 			isa = PBXGroup;
 			children = (
+				9668EF7F18C0097700A68B09 /* Model */,
+				9668EF6E18BEF15000A68B09 /* ViewDeck */,
 				960DF98518BDB2C90081229F /* AppDelegate.h */,
 				960DF98618BDB2C90081229F /* AppDelegate.m */,
-				960DF98818BDB2C90081229F /* Main.storyboard */,
 				960DF98B18BDB2C90081229F /* ViewController.h */,
 				960DF98C18BDB2C90081229F /* ViewController.m */,
-				960DF98E18BDB2C90081229F /* Images.xcassets */,
 				960DF97D18BDB2C90081229F /* Supporting Files */,
-				960DF9AB18BDB2E10081229F /* User.h */,
-				960DF9AC18BDB2E10081229F /* User.m */,
+				9668EF8618C00E8E00A68B09 /* EventTableViewController.h */,
+				9668EF8718C00E8E00A68B09 /* EventTableViewController.m */,
+				9668EF8918C00EF200A68B09 /* EventCell.h */,
+				9668EF8A18C00EF200A68B09 /* EventCell.m */,
+				9668EF8C18C015F400A68B09 /* MainStoryboard.storyboard */,
+				96B5C0FE18C18C290080BA78 /* Images.xcassets */,
 			);
 			path = CampusFeed;
 			sourceTree = "<group>";
@@ -155,6 +185,30 @@
 				960DF99E18BDB2C90081229F /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9668EF6E18BEF15000A68B09 /* ViewDeck */ = {
+			isa = PBXGroup;
+			children = (
+				9668EF6318BEEFBA00A68B09 /* IIViewDeckController.h */,
+				9668EF6418BEEFBA00A68B09 /* IIViewDeckController.m */,
+				9668EF6618BEF00D00A68B09 /* IIWrapController.h */,
+				9668EF6718BEF00D00A68B09 /* IIWrapController.m */,
+				9668EF6918BEF06800A68B09 /* IISideController.h */,
+				9668EF6A18BEF06800A68B09 /* IISideController.m */,
+			);
+			name = ViewDeck;
+			sourceTree = "<group>";
+		};
+		9668EF7F18C0097700A68B09 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				960DF9AB18BDB2E10081229F /* User.h */,
+				960DF9AC18BDB2E10081229F /* User.m */,
+				9668EF8018C009C200A68B09 /* Event.h */,
+				9668EF8118C009C200A68B09 /* Event.m */,
+			);
+			name = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,9 +287,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				960DF98F18BDB2C90081229F /* Images.xcassets in Resources */,
+				96B5C0FF18C18C290080BA78 /* Images.xcassets in Resources */,
+				9668EF8D18C015F400A68B09 /* MainStoryboard.storyboard in Resources */,
 				960DF98118BDB2C90081229F /* InfoPlist.strings in Resources */,
-				960DF98A18BDB2C90081229F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,10 +308,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9668EF8818C00E8E00A68B09 /* EventTableViewController.m in Sources */,
+				9668EF6B18BEF06800A68B09 /* IISideController.m in Sources */,
 				960DF9AD18BDB2E10081229F /* User.m in Sources */,
+				9668EF8218C009C200A68B09 /* Event.m in Sources */,
 				960DF98D18BDB2C90081229F /* ViewController.m in Sources */,
+				9668EF6518BEEFBA00A68B09 /* IIViewDeckController.m in Sources */,
+				9668EF8B18C00EF200A68B09 /* EventCell.m in Sources */,
 				960DF98718BDB2C90081229F /* AppDelegate.m in Sources */,
 				960DF98318BDB2C90081229F /* main.m in Sources */,
+				9668EF6818BEF00D00A68B09 /* IIWrapController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,14 +346,6 @@
 				960DF98018BDB2C90081229F /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		960DF98818BDB2C90081229F /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				960DF98918BDB2C90081229F /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		960DF99E18BDB2C90081229F /* InfoPlist.strings */ = {
@@ -384,6 +436,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/AnubhawArya/Documents/CampusFeedv2/iOS/CampusFeed,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CampusFeed/CampusFeed-Prefix.pch";
 				INFOPLIST_FILE = "CampusFeed/CampusFeed-Info.plist";
@@ -397,6 +453,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Users/AnubhawArya/Documents/CampusFeedv2/iOS/CampusFeed,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CampusFeed/CampusFeed-Prefix.pch";
 				INFOPLIST_FILE = "CampusFeed/CampusFeed-Info.plist";
@@ -466,6 +526,7 @@
 				960DF9A718BDB2C90081229F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		960DF9A818BDB2C90081229F /* Build configuration list for PBXNativeTarget "CampusFeedTests" */ = {
 			isa = XCConfigurationList;
@@ -474,6 +535,7 @@
 				960DF9AA18BDB2C90081229F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
