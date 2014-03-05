@@ -13,5 +13,8 @@ POST	/create_group		controllers.Group.createGroup()
 # Join group
 POST	/join_group		controllers.Group.joinGroup()
 
+#Create Event
+POST 	/create_event 	controllers.EventManager.create()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

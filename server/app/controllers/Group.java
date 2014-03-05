@@ -49,7 +49,7 @@ public class Group extends Controller {
         		long groupId = rs.getLong(1);
         		stmt.close();
     			//add user who created group as admin
-    			stmt = conn.prepareStatement("INSERT INTO group_has_user (userid, groupid, isadmin) VALUES (?, ?, 1)");
+    			stmt = conn.prepareStatement("INSERT INTO group_has_user (user_id, group_id, is_admin) VALUES (?, ?, 1)");
     			stmt.setLong(1, userId);
     			stmt.setLong(2, groupId);
     			stmt.execute();
@@ -111,7 +111,7 @@ public class Group extends Controller {
     	groupId = request.get("group_id").intValue();
     	userId = Application.getUserId(request);
     	try(Connection conn = DB.getConnection()) {
-    		try(PreparedStatement stmt = conn.prepareStatement("INSERT IGNORE INTO group_has_user (userid, groupid) VALUES (?, ?)")) {
+    		try(PreparedStatement stmt = conn.prepareStatement("INSERT IGNORE INTO group_has_user (user_id, group_id) VALUES (?, ?)")) {
 	    		stmt.setLong(1, userId);
 	    		stmt.setLong(2, groupId);
 	    		stmt.execute();
@@ -124,6 +124,6 @@ public class Group extends Controller {
     	}
     }
     
-    private static final String IS_MEMBER_ADMIN_SQL = "SELECT isadmin FROM group_has_user WHERE userid = ?";
-    private static final String LEAVE_GROUP_SQL = "DELETE FROM group_has_user WHERE userid = ?";
+    private static final String IS_MEMBER_ADMIN_SQL = "SELECT is_admin FROM group_has_user WHERE user_id = ?";
+    private static final String LEAVE_GROUP_SQL = "DELETE FROM group_has_user WHERE user_id = ?";
 }
