@@ -127,5 +127,87 @@ public class EventManager extends Controller{
 		response().setContentType("application/json");
 		return ok("{\"response\":\"success\"}");
 	}
+	
+	
+	public static int createFromScrapedPage(JsonNode request)
+	{
+
+		
+		String title = request.get("title").textValue();
+		String desc = request.get("desc").textValue();
+		String location = request.get("location").textValue();
+		String time_string = request.get("date_time").textValue();
+		// visibility =1 auto
+		
+		// convert time to date
+		Date datetime=null;
+		try {
+			datetime = new SimpleDateFormat("M-d-yyyy k:m").parse(time_string);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			
+			e1.printStackTrace();
+			return -1;
+			
+		}
+		long t = datetime.getTime();
+				 
+		java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(t);
+
+		// insert into database
+		ResultSet return_info;
+
+		int event_id=-1;
+		try(Connection conn = DB.getConnection()) {
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility) VALUES (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+			
+			stmt.setString(1, title);
+			stmt.setString(2, location);
+			stmt.setTimestamp(3, sqlTimestamp);
+			stmt.setString(4, desc);
+			stmt.setInt(5, 1);
+			
+			stmt.executeUpdate();
+			return_info = stmt.getGeneratedKeys();
+			// get the generated primary key
+			if(return_info.next())
+			{
+				event_id = return_info.getInt(1);
+				
+			}
+			
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+
+			return -1;
+		}
+		
+		
+		long user_id = ScraperHandler.SCRAPER_ID;
+		try(Connection conn = DB.getConnection()) {
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_user (event_id,user_id,is_admin) VALUES (?,?,?)");
+			stmt.setInt(1,  event_id);
+			stmt.setLong(2, user_id);
+			stmt.setInt(3, 1);
+			
+			
+			stmt.executeUpdate();
+		
+		
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+		
+		
+		
+		
+	
+		return event_id;
+	}
 
 }
