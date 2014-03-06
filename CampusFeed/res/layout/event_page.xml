@@ -12,12 +12,20 @@
         android:layout_height="250dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"/>
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/imageView"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:text="Edit"/>
         <!--android:layout_above="@id/button" -->
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button1"
+        android:text="Going"
         android:id="@+id/button"
         android:layout_alignLeft="@id/imageView"
         android:layout_below="@id/imageView"/>
@@ -25,7 +33,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button2"
+        android:text="Maybe"
         android:id="@+id/button2"
         android:layout_alignTop="@+id/button"
         android:layout_toRightOf="@+id/button" />
@@ -33,7 +41,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button3"
+        android:text="Decline"
         android:id="@+id/button3"
         android:layout_alignTop="@+id/button2"
         android:layout_toRightOf="@+id/button2" />
@@ -41,7 +49,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button4"
+        android:text="Invite"
         android:id="@+id/button4"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:layout_alignTop="@+id/button3"
@@ -51,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"
+        android:text="Monday, January 3 at 6 pm \n\nlorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum"
         android:id="@+id/textView"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
