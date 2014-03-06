@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class LoginTestFragment extends Fragment {
 
@@ -68,6 +69,7 @@ public class LoginTestFragment extends Fragment {
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 	    if (state.isOpened()) {
 	        Log.i(TAG, "Logged in...");
+	        Toast.makeText(getActivity(), session.getAccessToken(), Toast.LENGTH_LONG).show();
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
 	    }
