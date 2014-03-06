@@ -1,10 +1,10 @@
+package com.purdue.CampusFeed;
+
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.purdue.CampusFeed.R;
 
 /**
  * Created by Sean on 2/26/14.
