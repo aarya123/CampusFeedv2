@@ -8,7 +8,7 @@
 	<string name="get_started">To get started, log in using Facebook</string>
 	<string name="settings">Settings</string>
 	<string-array name="navigationdrawer_items">
-        <item>Log In</item>
+        <item>Log in</item>
         <item>Home</item>
         <item>Browse</item>
         <item>Advanced Search</item>

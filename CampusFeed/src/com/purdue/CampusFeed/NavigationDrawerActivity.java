@@ -14,6 +14,17 @@ import android.widget.ListView;
 /**
  * Created by Sean on 2/25/14.
  */
+/*
+ * 
+ * 
+ * 
+ * UNUSED
+ * 
+ * 
+ * 
+ * 
+ */
+
 public class NavigationDrawerActivity extends Activity {
    private String[] drawerItems;
    private DrawerLayout drawerLayout;
