@@ -304,6 +304,23 @@ public static Result rsvp_to_event()
 	return ok("success");
 }
 
+/**
+ * Helper function to create event json from results
+ * @param rs result set from query on a valid event row
+ * @return the json event
+ * @throws SQLException
+ */
+private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
+	ObjectNode searchResult = JsonNodeFactory.instance.objectNode();
+	searchResult.put("id", rs.getString("id"));
+	searchResult.put("name", rs.getString("name"));
+	searchResult.put("location", rs.getString("location"));
+	searchResult.put("time", rs.getInt("time"));
+	searchResult.put("description", rs.getString("description"));
+	searchResult.put("category", rs.getString("category"));
+	searchResult.put("status", rs.getInt("status"));
+	return searchResult;
+}
 public static Result search() {
 	JsonNode request = request().body().asJson();
 	try {
@@ -323,20 +340,51 @@ public static Result search() {
 	}
 	query = request.get("query").textValue();
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status FROM event WHERE name LIKE ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM event WHERE name LIKE ?")) {
     		stmt.setString(1, "%" + query + "%");
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
     		if(rs.next()) {
     			do {
-    				ObjectNode searchResult = JsonNodeFactory.instance.objectNode();
-    				searchResult.put("id", rs.getString("id"));
-    				searchResult.put("name", rs.getString("name"));
-    				searchResult.put("location", rs.getString("location"));
-    				searchResult.put("time", rs.getInt("time"));
-    				searchResult.put("description", rs.getString("description"));
-    				searchResult.put("status", rs.getInt("status"));
-    				searchResults.add(searchResult);
+    				searchResults.add(createEventJson(rs));
+    			}
+    			while(rs.next());
+    		}
+    		return ok(searchResults);
+		}
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+}
+
+public static Result listEvent() {
+	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	//check params
+	int page;
+	if(!request.has("page")) {
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
+	}
+	page = request.get("page").intValue();
+	try(Connection conn = DB.getConnection()) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM event LIMIT 25 OFFSET ?")) {
+    		stmt.setInt(1, page * 25);
+    		ResultSet rs = stmt.executeQuery();
+    		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
+    		if(rs.next()) {
+    			do {
+    				searchResults.add(createEventJson(rs));
     			}
     			while(rs.next());
     		}
