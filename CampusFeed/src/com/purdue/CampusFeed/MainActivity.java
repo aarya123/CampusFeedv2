@@ -160,7 +160,7 @@ public class MainActivity extends FragmentActivity {
                 fragToDisplay = new BrowseFragment();
                 break;
             case 3:
-                fragToDisplay = new EventPageFragment();
+                fragToDisplay = new AdvancedSearch_Fragment();
                 break;
             default:
                 break;

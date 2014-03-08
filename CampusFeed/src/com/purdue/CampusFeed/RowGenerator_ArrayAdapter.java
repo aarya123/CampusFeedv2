@@ -8,6 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+/*
+ * 
+ * generates rows for the browse events fragment
+ * 
+ */
 public class RowGenerator_ArrayAdapter extends ArrayAdapter<String> {
   private final Context context;
   

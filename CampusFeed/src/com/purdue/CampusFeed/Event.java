@@ -1,10 +1,13 @@
 package com.purdue.CampusFeed;
 
 public class Event {
-	String eventName;
-	String eventTime;
-	String eventLocation;
 	
+	//event info
+	String eventName;
 	String eventDescription;
+	String eventLocation;
+	String eventDate;
+	String eventTime;
 	/*add more stuff below*/
 }
+ 
