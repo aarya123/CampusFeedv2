@@ -34,9 +34,6 @@ public class HomepageFragment extends Fragment {
     private ListView lv3;
 
     public static ArrayList<Event> firstcat = new ArrayList<Event>();
-    public static ArrayList<Event> secondcat = new ArrayList<Event>();
-    public static ArrayList<Event> thirdcat = new ArrayList<Event>();
-
 
 
     @Override
@@ -48,24 +45,18 @@ public class HomepageFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
-        lv1 = (ListView) getActivity().findViewById(R.id.listView);
-        lv2 = (ListView) getActivity().findViewById(R.id.listView2);
-        lv3 = (ListView) getActivity().findViewById(R.id.listView3);
+        lv1 = (ListView) getActivity().findViewById(R.id.mainlist);
+
        adapter1= new RowGenerator_ArrayAdapter(getActivity(), HomepageFragment.firstcat);
-        adapter2 = new RowGenerator_ArrayAdapter(getActivity(), secondcat);
-        adapter3 = new RowGenerator_ArrayAdapter(getActivity(), thirdcat);
+
         lv1.setAdapter(adapter1);
-        lv2.setAdapter(adapter2);
-        lv3.setAdapter(adapter3);
+
 
         lv1.setOnItemClickListener(itemClickedListener);
-        lv2.setOnItemClickListener(itemClickedListener);
+
         DOWNLOADER d1 = new DOWNLOADER();
-        DOWNLOADER d2 = new DOWNLOADER();
-        DOWNLOADER d3 = new DOWNLOADER();
+
         d1.execute("Social","1");
-        d2.execute("Cultural","2");
-        d3.execute("Sports","3");
 
     }
     ListView.OnItemClickListener itemClickedListener = new AdapterView.OnItemClickListener() {
@@ -100,50 +91,25 @@ public class HomepageFragment extends Fragment {
                 HttpEntity res = response1.getEntity();
 
                 JSONArray r = new JSONArray( EntityUtils.toString(res));
-                Log.d("MAYANK123",r.toString());
 
                 for(int i=0;i<r.length();i++)
                 {
-                    if(which==1){
+
                         Event e = new Event();
                         JSONObject current = r.getJSONObject(i);
                         e.eventName = current.getString("title");
-                        e.datetime=current.getString("date_time");
+                        e.id = current.getString("id");
+                         e.datetime=current.getString("date_time");
                         e.eventDescription=current.getString("desc");
                         e.eventLocation=current.getString("location");
                         HomepageFragment.firstcat.add(e);
 
 
-                    }
-                    else
-                    if(which==2)
-                    {
-                        Event e = new Event();
-                        JSONObject current = r.getJSONObject(i);
-                        e.eventName = current.getString("title");
-                        e.datetime=current.getString("date_time");
-                        e.eventDescription=current.getString("desc");
-                        e.eventLocation=current.getString("location");
-                        HomepageFragment.secondcat.add(e);
-
-                    }
-                    else
-                    if(which==3)
-                    {
-                        Event e = new Event();
-                        JSONObject current = r.getJSONObject(i);
-                        e.eventName = current.getString("title");
-                        e.datetime=current.getString("date_time");
-                        e.eventDescription=current.getString("desc");
-                        e.eventLocation=current.getString("location");
-                        HomepageFragment.thirdcat.add(e);
-                    }
-
                 }
                 // handle response here...
             }catch (Exception ex) {
                 // handle exception here
-                Log.d("MAYANK", ex.toString());
+
                 ex.printStackTrace();
             } finally {
                 httpClient.getConnectionManager().shutdown();
@@ -154,28 +120,8 @@ public class HomepageFragment extends Fragment {
 
 
         protected void onPostExecute(Integer result) {
+            adapter1.notifyDataSetChanged();
 
-            if(result==1)
-            {
-
-                adapter1.notifyDataSetChanged();
-
-            }
-            else
-            if(result==2)
-            {
-
-                adapter2.notifyDataSetChanged();
-
-
-            }
-            else
-            if(result==3)
-            {
-
-                adapter3.notifyDataSetChanged();
-
-            }
 
         }
 
