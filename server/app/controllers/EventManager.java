@@ -495,7 +495,7 @@ public static Result all()
 			try {
 				JSONObject event = new JSONObject();
 				event.put("title", s.getString("name"));
-				event.put("id", s.getInt("id"));
+				event.put("id", s.getString("id"));
 				event.put("desc", s.getString("description"));
 				event.put("date_time",s.getTimestamp("time"));
 				event.put("location", s.getString("location"));
