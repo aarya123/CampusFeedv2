@@ -333,7 +333,7 @@ public static Result search() {
     				searchResult.put("id", rs.getString("id"));
     				searchResult.put("name", rs.getString("name"));
     				searchResult.put("location", rs.getString("location"));
-    				searchResult.put("time", rs.getString("time"));
+    				searchResult.put("time", rs.getInt("time"));
     				searchResult.put("description", rs.getString("description"));
     				searchResult.put("status", rs.getInt("status"));
     				searchResults.add(searchResult);
