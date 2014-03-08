@@ -32,7 +32,7 @@
     <!-- Use standard android.R class text2 id instead of app specific id. This is just useful for
          consistency. This is secondary text and not always visible so by default is has its
          visibility set to gone -->
-    <TextView android:id="@android:id/text2"
+    <!--  TextView android:id="@android:id/text2"
               android:paddingLeft="@dimen/listview_item_padding"
               android:paddingRight="@dimen/listview_item_padding"
               android:layout_width="match_parent"
@@ -45,13 +45,13 @@
               android:ellipsize="marquee"
               android:visibility="gone"
               android:text="@string/search_match_other"
-              android:textAppearance="?android:attr/textAppearanceSmall"/>
+              android:textAppearance="?android:attr/textAppearanceSmall"/>-->
 
     <!-- Use standard android.R class text1 id instead of app specific id. This is just useful for
          consistency. This view also sets layout_alignWithParentIfMissing=true which lets the view
          align with the parent view if the text2 view is not part of the view hierarchy (which is
          its initial state). -->
-    <TextView android:id="@android:id/text1"
+    <!--  TextView android:id="@android:id/text1"
               android:paddingLeft="@dimen/listview_item_padding"
               android:paddingRight="@dimen/listview_item_padding"
               android:layout_width="match_parent"
@@ -65,6 +65,6 @@
               android:fontFamily="sans-serif-light"
               android:singleLine="true"
               android:ellipsize="marquee"
-              android:textAppearance="?android:attr/textAppearanceLarge"/>
+              android:textAppearance="?android:attr/textAppearanceLarge"/>-->
 
 </RelativeLayout>
