@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -102,6 +103,8 @@ public class CreateEventFragment extends Fragment {
                 month=month+1;
                 Creator c= new Creator();
                 c.execute("create");
+                Toast.makeText(getActivity(),"event created", Toast.LENGTH_LONG).show();
+
 
             }
         });
@@ -184,6 +187,7 @@ class Creator extends AsyncTask<String,Void,String> {
 
         // might want to change "executed" for the returned string passed
         // into onPostExecute() but that is upto you
+
     }
 
 }
