@@ -524,8 +524,12 @@ public static Result all()
 }
 
 public static Result top5() {
+	JsonNode request = request().body().asJson();
+	String category = request.get("category").textValue();
 	try(Connection conn = DB.getConnection()) {
-		ResultSet s = conn.prepareStatement("SELECT * FROM `Event` ORDER BY view_count DESC LIMIT 5").executeQuery();
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event` WHERE category = ? ORDER BY view_count DESC LIMIT 5");
+		stmt.setString(1, category);
+		ResultSet s = stmt.executeQuery();
 		ArrayNode res = JsonNodeFactory.instance.arrayNode();
 		JSONArray list = new JSONArray();
 		while(s.next()) {
