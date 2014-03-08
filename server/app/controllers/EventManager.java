@@ -523,5 +523,34 @@ public static Result all()
 	return ok(list.toString());
 }
 
+public static Result top5() {
+	try(Connection conn = DB.getConnection()) {
+		ResultSet s = conn.prepareStatement("SELECT * FROM `Event` ORDER BY view_count DESC LIMIT 5").executeQuery();
+		ArrayNode res = JsonNodeFactory.instance.arrayNode();
+		JSONArray list = new JSONArray();
+		while(s.next()) {
+			JSONObject event = new JSONObject();
+			try {
+				event.put("title", s.getString("name"));
+				event.put("id", s.getString("id"));
+				event.put("desc", s.getString("description"));
+				event.put("date_time",s.getTimestamp("time"));
+				event.put("location", s.getString("location"));
+				event.put("view_count",s.getInt("view_count"));
+				event.put("category", s.getString("category"));
+			}
+			catch(JSONException e) {
+				
+			}
+			list.put(event);
+		}
+		return ok(list.toString());
+		
+	}
+	catch(SQLException e) {
+		return internalServerError(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+}
+
 
 }

@@ -37,5 +37,8 @@ POST	/search_event	controllers.EventManager.search()
 #List Event
 POST	/list_event		controllers.EventManager.listEvent()
 
+#top5
+POST	/top5			controllers.EventManager.top5
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
