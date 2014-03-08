@@ -17,4 +17,23 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    
+    <string name="activity_contacts_list">Contacts List</string>
+    <string name="activity_contact_detail">Contact Detail</string>
+    <string name="contacts_list_search_results_title">Contacts List Search for \"%s\"</string>
+    <string name="imageview_description">Contact Thumbnail</string>
+    <string name="address_button_description">View Address</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_add_contact">Add Contact</string>
+    <string name="menu_edit_contact">Edit Contact</string>
+    <string name="no_contacts">No Contacts Found</string>
+    <string name="no_contact_selected">No Contact Selected</string>
+    <string name="search_hint">Find contacts</string>
+    <string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="search_match_other">Matches Other Field</string>
+
+    <string name="no_address">No addresses found</string>
+    <string name="no_intent_found">No application found to handle this action</string>
+    <string name="activity_invite">Invite Your Friends</string>
+    
 </resources>
