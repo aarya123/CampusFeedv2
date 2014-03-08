@@ -331,16 +331,7 @@ private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
 }
 public static Result search() {
 	JsonNode request = request().body().asJson();
-	try {
-		Application.checkReqValid(request);
-	}
-	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-		return internalServerError();
-	}
+	
 	//check params
 	String query;
 	if(!request.has("query")) {
