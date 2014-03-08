@@ -7,6 +7,7 @@ public class Event {
 	public String eventDescription;
 	public String eventLocation;
 	public String datetime;
+    public String id;
 	/*add more stuff below*/
 }
  

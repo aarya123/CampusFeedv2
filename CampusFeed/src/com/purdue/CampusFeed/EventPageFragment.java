@@ -36,12 +36,11 @@ public class EventPageFragment extends Fragment {
         desc.setText(myEvent.eventName+" @ "+myEvent.datetime+"\n\n\n\n"+myEvent.eventDescription+"\n\n\n\n"+myEvent.eventLocation);
 
 
-    /*
        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, new EditEventFragment(myEvent));
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, new EditEventFragment(myEvent)).commit();
             }
-        });*/
+        });
     }
 }

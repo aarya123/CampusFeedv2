@@ -108,6 +108,7 @@ public class AdvancedSearch_Fragment extends Fragment {
                     e.datetime=current.getString("time");
                     e.eventDescription=current.getString("description");
                     e.eventLocation=current.getString("location");
+                    e.id=current.getString("id");
                     results.add(e);
                 }
                 return 1;

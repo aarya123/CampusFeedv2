@@ -88,6 +88,7 @@ public class BrowseFragment extends Fragment {
                         Event e = new Event();
                         JSONObject current = r.getJSONObject(i);
                         e.eventName = current.getString("title");
+                        e.id=current.getString("id");
                         e.datetime=current.getString("date_time");
                         e.eventDescription=current.getString("desc");
                         e.eventLocation=current.getString("location");

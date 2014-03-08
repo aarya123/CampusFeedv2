@@ -97,9 +97,10 @@ public class CreateEventFragment extends Fragment {
                 EditText locationText = (EditText)getActivity().findViewById(R.id.locationText);
 
 
-                 title = nameText.getText().toString();
-             description = descriptionText.getText().toString();
-             location = locationText.getText().toString();
+                title = nameText.getText().toString();
+                description = descriptionText.getText().toString();
+                location = locationText.getText().toString();
+
                 month=month+1;
                 Creator c= new Creator();
                 c.execute("create");
