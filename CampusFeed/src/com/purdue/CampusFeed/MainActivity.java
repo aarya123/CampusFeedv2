@@ -217,6 +217,7 @@ public class MainActivity extends FragmentActivity {
 	        
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
+	        Toast.makeText(getApplicationContext() , facebook_profileName+" logged out :(", Toast.LENGTH_LONG).show();
 	        facebook_userID = null;
 	        facebook_profileName = null;
 	        facebook_accessToken = null;
