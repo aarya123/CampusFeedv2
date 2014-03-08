@@ -11,6 +11,7 @@
         <item>Log in</item>
         <item>Home</item>
         <item>Browse</item>
+        <item>Create Event</item>
         <item>Advanced Search</item>
 	</string-array>
     <string name="drawer_open">Open navigation drawer</string>
