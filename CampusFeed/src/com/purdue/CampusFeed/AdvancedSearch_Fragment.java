@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -44,7 +45,17 @@ public class AdvancedSearch_Fragment extends Fragment {
 
 
 
+        resultsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                /*String text = (String) adapterView.getItemAtPosition(pos);
+                Toast.makeText(getActivity(), text + " selected", Toast.LENGTH_SHORT).show();*/
+            Event e = results.get(pos);
 
+
+            getFragmentManager().beginTransaction().replace(R.id.content_frame, new EventPageFragment(e)).commit();
+        }
+    });
         
         searchButton.setOnClickListener(new OnClickListener() {
 			
