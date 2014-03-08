@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_campusfeed" default="compile.module.campusfeed">
+  <dirname property="module.campusfeed.basedir" file="${ant.file.module_campusfeed}"/>
+  
+  <property name="module.jdk.home.campusfeed" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.campusfeed" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.campusfeed" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.campusfeed" value="${compiler.args}"/>
+  
+  <property name="campusfeed.output.dir" value="${module.campusfeed.basedir}/../out/production/CampusFeed"/>
+  <property name="campusfeed.testoutput.dir" value="${module.campusfeed.basedir}/../out/test/CampusFeed"/>
+  
+  <path id="campusfeed.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="campusfeed.module.production.classpath">
+    <path refid="${module.jdk.classpath.campusfeed}"/>
+    <path refid="library.android-support-v4.classpath"/>
+    <pathelement location="${facebook.output.dir}"/>
+  </path>
+  
+  <path id="campusfeed.runtime.production.module.classpath">
+    <pathelement location="${campusfeed.output.dir}"/>
+    <path refid="library.android-support-v4.classpath"/>
+    <path refid="facebook.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="campusfeed.module.classpath">
+    <path refid="${module.jdk.classpath.campusfeed}"/>
+    <pathelement location="${campusfeed.output.dir}"/>
+    <path refid="library.android-support-v4.classpath"/>
+    <pathelement location="${facebook.testoutput.dir}"/>
+    <pathelement location="${facebook.output.dir}"/>
+  </path>
+  
+  <path id="campusfeed.runtime.module.classpath">
+    <pathelement location="${campusfeed.testoutput.dir}"/>
+    <pathelement location="${campusfeed.output.dir}"/>
+    <path refid="library.android-support-v4.classpath"/>
+    <path refid="facebook.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.campusfeed">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.campusfeed">
+    <patternset refid="excluded.from.module.campusfeed"/>
+  </patternset>
+  
+  <path id="campusfeed.module.sourcepath">
+    <dirset dir="${module.campusfeed.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.campusfeed" depends="compile.module.campusfeed.production,compile.module.campusfeed.tests" description="Compile module CampusFeed"/>
+  
+  <target name="compile.module.campusfeed.production" depends="register.custom.compilers,compile.module.facebook" description="Compile module CampusFeed; production classes">
+    <mkdir dir="${campusfeed.output.dir}"/>
+    <javac2 destdir="${campusfeed.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.campusfeed}/javac">
+      <compilerarg line="${compiler.args.campusfeed}"/>
+      <bootclasspath refid="campusfeed.module.bootclasspath"/>
+      <classpath refid="campusfeed.module.production.classpath"/>
+      <src refid="campusfeed.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.campusfeed"/>
+    </javac2>
+    
+    <copy todir="${campusfeed.output.dir}">
+      <fileset dir="${module.campusfeed.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.campusfeed.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.campusfeed.tests" depends="register.custom.compilers,compile.module.campusfeed.production" description="compile module CampusFeed; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.campusfeed" description="cleanup module">
+    <delete dir="${campusfeed.output.dir}"/>
+    <delete dir="${campusfeed.testoutput.dir}"/>
+  </target>
+</project>
