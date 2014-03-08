@@ -174,7 +174,7 @@ public class MainActivity extends FragmentActivity {
                 fragToDisplay = new CreateEventFragment();
                 break;
             case 4:
-                fragToDisplay = new EventPageFragment();
+                fragToDisplay = new AdvancedSearch_Fragment();
                 break;
             default:
                 break;
