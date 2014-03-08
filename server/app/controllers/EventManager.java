@@ -406,7 +406,7 @@ public static Result listEvent() {
 }
 
 
-public Result popularByCategory()
+public static Result popularByCategory()
 {
 	JsonNode request = request().body().asJson();
 	String category = request.get("category").textValue();
