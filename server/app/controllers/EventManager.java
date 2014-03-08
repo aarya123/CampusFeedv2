@@ -412,7 +412,7 @@ public static Result popularByCategory()
 	String category = request.get("category").textValue();
 	JSONArray list = new JSONArray();
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`  WHERE category=?");
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`");
 		stmt.setString(1, category);
 		ResultSet s =stmt.executeQuery();
 		JSONObject event = new JSONObject();
