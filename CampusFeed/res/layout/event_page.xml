@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Invite"
-        android:id="@+id/button4"
+        android:id="@+id/invite_button"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:layout_alignTop="@+id/button3"
         android:layout_alignRight="@id/imageView" />

@@ -79,7 +79,7 @@ public class ContactDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, OnClickListener {
 
     public static final String EXTRA_CONTACT_URI =
-            "com.example.android.contactslist.ui.EXTRA_CONTACT_URI";
+            "com.purdue.CampusFeed.EXTRA_CONTACT_URI";
 
     // Defines a tag for identifying log entries
     private static final String TAG = "ContactDetailFragment";
@@ -733,7 +733,7 @@ public class ContactDetailFragment extends Fragment implements
         @SuppressLint("InlinedApi")
         final static String[] PROJECTION = 
     	{
-        		//ContactsContract.CommonDataKinds.Contactables._ID,
+        		ContactsContract.CommonDataKinds.Contactables._ID,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
         };        
         

@@ -74,13 +74,13 @@
     <!-- This view will be displayed when the views above are hidden. That happens when in two-pane
          layout mode and no contact is currently selected and therefore the this fragment will
          simply show a text message instead of contact details. -->
-    <!-- TextView android:id="@id/android:empty"
+    <TextView android:id="@id/android:empty"
               android:gravity="center"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:text="@string/no_contact_selected"
               android:fontFamily="sans-serif-light"
               android:visibility="gone"
-              android:textAppearance="?android:attr/textAppearanceLarge"/> -->
+              android:textAppearance="?android:attr/textAppearanceLarge"/>
 
 </FrameLayout>
