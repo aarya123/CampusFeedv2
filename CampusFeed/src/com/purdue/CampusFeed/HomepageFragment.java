@@ -85,6 +85,7 @@ public class HomepageFragment extends Fragment {
 	                        e.eventName = current.getString("title");
 	                        e.datetime=current.getString("date_time");
 	                        e.eventDescription=current.getString("desc");
+                            e.id=current.getString("id");
 	                        e.eventLocation=current.getString("location");
 	                        top5.add(e);
 						}
