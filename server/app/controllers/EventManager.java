@@ -16,8 +16,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeCreator;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import play.*;
 import play.db.DB;
@@ -106,7 +108,7 @@ public class EventManager extends Controller{
 	
 		long user_id =Application.getUserId(request);
 		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_user (event_id,user_id,is_admin) VALUES (?,?,?)");
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (event_id,user_id,is_admin) VALUES (?,?,?)");
 			stmt.setInt(1,  event_id);
 			stmt.setLong(2, user_id);
 			stmt.setInt(3, 1);
@@ -187,7 +189,7 @@ public class EventManager extends Controller{
 		
 		long user_id = ScraperHandler.SCRAPER_ID;
 		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_user (event_id,user_id,is_admin) VALUES (?,?,?)");
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (event_id,user_id,is_admin) VALUES (?,?,?)");
 			stmt.setInt(1,  event_id);
 			stmt.setLong(2, user_id);
 			stmt.setInt(3, 1);
@@ -236,7 +238,7 @@ public static Result rsvp_to_event()
 	// check if user has already rsvp'd
 	boolean should_add = false;
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_user WHERE user_id=? AND event_id=?");
+		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_User WHERE user_id=? AND event_id=?");
 		stmt.setLong(1, user_id);
 		stmt.setInt(2, event_id);
 		stmt.execute();
@@ -282,7 +284,7 @@ public static Result rsvp_to_event()
 	if(should_add){
 	// main thing, add to rsvp 
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_user (user_id,event_id,rsvp,is_admin) VALUES (?,?,1,0)");
+		PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (user_id,event_id,rsvp,is_admin) VALUES (?,?,1,0)");
 		stmt.setLong(1, user_id);
 		stmt.setInt(2, event_id);
 		stmt.executeUpdate();
@@ -300,6 +302,99 @@ public static Result rsvp_to_event()
 	
 	
 	return ok("success");
+}
+
+/**
+ * Helper function to create event json from results
+ * @param rs result set from query on a valid event row
+ * @return the json event
+ * @throws SQLException
+ */
+private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
+	ObjectNode searchResult = JsonNodeFactory.instance.objectNode();
+	searchResult.put("id", rs.getString("id"));
+	searchResult.put("name", rs.getString("name"));
+	searchResult.put("location", rs.getString("location"));
+	searchResult.put("time", rs.getInt("time"));
+	searchResult.put("description", rs.getString("description"));
+	searchResult.put("category", rs.getString("category"));
+	searchResult.put("status", rs.getInt("status"));
+	return searchResult;
+}
+public static Result search() {
+	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	//check params
+	String query;
+	if(!request.has("query")) {
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: query (text)"));
+	}
+	query = request.get("query").textValue();
+	try(Connection conn = DB.getConnection()) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event WHERE name LIKE ?")) {
+    		stmt.setString(1, "%" + query + "%");
+    		ResultSet rs = stmt.executeQuery();
+    		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
+    		if(rs.next()) {
+    			do {
+    				searchResults.add(createEventJson(rs));
+    			}
+    			while(rs.next());
+    		}
+    		return ok(searchResults);
+		}
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+}
+
+public static Result listEvent() {
+	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	//check params
+	int page;
+	if(!request.has("page")) {
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
+	}
+	page = request.get("page").intValue();
+	try(Connection conn = DB.getConnection()) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event LIMIT 25 OFFSET ?")) {
+    		stmt.setInt(1, page * 25);
+    		ResultSet rs = stmt.executeQuery();
+    		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
+    		if(rs.next()) {
+    			do {
+    				searchResults.add(createEventJson(rs));
+    			}
+    			while(rs.next());
+    		}
+    		return ok(searchResults);
+		}
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
 }
 
 }
