@@ -38,10 +38,14 @@ public class MainActivity extends FragmentActivity {
    private ActionBarDrawerToggle drawerToggle;
    private CharSequence drawerTitle;
    
-   //---------------------------------------------------
+   //------------------------------------------------------------------------
    
    //Data members required for the Facebook login
 	
+   private String facebook_userID;
+   private String facebook_profileName;
+   private String facebook_accessToken;
+
    //for debugging purposes
 	private static final String TAG = "Facebook OAUTH";
  
@@ -185,12 +189,38 @@ public class MainActivity extends FragmentActivity {
     */
 	
 	//what to do when the session status changes (logged in or logged out)
-	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
+	private void onSessionStateChange(final Session session, SessionState state, Exception exception) {
 	    if (state.isOpened()) {
 	        Log.i(TAG, "Logged in...");
-	        Toast.makeText(this, session.getAccessToken(), Toast.LENGTH_SHORT).show();
+	        facebook_accessToken = session.getAccessToken();
+	        //Toast.makeText(this, "A, Toast.LENGTH_SHORT).show();
+	        
+	        // If the session is open, make an API call to get user data
+	        // and define a new callback to handle the response
+	        Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+	            @Override
+	            public void onCompleted(GraphUser user, Response response) {
+	                // If the response is successful
+	                if (session == Session.getActiveSession()) {
+	                    if (user != null) {
+	                        facebook_userID = user.getId();//user id
+	                        facebook_profileName = user.getName();//user's profile name
+	                        Toast.makeText(getApplicationContext() , "User ID: "+facebook_userID+"\n\nName: "+facebook_profileName+"\n\nAccess token: "+facebook_accessToken, Toast.LENGTH_LONG).show();
+	                        //userNameView.setText(user.getName());
+	                    }   
+	                }   
+	            }    
+	        }); 
+	        Request.executeBatchAsync(request);
+	        
+	        
+	        
 	    } else if (state.isClosed()) {
 	        Log.i(TAG, "Logged out...");
+	        facebook_userID = null;
+	        facebook_profileName = null;
+	        facebook_accessToken = null;
+	        
 	    }
 	}
 	@Override

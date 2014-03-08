@@ -733,7 +733,7 @@ public class ContactDetailFragment extends Fragment implements
         @SuppressLint("InlinedApi")
         final static String[] PROJECTION = 
     	{
-        		ContactsContract.CommonDataKinds.Contactables._ID,
+        		//ContactsContract.CommonDataKinds.Contactables._ID,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
         };        
         
