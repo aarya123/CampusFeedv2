@@ -412,12 +412,13 @@ public static Result popularByCategory()
 	String category = request.get("category").textValue();
 	JSONArray list = new JSONArray();
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`  WHERE category=? ORDER BY `Event`.`view_count` DESC LIMIT 0,3");
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`  WHERE category=?");
 		stmt.setString(1, category);
 		ResultSet s =stmt.executeQuery();
 		JSONObject event = new JSONObject();
 		while(s.next())
 		{
+			
 			try {
 				event.put("title", s.getString("name"));
 				event.put("desc", s.getString("description"));
@@ -433,7 +434,7 @@ public static Result popularByCategory()
 			
 			
 		}
-		
+		s.close();
 		
 	}
 	catch(SQLException e) {
