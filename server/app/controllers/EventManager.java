@@ -56,6 +56,7 @@ public class EventManager extends Controller{
 		String location = request.get("location").textValue();
 		String time_string = request.get("date_time").textValue();
 		int visibility = request.get("visibility").intValue();
+		String category = request.get("category").textValue();
 		
 		// convert time to date
 		Date datetime=null;
@@ -78,11 +79,12 @@ public class EventManager extends Controller{
 
 		int event_id=-1;
 		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility) VALUES (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility,category) VALUES (?,?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setString(1, title);
 			stmt.setString(2, location);
 			stmt.setTimestamp(3, sqlTimestamp);
+			stmt.setString(6, category);
 			stmt.setString(4, desc);
 			stmt.setInt(5, visibility);
 			
@@ -127,7 +129,7 @@ public class EventManager extends Controller{
 		
 		
 		response().setContentType("application/json");
-		return ok("{\"response\":\"success\"}");
+		return ok("{\"response\":\"success\"}+ category="+category);
 	}
 	
 	
@@ -138,6 +140,7 @@ public class EventManager extends Controller{
 		String title = request.get("title").textValue();
 		String desc = request.get("desc").textValue();
 		String location = request.get("location").textValue();
+		String category = request.get("category").textValue();
 		String time_string = request.get("date_time").textValue();
 		// visibility =1 auto
 		
@@ -161,11 +164,12 @@ public class EventManager extends Controller{
 
 		int event_id=-1;
 		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility) VALUES (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility,category) VALUES (?,?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setString(1, title);
 			stmt.setString(2, location);
 			stmt.setTimestamp(3, sqlTimestamp);
+			stmt.setString(6, category);
 			stmt.setString(4, desc);
 			stmt.setInt(5, 1);
 			
