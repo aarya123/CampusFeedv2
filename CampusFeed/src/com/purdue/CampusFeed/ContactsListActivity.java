@@ -54,7 +54,7 @@ public class ContactsListActivity extends FragmentActivity implements
 
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.invite_activity_main);
 
         // Check if two pane bool is set based on resource directories
         isTwoPaneLayout = getResources().getBoolean(R.bool.has_two_panes);

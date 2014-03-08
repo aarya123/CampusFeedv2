@@ -90,7 +90,7 @@ public class ContactsListFragment extends ListFragment implements
 
     // Bundle key for saving previously selected search result item
     private static final String STATE_PREVIOUSLY_SELECTED_KEY =
-            "com.example.android.contactslist.ui.SELECTED_ITEM";
+            "com.purdue.CampusFeed.SELECTED_ITEM";
 
     private ContactsAdapter mAdapter; // The main query adapter
     private ImageLoader mImageLoader; // Handles loading the contact image in a background thread
@@ -717,6 +717,13 @@ public class ContactsListFragment extends ListFragment implements
         public void bindView(View view, Context context, Cursor cursor) {
             // Gets handles to individual view resources
             final ViewHolder holder = (ViewHolder) view.getTag();
+/*
+           if (holder.text1 == null) {
+        	   holder.text1 = (TextView) view.findViewById(android.R.id.text1);
+               holder.text2 = (TextView) view.findViewById(android.R.id.text2);
+               holder.icon = (QuickContactBadge) view.findViewById(android.R.id.icon);
+           }*/
+            	//return;
 
             // For Android 3.0 and later, gets the thumbnail image Uri from the current Cursor row.
             // For platforms earlier than 3.0, this isn't necessary, because the thumbnail is
@@ -724,7 +731,7 @@ public class ContactsListFragment extends ListFragment implements
             final String photoUri = cursor.getString(ContactsQuery.PHOTO_THUMBNAIL_DATA);
 
             final String displayName = cursor.getString(ContactsQuery.DISPLAY_NAME);
-
+            
             final int startIndex = indexOfSearchQuery(displayName);
 
             if (startIndex == -1) {

@@ -62,7 +62,11 @@ public class HomepageFragment extends Fragment {
     ListView.OnItemClickListener itemClickedListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+            Event e = firstcat.get(pos);
 
+            EventPageFragment fragment = new EventPageFragment();
+            fragment.setEvent(e);
+            getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
         }
     };
 

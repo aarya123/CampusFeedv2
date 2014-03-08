@@ -52,8 +52,9 @@ public class AdvancedSearch_Fragment extends Fragment {
                 Toast.makeText(getActivity(), text + " selected", Toast.LENGTH_SHORT).show();*/
             Event e = results.get(pos);
 
-
-            getFragmentManager().beginTransaction().replace(R.id.content_frame, new EventPageFragment(e)).commit();
+            EventPageFragment fragment = new EventPageFragment();
+            fragment.setEvent(e);
+            getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
         }
     });
         

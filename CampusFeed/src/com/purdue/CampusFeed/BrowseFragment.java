@@ -56,8 +56,9 @@ public class BrowseFragment extends Fragment {
                 /*String text = (String) adapterView.getItemAtPosition(pos);
                 Toast.makeText(getActivity(), text + " selected", Toast.LENGTH_SHORT).show();*/
                 Event e = events.get(pos);
-
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, new EventPageFragment(e)).commit();
+                EventPageFragment fragment = new EventPageFragment();
+                fragment.setEvent(e);
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
             }
         });
     }
