@@ -1,33 +1,25 @@
 package com.purdue.CampusFeed;
 
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
-import com.purdue.CampusFeed.R;
-import com.facebook.*;
-import com.facebook.model.*;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.widget.LoginButton;
-
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.content.Intent;
-import android.content.res.Configuration;
+import com.facebook.model.GraphUser;
 
 public class MainActivity extends FragmentActivity {
 	
@@ -37,6 +29,7 @@ public class MainActivity extends FragmentActivity {
    private ListView drawerList;
    private ActionBarDrawerToggle drawerToggle;
    private CharSequence drawerTitle;
+   //private FragmentManager fragmentManager;
    
    //------------------------------------------------------------------------
    
@@ -89,7 +82,10 @@ public class MainActivity extends FragmentActivity {
 	    	loginTestFragment = (LoginTestFragment) getSupportFragmentManager()
 	        .findFragmentById(android.R.id.content);
 	    }*/
-	    
+        HomepageFragment homepageFragment = new HomepageFragment();
+	    //fragmentManager = getSupportFragmentManager();
+        getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
+
 	    uiHelper = new UiLifecycleHelper(this, callback);
 	    uiHelper.onCreate(savedInstanceState);
 	    
@@ -103,6 +99,13 @@ public class MainActivity extends FragmentActivity {
         
         //Set custom adapter for list view
         drawerList.setAdapter(new NavigationDrawer_ArrayAdapter(this, drawerItems));
+
+        drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                selectItem(pos);
+            }
+        });
 
         //set the nav drawer lists' click listener
         //drawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -144,7 +147,26 @@ public class MainActivity extends FragmentActivity {
 	 * 
 	 *
 	 */
-	
+	private void selectItem(int position){
+        android.app.Fragment fragToDisplay = null;
+        switch(position)
+        {
+            case 1:
+                fragToDisplay = new HomepageFragment();
+                break;
+            case 2:
+                fragToDisplay = new BrowseFragment();
+                break;
+            case 3:
+                fragToDisplay = new EventPageFragment();
+                break;
+            default:
+                break;
+        }
+        if(fragToDisplay!=null){
+            getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
+        }
+    }
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         //sync the toggle state after onRestoreInstanceState

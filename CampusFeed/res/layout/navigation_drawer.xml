@@ -10,7 +10,7 @@
          space available using match_parent in both dimensions. -->
      
     <FrameLayout
-        android:id="@+id/content_frame"
+        android:id="@+id/content_frame2"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
