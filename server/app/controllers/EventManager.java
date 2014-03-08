@@ -108,7 +108,7 @@ public class EventManager extends Controller{
 	
 		long user_id =Application.getUserId(request);
 		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_user (event_id,user_id,is_admin) VALUES (?,?,?)");
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (event_id,user_id,is_admin) VALUES (?,?,?)");
 			stmt.setInt(1,  event_id);
 			stmt.setLong(2, user_id);
 			stmt.setInt(3, 1);
@@ -189,7 +189,7 @@ public class EventManager extends Controller{
 		
 		long user_id = ScraperHandler.SCRAPER_ID;
 		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_user (event_id,user_id,is_admin) VALUES (?,?,?)");
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (event_id,user_id,is_admin) VALUES (?,?,?)");
 			stmt.setInt(1,  event_id);
 			stmt.setLong(2, user_id);
 			stmt.setInt(3, 1);
@@ -238,7 +238,7 @@ public static Result rsvp_to_event()
 	// check if user has already rsvp'd
 	boolean should_add = false;
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_user WHERE user_id=? AND event_id=?");
+		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_User WHERE user_id=? AND event_id=?");
 		stmt.setLong(1, user_id);
 		stmt.setInt(2, event_id);
 		stmt.execute();
@@ -284,7 +284,7 @@ public static Result rsvp_to_event()
 	if(should_add){
 	// main thing, add to rsvp 
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_user (user_id,event_id,rsvp,is_admin) VALUES (?,?,1,0)");
+		PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (user_id,event_id,rsvp,is_admin) VALUES (?,?,1,0)");
 		stmt.setLong(1, user_id);
 		stmt.setInt(2, event_id);
 		stmt.executeUpdate();
@@ -340,7 +340,7 @@ public static Result search() {
 	}
 	query = request.get("query").textValue();
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM event WHERE name LIKE ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event WHERE name LIKE ?")) {
     		stmt.setString(1, "%" + query + "%");
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
@@ -378,7 +378,7 @@ public static Result listEvent() {
 	}
 	page = request.get("page").intValue();
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM event LIMIT 25 OFFSET ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event LIMIT 25 OFFSET ?")) {
     		stmt.setInt(1, page * 25);
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();

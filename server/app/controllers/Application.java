@@ -114,7 +114,7 @@ public class Application extends Controller {
     	}
     	//write new info or updated info to db
     	try(Connection connection = DB.getConnection()) {
-    		PreparedStatement stmt = connection.prepareStatement("INSERT INTO user (fb_user_id, first_name, last_name, access_token, expires) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?)) ON DUPLICATE KEY UPDATE access_token=?, expires=FROM_UNIXTIME(?)");
+    		PreparedStatement stmt = connection.prepareStatement("INSERT INTO User (fb_user_id, first_name, last_name, access_token, expires) VALUES (?, ?, ?, ?, FROM_UNIXTIME(?)) ON DUPLICATE KEY UPDATE access_token=?, expires=FROM_UNIXTIME(?)");
     		stmt.setString(1, userId);
     		stmt.setString(2, firstName);
     		stmt.setString(3, lastName);
@@ -141,7 +141,7 @@ public class Application extends Controller {
     		String accessToken = auth.get("access_token").textValue();
     		try(Connection connection = DB.getConnection()) {
         		//try to retrieve expires given the user id and access token
-        		PreparedStatement stmt = connection.prepareStatement("SELECT UNIX_TIMESTAMP(expires) FROM user WHERE fb_user_id = ? AND access_token = ?");
+        		PreparedStatement stmt = connection.prepareStatement("SELECT UNIX_TIMESTAMP(expires) FROM User WHERE fb_user_id = ? AND access_token = ?");
         		stmt.setString(1, userId);
         		stmt.setString(2, accessToken);
         		stmt.execute();
@@ -175,7 +175,7 @@ public class Application extends Controller {
 		if(auth != null && auth.has("fb_user_id")) {
 			String userId = auth.get("fb_user_id").textValue();
 			try(Connection conn = DB.getConnection()) {
-				PreparedStatement stmt = conn.prepareStatement("SELECT id FROM user WHERE fb_user_id = ?");
+				PreparedStatement stmt = conn.prepareStatement("SELECT id FROM User WHERE fb_user_id = ?");
 				stmt.setString(1, userId);
 				stmt.execute();
 				ResultSet rs = stmt.getResultSet();
