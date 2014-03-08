@@ -35,7 +35,7 @@ public class BrowseFragment extends Fragment {
             return;
         }
         else{
-            lv.setAdapter(adapter);
+            lv.setAdapter(adapter); 
         }
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
