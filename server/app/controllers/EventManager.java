@@ -415,11 +415,12 @@ public static Result popularByCategory()
 		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`");
 		
 		ResultSet s =stmt.executeQuery();
-		JSONObject event = new JSONObject();
+		
 		while(s.next())
 		{
 			
 			try {
+				JSONObject event = new JSONObject();
 				event.put("title", s.getString("name"));
 				event.put("desc", s.getString("description"));
 				event.put("date_time",s.getTimestamp("time"));
