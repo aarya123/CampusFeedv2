@@ -147,6 +147,8 @@ public class MainActivity extends FragmentActivity {
 	 * 
 	 *
 	 */
+	
+	//Fragment swapping
 	private void selectItem(int position){
         android.app.Fragment fragToDisplay = null;
         switch(position)

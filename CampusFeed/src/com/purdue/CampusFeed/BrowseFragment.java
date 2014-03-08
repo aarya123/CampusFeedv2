@@ -41,8 +41,9 @@ public class BrowseFragment extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                String text = (String) adapterView.getItemAtPosition(pos);
-                Toast.makeText(getActivity(), text + " selected", Toast.LENGTH_SHORT).show();
+                /*String text = (String) adapterView.getItemAtPosition(pos);
+                Toast.makeText(getActivity(), text + " selected", Toast.LENGTH_SHORT).show();*/
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, new EventPageFragment()).commit();
             }
         });
     }
