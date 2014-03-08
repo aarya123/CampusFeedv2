@@ -2,7 +2,6 @@ package com.purdue.CampusFeed;
 
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -18,11 +17,14 @@ import android.widget.Toast;
 public class Test_RG_ArrayAdapter extends ListActivity {
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
+/*
+      ArrayList<Event> events = ArrayList<Event>();3
     String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
         "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
         "Linux", "OS/2" };
     RowGenerator_ArrayAdapter adapter = new RowGenerator_ArrayAdapter(this, values);
     setListAdapter(adapter);
+    */
   }
   
   @Override
