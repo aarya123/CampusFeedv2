@@ -438,7 +438,48 @@ public static Result popularByCategory()
 	
 	return ok(list.toString());
 }
+public static Result updateEvent()
+{JsonNode request = request().body().asJson();
+String id = request.get("id").textValue();
+String title = request.get("title").textValue();
+String desc = request.get("desc").textValue();
+String location = request.get("location").textValue();
 
+String time_string = request.get("date_time").textValue();
+try(Connection conn2 = DB.getConnection()) {
+	PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=? AND SET location=? AND SET description=? AND SET time=?   WHERE `Event`.`event_id` = ?");
+	stmt2.setString(1, title);
+	stmt2.setString(2, location);
+	stmt2.setString(3, desc);
+	Date datetime=null;
+	try {
+		datetime = new SimpleDateFormat("M-d-yyyy k:m").parse(time_string);
+	} catch (ParseException e1) {
+		// TODO Auto-generated catch block
+		
+		e1.printStackTrace();
+		response().setContentType("application/json");
+		return ok("{\"response\":\"error, bad date\"}");
+		
+	}
+	long t = datetime.getTime();
+			 
+	java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(t);
+
+	stmt2.setTimestamp(4, sqlTimestamp);
+	stmt2.setString(5, id);
+	stmt2.executeUpdate();
+	
+	
+}
+catch(SQLException e) {
+	e.printStackTrace();
+
+	return internalServerError();
+}
+	
+	return ok("success");
+}
 
 public static Result all()
 {
