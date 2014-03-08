@@ -448,7 +448,7 @@ String location = request.get("location").textValue();
 
 String time_string = request.get("date_time").textValue();
 try(Connection conn2 = DB.getConnection()) {
-	PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=? AND SET location=? AND SET description=? AND SET time=?   WHERE `Event`.`event_id` = ?");
+	PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=?, location=?,description=?,time=?   WHERE `Event`.`id` = ?");
 	stmt2.setString(1, title);
 	stmt2.setString(2, location);
 	stmt2.setString(3, desc);
@@ -524,8 +524,12 @@ public static Result all()
 }
 
 public static Result top5() {
+	JsonNode request = request().body().asJson();
+	String category = request.get("category").textValue();
 	try(Connection conn = DB.getConnection()) {
-		ResultSet s = conn.prepareStatement("SELECT * FROM `Event` ORDER BY view_count DESC LIMIT 5").executeQuery();
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event` WHERE category = ? ORDER BY view_count DESC LIMIT 5");
+		stmt.setString(1, category);
+		ResultSet s = stmt.executeQuery();
 		ArrayNode res = JsonNodeFactory.instance.arrayNode();
 		JSONArray list = new JSONArray();
 		while(s.next()) {
