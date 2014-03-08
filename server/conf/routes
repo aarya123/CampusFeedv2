@@ -22,5 +22,8 @@ POST 	/scraper_handle	controllers.ScraperHandler.scrapedPage()
 #RSVP endpoint
 POST /rsvp	controllers.EventManager.rsvp_to_event()
 
+#Search Event
+POST	/search_event	controllers.EventManager.search()
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -16,8 +16,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeCreator;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import play.*;
 import play.db.DB;
@@ -300,6 +302,51 @@ public static Result rsvp_to_event()
 	
 	
 	return ok("success");
+}
+
+public static Result search() {
+	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	//check params
+	String query;
+	if(!request.has("query")) {
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: query (text)"));
+	}
+	query = request.get("query").textValue();
+	try(Connection conn = DB.getConnection()) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status FROM event WHERE name LIKE ?")) {
+    		stmt.setString(1, "%" + query + "%");
+    		ResultSet rs = stmt.executeQuery();
+    		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
+    		if(rs.next()) {
+    			do {
+    				ObjectNode searchResult = JsonNodeFactory.instance.objectNode();
+    				searchResult.put("id", rs.getString("id"));
+    				searchResult.put("name", rs.getString("name"));
+    				searchResult.put("location", rs.getString("location"));
+    				searchResult.put("time", rs.getString("time"));
+    				searchResult.put("description", rs.getString("description"));
+    				searchResult.put("status", rs.getInt("status"));
+    				searchResults.add(searchResult);
+    			}
+    			while(rs.next());
+    		}
+    		return ok(searchResults);
+		}
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
 }
 
 }
