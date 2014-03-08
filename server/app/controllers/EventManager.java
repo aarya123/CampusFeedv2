@@ -451,8 +451,7 @@ public static Result popularByCategory()
 
 public static Result all()
 {
-	JsonNode request = request().body().asJson();
-	String category = request.get("category").textValue();
+	
 	JSONArray list = new JSONArray();
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`");
