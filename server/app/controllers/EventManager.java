@@ -448,4 +448,47 @@ public static Result popularByCategory()
 	return ok(list.toString());
 }
 
+
+public static Result all()
+{
+	JsonNode request = request().body().asJson();
+	String category = request.get("category").textValue();
+	JSONArray list = new JSONArray();
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`");
+		ResultSet s =stmt.executeQuery();
+	
+		while(s.next())
+		{
+			try {
+				JSONObject event = new JSONObject();
+				event.put("title", s.getString("name"));
+				event.put("desc", s.getString("description"));
+				event.put("date_time",s.getTimestamp("time"));
+				event.put("location", s.getString("location"));
+				event.put("view_count",s.getInt("view_count"));
+				event.put("category", s.getString("category"));
+				list.put(event);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		s.close();
+		
+		
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		response().setContentType("application/json");
+		return ok("{\"response\":\"error, sql exception\"}");
+	}
+	
+	
+	return ok(list.toString());
+}
+
+
 }

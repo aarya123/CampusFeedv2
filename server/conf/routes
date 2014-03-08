@@ -25,6 +25,9 @@ POST /rsvp	controllers.EventManager.rsvp_to_event()
 #CATEGORY TOP 3
 POST /top3cat	controllers.EventManager.popularByCategory()
 
+#ALL
+POST /all	controllers.EventManager.all()
+
 #Search Event
 POST	/search_event	controllers.EventManager.search()
 
