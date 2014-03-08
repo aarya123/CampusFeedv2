@@ -448,7 +448,7 @@ String location = request.get("location").textValue();
 
 String time_string = request.get("date_time").textValue();
 try(Connection conn2 = DB.getConnection()) {
-	PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=? AND SET location=? AND SET description=? AND SET time=?   WHERE `Event`.`event_id` = ?");
+	PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=\"?\" AND SET location=\"?\" AND SET description=\"?\" AND SET time=\"?\"   WHERE `Event`.`event_id` = ?");
 	stmt2.setString(1, title);
 	stmt2.setString(2, location);
 	stmt2.setString(3, desc);
