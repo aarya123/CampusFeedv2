@@ -209,7 +209,7 @@ public class MainActivity extends FragmentActivity {
 	                        //userNameView.setText(user.getName());
 	                    }   
 	                }   
-	            }   
+	            }    
 	        }); 
 	        Request.executeBatchAsync(request);
 	        
