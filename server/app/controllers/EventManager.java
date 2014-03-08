@@ -412,7 +412,7 @@ public static Result popularByCategory()
 	String category = request.get("category").textValue();
 	JSONArray list = new JSONArray();
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`  WHERE category='?' LIMIT 0,3");
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`  WHERE category=? LIMIT 0,3");
 		stmt.setString(1, category);
 		ResultSet s =stmt.executeQuery();
 	
