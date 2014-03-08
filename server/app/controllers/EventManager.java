@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeCreator;
@@ -399,6 +403,46 @@ public static Result listEvent() {
 		e.printStackTrace();
 		return internalServerError();
 	}
+}
+
+
+public Result popularByCategory()
+{
+	JsonNode request = request().body().asJson();
+	String category = request.get("category").textValue();
+	JSONArray list = new JSONArray();
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`  WHERE category=? ORDER BY `Event`.`view_count` DESC LIMIT 0,3");
+		stmt.setString(1, category);
+		ResultSet s =stmt.executeQuery();
+		JSONObject event = new JSONObject();
+		while(s.next())
+		{
+			try {
+				event.put("title", s.getString("title"));
+				event.put("desc", s.getString("description"));
+				event.put("date_time",s.getTimestamp("time"));
+				event.put("location", s.getString("location"));
+				event.put("view_count",s.getInt("view_count"));
+				list.put(event);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+		
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		response().setContentType("application/json");
+		return ok("{\"response\":\"error, sql exception\"}");
+	}
+	
+	
+	return ok(list.toString());
 }
 
 }

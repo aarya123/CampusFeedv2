@@ -22,6 +22,9 @@ POST 	/scraper_handle	controllers.ScraperHandler.scrapedPage()
 #RSVP endpoint
 POST /rsvp	controllers.EventManager.rsvp_to_event()
 
+#CATEGORY TOP 3
+POST /top3cat	controllers.EventManager.popularByCategory()
+
 #Search Event
 POST	/search_event	controllers.EventManager.search()
 
