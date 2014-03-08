@@ -419,11 +419,12 @@ public static Result popularByCategory()
 		while(s.next())
 		{
 			try {
-				event.put("title", s.getString("title"));
+				event.put("title", s.getString("name"));
 				event.put("desc", s.getString("description"));
 				event.put("date_time",s.getTimestamp("time"));
 				event.put("location", s.getString("location"));
 				event.put("view_count",s.getInt("view_count"));
+				event.put("category", s.getString("category"));
 				list.put(event);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
