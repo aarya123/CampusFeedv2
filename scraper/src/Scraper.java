@@ -41,11 +41,10 @@ public class Scraper {
 	
 	public static void sendData(Event e) {
 		HttpClient httpClient = new DefaultHttpClient();
-
 	    try {
-	        HttpPost request = new HttpPost("http://yoururl");
-	        StringEntity params =new StringEntity("details={\"name\":\"myname\",\"age\":\"20\"} ");
-	        request.addHeader("content-type", "application/x-www-form-urlencoded");
+	        HttpPost request = new HttpPost("http://yoururl/scraper_handle");
+	        StringEntity params = new StringEntity(e.getSendFormat());
+	        request.addHeader("content-type", "application/json");
 	        request.setEntity(params);
 	        HttpResponse response = httpClient.execute(request);
 	        // handle response here...
@@ -60,7 +59,12 @@ public class Scraper {
 		String page_url = event.text().split("<link />")[0].split(" ")[0];
 		Event k = new Event(page_url);
 		
-		k.setAuthor(event.select("author").text());
+		String auth = event.select("author").text();
+		k.setAuthor(auth);
+		
+		// TODO Implement ORGS
+		//k.setOrganization(org);
+		
 		k.setCategory(event.select("category").text());
 		if (k.getCategory().length() == 0) { k.setCategory("error"); }
 		k.setTitle(event.select("title").text());
@@ -73,23 +77,37 @@ public class Scraper {
 			k.setStartTime("error");
 		} else {
 			startTime = startTime.split("title=\"")[1].split("\">")[0];
+			if (!startTime.contains("T")) {
+				startTime = startTime + "T00:00:00";
+			}
 			k.setStartTime(startTime);
 		}
 		k.setEndTime(times[2].split("</span>")[0].split("title=\"")[1].split("\">")[0]);
+		if (!k.getEndTime().contains("T") && !k.getEndTime().contains("error")) {
+			k.setEndTime(k.getEndTime() + "T00:00:00");
+		}
+		if (k.getStartTime() == "error" && k.getEndTime() != "error") {
+			k.setStartTime(k.getEndTime());
+		}
+		
+		// Remove "T" from times
+		if (!k.getStartTime().contains("error")) {
+			k.setStartTime(k.getStartTime().replace("T", " "));
+		}
+		if (!k.getEndTime().contains("error")) {
+			k.setEndTime(k.getEndTime().replace("T", " "));
+		}
+		
 		k.setLocation(description.split("<span class=\"location\">")[1].split("</span>")[0]);
 		
 		description = description.split("<div class=\"description\">")[1];
 		if (description.equals("</div>")) {
 			k.setDescription("error");
-		/*} else if (description.contains("<") || description.contains(">")){
-			k.setDescription("error");
-			System.out.println("PARSING ERROR - " + description);
-		*/
 		} else {
 			description = description.split("</div>")[0];
-			description = description.replace("<p>", "");
-			description = description.replace("</p>", "");
 			description = description.replace("&nbsp;", "");
+			description = description.replace("&amp;", "");
+			// Strip stray tags from description
 			String alt[] = description.split("(<)(.+?)(>)");
 			for (int i=1; i<alt.length; i++) {
 				alt[0] = alt[0] + alt[i];
@@ -98,11 +116,18 @@ public class Scraper {
 			k.setDescription(description);
 		}
 		//TODO DEBUG TESTING
-		System.out.println(k.toString() + "\n");
+		//System.out.println(k.toString() + "\n");
+		System.out.println(k.getSendFormat());
 		return k;
 	}
 	
-	public static void main(String[] args) {
-		runScanner("BoilerLink");
+	public static void main(String[] args) throws InterruptedException {
+		boolean run = true;
+		int delay = 10; // Seconds
+		while (run) {
+			runScanner("BoilerLink");
+			Thread.sleep(delay*1000);
+			// run = false;
+		}
 	}
 }

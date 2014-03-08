@@ -1,10 +1,11 @@
-import java.util.Date;
+import java.net.URLEncoder;
 
 public class Event {
 
 	private String url;
 	private String title;
 	private String author;
+	private String organization;
 	private String category;
 	private String location;
 	private String time_start;
@@ -75,10 +76,30 @@ public class Event {
 		return description;
 	}
 	
+	public void setOrganization(String organization) {
+		this.organization = organization;
+	}
+	
+	public String getOrganization() {
+		return organization;
+	}
+	
+	public String getSendFormat() {
+		String k = "{\"title\":\"" + title +
+					"\",\"desc\":\"" + description +
+					"\",\"location\":\"" + location +
+					"\",\"visibility\":1,"
+					+ "\"date_time\":\"" + time_start +
+					"\",\"url\":\"" + URLEncoder.encode(url) + "\"}";
+		return k;
+	}
+	
 	public String toString() {
 		return url + "\n"
 				+ title + "\n"
 				+ author + "\n"
+				// TODO
+				// + organization + "\n"
 				+ category + "\n"
 				+ location + "\n"
 				+ time_start + "\n"
