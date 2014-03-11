@@ -22,9 +22,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import com.purdue.CampusFeed.BuildConfig;
-import com.purdue.CampusFeed.R;
-
 /**
  * FragmentActivity to hold the main {@link ContactsListFragment}. On larger screen devices which
  * can fit two panes also load {@link ContactDetailFragment}.

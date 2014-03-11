@@ -21,7 +21,6 @@ import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -40,22 +39,9 @@ import android.support.v4.content.Loader;
 import android.telephony.SmsManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.purdue.CampusFeed.BuildConfig;
-import com.purdue.CampusFeed.R;
+import android.widget.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -66,11 +52,11 @@ import java.util.List;
  * This fragment displays details of a specific contact from the contacts provider. It shows the
  * contact's display photo, name and all its mailing addresses. You can also modify this fragment
  * to show other information, such as phone numbers, email addresses and so forth.
- *
+ * <p/>
  * This fragment appears full-screen in an activity on devices with small screen sizes, and as
  * part of a two-pane layout on devices with larger screens, alongside the
  * {@link ContactsListFragment}.
- *
+ * <p/>
  * To create an instance of this fragment, use the factory method
  * {@link ContactDetailFragment#newInstance(android.net.Uri)}, passing as an argument the contact
  * Uri for the contact you want to display.
@@ -89,13 +75,13 @@ public class ContactDetailFragment extends Fragment implements
     private static final String GEO_URI_SCHEME_PREFIX = "geo:0,0?q=";
 
     private static String SelectedContactID = null;
-    private static String CONTACT_PHONE_QUERY_SELECTION = null; 
+    private static String CONTACT_PHONE_QUERY_SELECTION = null;
     private static List<String> contactPhoneNumbers = new ArrayList<String>();
-    
+
     // Whether or not this fragment is showing in a two pane layout
     private boolean mIsTwoPaneLayout;
-    
-    
+
+
     private Uri mContactUri; // Stores the contact Uri for this fragment instance
     private ImageLoader mImageLoader; // Handles loading the contact image in a background thread
 
@@ -108,12 +94,11 @@ public class ContactDetailFragment extends Fragment implements
     private MenuItem mEditContactMenuItem;
     private String contactPhoneNumber;
 
-    public static void updateContactIdFromUri(Uri uri)
-    {
-    	ContactDetailFragment.SelectedContactID = uri.getLastPathSegment();
-    	ContactDetailFragment.CONTACT_PHONE_QUERY_SELECTION = Data.CONTACT_ID + "=" + ContactDetailFragment.SelectedContactID;    	
+    public static void updateContactIdFromUri(Uri uri) {
+        ContactDetailFragment.SelectedContactID = uri.getLastPathSegment();
+        ContactDetailFragment.CONTACT_PHONE_QUERY_SELECTION = Data.CONTACT_ID + "=" + ContactDetailFragment.SelectedContactID;
     }
-    
+
     /**
      * Factory method to generate a new instance of the fragment given a contact Uri. A factory
      * method is preferable to simply using the constructor as it handles creating the bundle and
@@ -140,7 +125,8 @@ public class ContactDetailFragment extends Fragment implements
     /**
      * Fragments require an empty constructor.
      */
-    public ContactDetailFragment() {}
+    public ContactDetailFragment() {
+    }
 
     /**
      * Sets the contact that this Fragment displays, or clears the display if the contact argument
@@ -153,9 +139,9 @@ public class ContactDetailFragment extends Fragment implements
      */
     public void setContact(Uri contactLookupUri) {
 
-    	if(contactLookupUri != null)
-    		updateContactIdFromUri(contactLookupUri);
-    	
+        if (contactLookupUri != null)
+            updateContactIdFromUri(contactLookupUri);
+
         // In version 3.0 and later, stores the provided contact lookup Uri in a class field. This
         // Uri is then used at various points in this class to map to the provided contact.
         if (Utils.hasHoneycomb()) {
@@ -249,7 +235,7 @@ public class ContactDetailFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
         // Inflates the main layout to be used by this fragment
         final View detailView =
@@ -354,13 +340,13 @@ public class ContactDetailFragment extends Fragment implements
                         ContactAddressQuery.SELECTION,
                         null, null);
             case ContactPhoneQuery.QUERY_ID:
-	           	Uri phoneNumberUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
-	           	return new CursorLoader(getActivity(), 
-	               		phoneNumberUri,
-	                       ContactPhoneQuery.PROJECTION,
-	                       ContactDetailFragment.CONTACT_PHONE_QUERY_SELECTION, 
-	                       null, 
-	                       null);
+                Uri phoneNumberUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                return new CursorLoader(getActivity(),
+                        phoneNumberUri,
+                        ContactPhoneQuery.PROJECTION,
+                        ContactDetailFragment.CONTACT_PHONE_QUERY_SELECTION,
+                        null,
+                        null);
         }
         return null;
     }
@@ -403,7 +389,7 @@ public class ContactDetailFragment extends Fragment implements
 
                 // Each LinearLayout has the same LayoutParams so this can
                 // be created once and used for each address.
-            	/*
+                /*
                 final LinearLayout.LayoutParams layoutParams =
                         new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -430,9 +416,9 @@ public class ContactDetailFragment extends Fragment implements
                 }*/
                 break;
             case ContactPhoneQuery.QUERY_ID:
-            	
-            	ContactDetailFragment.contactPhoneNumbers.clear();
-            	
+
+                ContactDetailFragment.contactPhoneNumbers.clear();
+
                 final LinearLayout.LayoutParams layoutParameters =
                         new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                                 ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -443,32 +429,31 @@ public class ContactDetailFragment extends Fragment implements
                 mDetailsLayout.removeAllViews();
 
                 // Loops through all the rows in the Cursor
-                if (data.moveToFirst()) 
-                {                    
+                if (data.moveToFirst()) {
                     do {
                         // Builds the address layout
-                    	String contactPhoneNumber = data.getString(ContactPhoneQuery.PHONE_NUMBER);
-                    	ContactDetailFragment.contactPhoneNumbers.add(contactPhoneNumber);
-                    	
+                        String contactPhoneNumber = data.getString(ContactPhoneQuery.PHONE_NUMBER);
+                        ContactDetailFragment.contactPhoneNumbers.add(contactPhoneNumber);
+
                         final LinearLayout layout = buildAddressLayout(contactPhoneNumber);
                         // Adds the new address layout to the details layout
                         mDetailsLayout.addView(layout, layoutParameters);
-                        
+
                         ImageButton button = (ImageButton) mDetailsLayout.findViewById(R.id.contact_detail_item_sms_button);
                         button.setVisibility(View.VISIBLE);
-                        
+
                     } while (data.moveToNext());
-                    
+
                 } else {
                     // If nothing found, adds an empty address layout
                     mDetailsLayout.addView(buildEmptyAddressLayout(), layoutParameters);
-                    
+
                     ImageButton button = (ImageButton) mDetailsLayout.findViewById(R.id.contact_detail_item_sms_button);
                     button.setVisibility(View.INVISIBLE);
                 }
 
-                
-            	break;
+
+                break;
         }
     }
 
@@ -493,14 +478,14 @@ public class ContactDetailFragment extends Fragment implements
      * Each address for the contact gets its own LinearLayout object; for example, if the contact
      * has three postal addresses, then 3 LinearLayouts are generated.
      *
-     * @param addressType From
-     * {@link android.provider.ContactsContract.CommonDataKinds.StructuredPostal#TYPE}
+     * @param addressType      From
+     *                         {@link android.provider.ContactsContract.CommonDataKinds.StructuredPostal#TYPE}
      * @param addressTypeLabel From
-     * {@link android.provider.ContactsContract.CommonDataKinds.StructuredPostal#LABEL}
-     * @param address From
-     * {@link android.provider.ContactsContract.CommonDataKinds.StructuredPostal#FORMATTED_ADDRESS}
+     *                         {@link android.provider.ContactsContract.CommonDataKinds.StructuredPostal#LABEL}
+     * @param address          From
+     *                         {@link android.provider.ContactsContract.CommonDataKinds.StructuredPostal#FORMATTED_ADDRESS}
      * @return A LinearLayout to add to the contact details layout,
-     *         populated with the provided address details.
+     * populated with the provided address details.
      */
     private LinearLayout buildAddressLayout(String contactPhoneNumber) {
         // Inflates the address layout
@@ -518,15 +503,15 @@ public class ContactDetailFragment extends Fragment implements
         final ImageButton viewAddressButton =
                 (ImageButton) addressLayout.findViewById(R.id.button_view_address);
 		*/
-        
+
         final ImageButton smsButton = (ImageButton) addressLayout.findViewById(R.id.contact_detail_item_sms_button);
-        
+
         // http://stackoverflow.com/questions/1556987/how-to-make-a-phone-call-in-android-and-come-back-to-my-activity-when-the-call-i
         final String num = new String(contactPhoneNumber);
         this.contactPhoneNumber = contactPhoneNumber;
-        
+
         smsButton.setOnClickListener(this);
-        
+
         headerTextView.setText(contactPhoneNumber);
         addressTextView.setText(contactPhoneNumber);
 
@@ -569,8 +554,9 @@ public class ContactDetailFragment extends Fragment implements
 
     /**
      * Decodes and returns the contact's thumbnail image.
+     *
      * @param contactUri The Uri of the contact containing the image.
-     * @param imageSize The desired target width and height of the output image in pixels.
+     * @param imageSize  The desired target width and height of the output image in pixels.
      * @return If a thumbnail image exists for the contact, a Bitmap image, otherwise null.
      */
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -722,35 +708,34 @@ public class ContactDetailFragment extends Fragment implements
         final static int TYPE = 2;
         final static int LABEL = 3;
     }
-    
-    public interface ContactPhoneQuery 
-    {
+
+    public interface ContactPhoneQuery {
         // A unique query ID to distinguish queries being run by the
         // LoaderManager.
         final static int QUERY_ID = 3;
 
         // The query projection (columns to fetch from the provider)
         @SuppressLint("InlinedApi")
-        final static String[] PROJECTION = 
-    	{
-        		ContactsContract.CommonDataKinds.Contactables._ID,
-                ContactsContract.CommonDataKinds.Phone.NUMBER,
-        };        
-        
+        final static String[] PROJECTION =
+                {
+                        ContactsContract.CommonDataKinds.Identity._ID,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER,
+                };
+
         // The query column numbers which map to each value in the projection
         final static int ID = 0;
-        final static int PHONE_NUMBER = 1;    	
+        final static int PHONE_NUMBER = 1;
     }
 
-	@Override
-	public void onClick(View v) {
-		SmsManager sms = SmsManager.getDefault();
-		String message = "Hi, I am going to the James Blunt Concert this weekend! Join me!";
-	    sms.sendTextMessage(this.contactPhoneNumber, null, message, null, null);
-	    Context context = getActivity();
-	    CharSequence text = "Invite Sent!";
-	    int duration = Toast.LENGTH_SHORT;
-	    Toast toast = Toast.makeText(context, text, duration);
-	    toast.show();
-	}
+    @Override
+    public void onClick(View v) {
+        SmsManager sms = SmsManager.getDefault();
+        String message = "Hi, I am going to the James Blunt Concert this weekend! Join me!";
+        sms.sendTextMessage(this.contactPhoneNumber, null, message, null, null);
+        Context context = getActivity();
+        CharSequence text = "Invite Sent!";
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
 }

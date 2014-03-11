@@ -1,55 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:padding="20dp">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:padding="6dip" >
+	<ImageView
+			android:id="@+id/event_image"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:layout_marginRight="10dp"
+			android:src="@drawable/ic_launcher"/>
 
-    <ImageView
-        android:id="@+id/event_image"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="6dip"
-        android:contentDescription="TODO"
-        android:src="@drawable/ic_launcher" />
+	<LinearLayout android:layout_width="match_parent"
+	              android:layout_height="match_parent"
+	              android:orientation="vertical"
+	              android:gravity="center">
+		<TextView
+				android:id="@+id/event_name"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="Event Name"
+				android:textSize="16sp"
+				android:layout_marginBottom="5dp"/>
+		<TextView
+				android:id="@+id/event_location"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:ellipsize="marquee"
+				android:singleLine="true"
+				android:text="Location"
+				android:textSize="12sp"
+				android:layout_marginTop="5dp"
+				android:layout_marginBottom="5dp"/>
 
-    <TextView
-        android:id="@+id/event_location"
-        android:layout_width="fill_parent"
-        android:layout_height="18dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/event_image"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="location"
-        android:textSize="12sp" />
-    
-    <TextView
-        android:id="@+id/event_time"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/event_location"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/event_image"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="time"
-        android:textSize="12sp" />
+		<TextView
+				android:id="@+id/event_time"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:ellipsize="marquee"
+				android:singleLine="true"
+				android:text="Time"
+				android:textSize="12sp"
+				android:layout_marginTop="5dp"/>
 
-    <TextView
-        android:id="@+id/event_name"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/event_time"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_toRightOf="@id/event_image"
-        android:gravity="center_vertical"
-        android:text="Event Name"
-        android:textSize="16sp" />
 
-</RelativeLayout> 
+	</LinearLayout>
+</LinearLayout>

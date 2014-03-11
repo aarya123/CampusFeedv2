@@ -25,8 +25,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
-import com.purdue.CampusFeed.BuildConfig;
-
 
 /**
  * This class defines a simple FragmentActivity as the parent of {@link ContactDetailFragment}.

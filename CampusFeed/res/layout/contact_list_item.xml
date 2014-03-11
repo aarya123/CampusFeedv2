@@ -40,7 +40,6 @@
               android:layout_toRightOf="@android:id/icon"
               android:layout_alignParentBottom="true"
               android:layout_alignParentRight="true"
-              android:fontFamily="sans-serif"
               android:singleLine="true"
               android:ellipsize="marquee"
               android:visibility="gone"
@@ -62,7 +61,6 @@
               android:layout_alignParentRight="true"
               android:layout_alignParentTop="true"
               android:layout_alignWithParentIfMissing="true"
-              android:fontFamily="sans-serif-light"
               android:singleLine="true"
               android:ellipsize="marquee"
               android:textAppearance="?android:attr/textAppearanceLarge"/>

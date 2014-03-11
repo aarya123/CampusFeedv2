@@ -79,7 +79,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:text="@string/no_contact_selected"
-              android:fontFamily="sans-serif-light"
               android:visibility="gone"
               android:textAppearance="?android:attr/textAppearanceLarge"/>
 

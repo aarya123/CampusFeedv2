@@ -1,19 +1,17 @@
 package com.purdue.CampusFeed;
 
-import com.facebook.widget.LoginButton;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+import com.facebook.widget.LoginButton;
 
 
 public class NavigationDrawer_ArrayAdapter extends ArrayAdapter<String> {
   private final Context context;
-  
+
   //testing
 	//items in the navigation drawer
   	private final String[] drawerItems;
@@ -31,7 +29,7 @@ public class NavigationDrawer_ArrayAdapter extends ArrayAdapter<String> {
     LayoutInflater inflater = (LayoutInflater) context
         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     View view = inflater.inflate(R.layout.items_in_nav_drawer, parent, false);
-    
+
     if(position == 0){
     	TextView elementInList = (TextView) view.findViewById(R.id.textView1);
     	elementInList.setVisibility(8); //hides element

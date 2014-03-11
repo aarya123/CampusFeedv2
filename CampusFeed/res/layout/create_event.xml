@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/nameText"
-        android:text="Event Name" />
+        android:hint="Event Name" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -21,13 +21,13 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/descriptionText"
-        android:text="Event Description" />
+        android:hint="Event Description" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/locationText"
-        android:text="Location" />
+        android:hint="Location" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -37,7 +37,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:id="@+id/dateSpinner"
-            android:text="Date"
+            android:hint="Date"
             style="@android:style/Widget.DeviceDefault.Light.Spinner"
             android:paddingLeft="13dp"
             android:layout_alignParentTop="true"
@@ -47,7 +47,7 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:id="@+id/timeSpinner"
-            android:text="Time"
+            android:hint="Time"
             style="@android:style/Widget.DeviceDefault.Light.Spinner"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/dateSpinner" />

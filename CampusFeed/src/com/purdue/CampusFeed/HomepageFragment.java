@@ -101,6 +101,8 @@ public class HomepageFragment extends Fragment {
 			
 			@Override
 		    protected void onPostExecute(final List<Object> result) {
+                if(result==null)
+                    return;
 				Log.i("result", result.toString());
 				list.setAdapter(new BaseAdapter() {
 
