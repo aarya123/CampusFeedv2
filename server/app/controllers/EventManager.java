@@ -325,7 +325,7 @@ private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
 	searchResult.put("location", rs.getString("location"));
 	searchResult.put("time", rs.getInt("time"));
 	searchResult.put("description", rs.getString("description"));
-	searchResult.put("category", rs.getString("category"));
+	//searchResult.put("category", rs.getString("category"));
 	searchResult.put("status", rs.getInt("status"));
 	return searchResult;
 }
@@ -339,7 +339,7 @@ public static Result search() {
 	}
 	query = request.get("query").textValue();
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event WHERE name LIKE ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status FROM Event WHERE name LIKE ?")) {
     		stmt.setString(1, "%" + query + "%");
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
