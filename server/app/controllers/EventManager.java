@@ -484,25 +484,24 @@ catch(SQLException e) {
 public static Result all()
 {
 	
-	JSONArray list = new JSONArray();
+	ArrayNode all = JsonNodeFactory.instance.arrayNode();
 	try(Connection conn = DB.getConnection()) {
 		try(PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`")) {
 			try(ResultSet s =stmt.executeQuery()) {
 				while(s.next())
 				{
-					list.put(createEventJson(s));
+					all.add(createEventJson(s));
 				}
 			}
 		}
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		response().setContentType("application/json");
-		return ok("{\"response\":\"error, sql exception\"}");
+		return internalServerError(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	
 	
-	return ok(list.toString());
+	return ok(all);
 }
 
 public static Result top5() {
