@@ -23,7 +23,12 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.purdue.CampusFeed.api.Api;
+import com.purdue.CampusFeed.api.Api.Callback;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Sean on 3/7/14.
@@ -39,6 +44,26 @@ public class AdvancedSearch_Fragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
+        Api test = new Api(getActivity());
+        test.asyncSearchEvent("", new Callback<List<com.purdue.CampusFeed.api.Event>>() {
+
+			@Override
+			public void call(List<com.purdue.CampusFeed.api.Event> data) {
+				if(data != null) {
+					Log.i("test", data.toString());
+				}
+				else {
+					Log.i("test", "null");
+				}
+			}
+        
+        });
+        try {
+			test.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
         //lv = (ListView) getActivity().findViewById(R.id.browse_listview);
         Button searchButton = (Button) getActivity().findViewById(R.id.searchButton);
      resultsView = (ListView)getActivity().findViewById(R.id.search_list);

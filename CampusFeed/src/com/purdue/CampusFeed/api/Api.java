@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,6 +20,7 @@ import com.google.gson.stream.JsonReader;
 
 import android.content.Context;
 import android.net.http.HttpResponseCache;
+import android.os.AsyncTask;
 import android.util.Log;
 
 /**
@@ -51,15 +53,50 @@ public class Api implements Closeable {
 		}
 	}
 	
-	public List<Event> search(String query) throws IOException {
-		HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + "search_event").openConnection();
-		conn.setRequestProperty("content-type", "application/json");
-		conn.setDoOutput(true);
-		OutputStream output = new BufferedOutputStream(conn.getOutputStream());
-		InputStream input = new BufferedInputStream(conn.getInputStream());
-		gson.toJson(new SearchEventRequest(query), new OutputStreamWriter(output));
-		List<Event> response = gson.fromJson(new JsonReader(new InputStreamReader(input)), new TypeToken<List<Event>>() {}.getType());
-		return response;
+	public <T> T getResponse(String endpoint, String json) {
+		try {
+			HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + endpoint).openConnection();
+			conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+			conn.setRequestProperty("Content-Length", Integer.toString(json.length()));
+			conn.setInstanceFollowRedirects(false);
+			conn.setRequestMethod("POST");
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			OutputStream output = new BufferedOutputStream(conn.getOutputStream());
+			new OutputStreamWriter(output).append(json).close();
+			InputStream input = new BufferedInputStream(conn.getInputStream());
+			T response = gson.fromJson(new JsonReader(new InputStreamReader(input)), new TypeToken<T>() {}.getType());
+			input.close();
+			return response;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public interface Callback<T> {
+		public void call(T data);
+	}
+	
+	public List<Event> searchEvent(String query) {
+		return getResponse("search_event", gson.toJson(new SearchEventRequest(query)));
+	}
+	
+	public void asyncSearchEvent(final String query, final Callback<List<Event>> callback) {
+		new AsyncTask<Void, Void, List<Event>>() {
+
+			@Override
+			protected List<Event> doInBackground(Void... arg0) {
+				return searchEvent(query);
+			}
+			
+			@Override
+			protected void onPostExecute(List<Event> results) {
+				callback.call(results);
+			}
+			
+		}.execute();
 	}
 
 	@Override

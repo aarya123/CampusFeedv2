@@ -11,4 +11,9 @@ public class Event {
 	public String status;
 	public String category;
 	
+	@Override
+	public String toString() {
+		return GsonHelper.createCampusFeedGson().toJson(this);
+	}
+	
 }
