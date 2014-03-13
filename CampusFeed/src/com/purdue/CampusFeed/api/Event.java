@@ -9,6 +9,7 @@ public class Event {
 	public Date time;
 	public String description;
 	public String status;
+	public String name;
 	
 	@Override
 	public String toString() {
