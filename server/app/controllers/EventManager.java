@@ -331,7 +331,6 @@ private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
 }
 public static Result search() {
 	JsonNode request = request().body().asJson();
-	
 	//check params
 	String query;
 	if(!request.has("query")) {
@@ -487,31 +486,14 @@ public static Result all()
 	
 	JSONArray list = new JSONArray();
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`");
-		ResultSet s =stmt.executeQuery();
-	
-		while(s.next())
-		{
-			try {
-				JSONObject event = new JSONObject();
-				event.put("title", s.getString("name"));
-				event.put("id", s.getString("id"));
-				event.put("desc", s.getString("description"));
-				event.put("date_time",s.getTimestamp("time"));
-				event.put("location", s.getString("location"));
-				event.put("view_count",s.getInt("view_count"));
-				event.put("category", s.getString("category"));
-				list.put(event);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`")) {
+			try(ResultSet s =stmt.executeQuery()) {
+				while(s.next())
+				{
+					list.put(createEventJson(s));
+				}
 			}
-			
-			
 		}
-		s.close();
-		
-		
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
