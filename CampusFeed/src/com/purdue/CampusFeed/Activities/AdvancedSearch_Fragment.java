@@ -1,4 +1,4 @@
-package com.purdue.CampusFeed;
+package com.purdue.CampusFeed.Activities;
 
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -23,8 +23,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.purdue.CampusFeed.api.Api;
-import com.purdue.CampusFeed.api.Api.Callback;
+import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.API.Api;
+import com.purdue.CampusFeed.API.Api.Callback;
+import com.purdue.CampusFeed.Adapters.RowGenerator_ArrayAdapter;
+import com.purdue.CampusFeed.Model.Event;
+import com.purdue.CampusFeed.R.id;
+import com.purdue.CampusFeed.R.layout;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,10 +50,10 @@ public class AdvancedSearch_Fragment extends Fragment {
     {
         super.onActivityCreated(savedInstanceState);
         Api test = new Api(getActivity());
-        test.asyncSearchEvent("", new Callback<List<com.purdue.CampusFeed.api.Event>>() {
+        test.asyncSearchEvent("", new Callback<List<com.purdue.CampusFeed.API.Event>>() {
 
 			@Override
-			public void call(List<com.purdue.CampusFeed.api.Event> data) {
+			public void call(List<com.purdue.CampusFeed.API.Event> data) {
 				if(data != null) {
 					Log.i("test", data.toString());
 				}
@@ -128,13 +133,8 @@ public class AdvancedSearch_Fragment extends Fragment {
                 }
                 for(int i=0;i<r.length();i++)
                 {
-                    Event e = new Event();
                     JSONObject current = r.getJSONObject(i);
-                    e.eventName = current.getString("name");
-                    e.datetime=current.getString("time");
-                    e.eventDescription=current.getString("description");
-                    e.eventLocation=current.getString("location");
-                    e.id=current.getString("id");
+                    Event e=Event.JSONToEvent(current);
                     results.add(e);
                 }
                 return 1;
@@ -158,8 +158,8 @@ public class AdvancedSearch_Fragment extends Fragment {
             // into onPostExecute() but that is upto you
             if(result==0)
             {
-                Event e = new Event();
-                e.eventName="No Results Found";
+                Event e = Event.JSONToEvent(new JSONObject());
+                e.setEventName("No Results Found");
                 results.add(e);
 
             }

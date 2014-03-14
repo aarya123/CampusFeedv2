@@ -33,7 +33,7 @@
         <activity android:name=".NavigationDrawerActivity" />
         
         <activity
-                android:name=".ContactsListActivity"
+                android:name="Activities.ContactsListActivity"
                 android:label="@string/activity_contacts_list"
                 android:windowSoftInputMode="adjustResize">
             <!-- Add intent-filter for search intent action and specify searchable configuration
@@ -48,7 +48,7 @@
                        android:resource="@xml/searchable_contacts" />
         </activity>
         <activity
-            android:name=".ContactDetailActivity"
+            android:name="Activities.ContactDetailActivity"
             android:label="@string/activity_contact_detail">
             <!-- Define hierarchical parent of this activity, both via the system
                  parentActivityName attribute (added in API Level 16) and via meta-data annotation.

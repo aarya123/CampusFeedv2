@@ -28,13 +28,13 @@
               android:weightSum="100"
               android:baselineAligned="false">
 
-    <fragment class="com.purdue.CampusFeed.ContactsListFragment"
+    <fragment class="Activities.ContactsListFragment"
               android:id="@+id/contact_list"
               android:layout_height="match_parent"
               android:layout_width="0dp"
               android:layout_weight="@integer/contact_list_percent"/>
 
-    <fragment class="com.purdue.CampusFeed.ContactDetailFragment"
+    <fragment class="Activities.ContactDetailFragment"
               android:id="@+id/contact_detail"
               android:layout_height="match_parent"
               android:layout_width="0dp"

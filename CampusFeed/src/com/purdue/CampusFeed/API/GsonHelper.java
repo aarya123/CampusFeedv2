@@ -1,4 +1,4 @@
-package com.purdue.CampusFeed.api;
+package com.purdue.CampusFeed.API;
 
 import java.lang.reflect.Type;
 import java.util.Date;

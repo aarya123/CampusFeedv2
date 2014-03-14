@@ -1,4 +1,4 @@
-package com.purdue.CampusFeed;
+package com.purdue.CampusFeed.Activities;
 
 import android.app.DatePickerDialog;
 import android.app.Fragment;
@@ -24,6 +24,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.AsyncTasks.ModifyEvent;
+import com.purdue.CampusFeed.Model.Event;
+import com.purdue.CampusFeed.R.id;
+import com.purdue.CampusFeed.R.layout;
+
 import java.util.Calendar;
 
 /**
@@ -48,16 +54,20 @@ public class EditEventFragment extends Fragment {
     EditText nameText;
     EditText descriptionText;
     EditText locationText;
-
+    public EditEventFragment(){
+    	new EditEventFragment(Event.JSONToEvent(new JSONObject()));
+    }
     public EditEventFragment(Event event)
     {
         super();
         myEvent = event;
     }
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.create_event, container, false);
     }
+    
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
@@ -69,12 +79,12 @@ public class EditEventFragment extends Fragment {
         doneButton = (Button)getActivity().findViewById(R.id.done);
 
         //set default text field values
-        nameText.setText(myEvent.eventName);
-        descriptionText.setText(myEvent.eventDescription);
-        locationText.setText(myEvent.eventLocation);
+        nameText.setText(myEvent.getEventName());
+        descriptionText.setText(myEvent.getEventDescription());
+        locationText.setText(myEvent.getEventLocation());
 
         //get current date information from our event
-        String[] date = myEvent.datetime.split(" ");
+        String[] date = myEvent.getDatetime().split(" ");
 
         //get current date
         final Calendar cal = Calendar.getInstance();
@@ -119,18 +129,18 @@ public class EditEventFragment extends Fragment {
                 EditText locationText = (EditText)getActivity().findViewById(R.id.locationText);
 
                 //update event data structure
-                myEvent.eventName = nameText.getText().toString();
-                myEvent.eventDescription = descriptionText.getText().toString();
-                myEvent.eventLocation = locationText.getText().toString();
+                myEvent.setEventName(nameText.getText().toString());
+                myEvent.setEventDescription(descriptionText.getText().toString());
+                myEvent.setEventLocation( locationText.getText().toString());
                 month=month+1;//account for months indexed at 0
-                myEvent.datetime = ""+month+"-"+day+"-"+year+" "+hour+":"+minute;
-                title=myEvent.eventName;
-                description=myEvent.eventDescription;
-                location=myEvent.eventLocation;
-                date_time=myEvent.datetime;
+                myEvent.setDatetime( ""+month+"-"+day+"-"+year+" "+hour+":"+minute);
+                title=myEvent.getEventName();
+                description=myEvent.getEventDescription();
+                location=myEvent.getEventLocation();
+                date_time=myEvent.getDatetime();
 
-                new CreatorModify().execute("fsdf");
-                Toast.makeText(getActivity(),"Event updated to: "+myEvent.eventLocation+""+myEvent.datetime,Toast.LENGTH_SHORT).show();
+                new ModifyEvent(myEvent).execute("fsdf");
+                Toast.makeText(getActivity(),"Event updated to: "+myEvent.getEventLocation()+""+myEvent.getDatetime(),Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -164,58 +174,5 @@ public class EditEventFragment extends Fragment {
 
 
 
-    class CreatorModify extends AsyncTask<String,Void,String> {
-
-
-        @Override
-        protected String doInBackground(String... in) {
-            HttpClient httpClient = new DefaultHttpClient();
-            String title = EditEventFragment.title;
-            String description = EditEventFragment.description;
-            String location = EditEventFragment.location;
-            EditEventFragment.month=EditEventFragment.month+1;
-                 String category = "Social"; // set as a default
-            try {
-                HttpPost request = new HttpPost("http://54.213.17.69:9000/update_event");
-                JSONObject requestjson = new JSONObject();
-                requestjson.put("desc",description);
-                requestjson.put("location",location);
-                requestjson.put("category" ,category);
-                requestjson.put("title",title);
-                requestjson.put("id",myEvent.id);
-
-                requestjson.put("date_time",date_time);
-
-                Log.d("campus", requestjson.toString());
-
-                StringEntity params =new StringEntity(requestjson.toString());
-                request.addHeader("content-type", "application/json");
-                request.setEntity(params);
-                HttpResponse response = httpClient.execute(request);
-                // get response
-                HttpEntity res = response.getEntity();
-                Log.d("MAYANK", EntityUtils.toString(res)+"response");
-                // handle response here...
-            }catch (Exception ex) {
-                // handle exception here
-            } finally {
-                httpClient.getConnectionManager().shutdown();
-            }
-            return "done";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-
-            // might want to change "executed" for the returned string passed
-            // into onPostExecute() but that is upto you
-
-        }
-
-    }
-
-
-
-
+   
 }
-
