@@ -1,4 +1,4 @@
-package com.purdue.CampusFeed;
+package com.purdue.CampusFeed.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,19 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
 import com.facebook.widget.LoginButton;
+import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.R.id;
+import com.purdue.CampusFeed.R.layout;
 
 
-public class NavigationDrawer_ArrayAdapter extends ArrayAdapter<String> {
+public class NavigationArrayAdapter extends ArrayAdapter<String> {
   private final Context context;
 
-  //testing
 	//items in the navigation drawer
   	private final String[] drawerItems;
-  //end test
 
   //constructor
-  public NavigationDrawer_ArrayAdapter(Context context, String [] values) {
+  public NavigationArrayAdapter(Context context, String[] values) {
     super(context, R.layout.items_in_nav_drawer,values);
     this.context = context;
     this.drawerItems = values;

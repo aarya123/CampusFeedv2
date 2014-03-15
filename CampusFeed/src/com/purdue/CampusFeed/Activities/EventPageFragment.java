@@ -1,9 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
 import com.purdue.CampusFeed.R;
-import com.purdue.CampusFeed.Model.Event;
-import com.purdue.CampusFeed.R.id;
-import com.purdue.CampusFeed.R.layout;
+import com.purdue.CampusFeed.API.Event;
 
 import android.app.Fragment;
 import android.content.Intent;

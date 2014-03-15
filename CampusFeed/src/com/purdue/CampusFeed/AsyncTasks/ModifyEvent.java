@@ -13,7 +13,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.purdue.CampusFeed.Activities.EditEventFragment;
-import com.purdue.CampusFeed.Model.Event;
+import com.purdue.CampusFeed.API.Event;
 
 public class ModifyEvent extends AsyncTask<String, Void, String> {
 	Event event;

@@ -1,5 +1,9 @@
 package com.purdue.CampusFeed.AsyncTasks;
 
+import android.os.AsyncTask;
+import android.util.Log;
+import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
+import com.purdue.CampusFeed.API.Event;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -9,52 +13,51 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
-import android.util.Log;
-
-import com.purdue.CampusFeed.Model.Event;
-
 public class GetEventsByTag extends AsyncTask<String, Void, Integer> {
-	
-public GetEventsByTag(){}
 
-		protected Integer doInBackground(String... cat) {
+    EventArrayAdapter adapter;
 
-			HttpClient httpClient = new DefaultHttpClient();
+    public GetEventsByTag(EventArrayAdapter adapter) {
+        this.adapter = adapter;
+    }
 
-			try {
-				HttpPost request = new HttpPost("http://54.213.17.69:9000/all");
+    protected Integer doInBackground(String... cat) {
 
-				HttpResponse response1 = httpClient.execute(request);
-				// get response
-				HttpEntity res = response1.getEntity();
+        HttpClient httpClient = new DefaultHttpClient();
 
-				JSONArray r = new JSONArray(EntityUtils.toString(res));
-				Log.d("MAYANK123", r.toString());
+        try {
+            HttpPost request = new HttpPost("http://54.213.17.69:9000/all");
 
-				for (int i = 0; i < r.length(); i++) {
-					JSONObject current = r.getJSONObject(i);
-					Event e = Event.JSONToEvent(current);
-					events.add(e);
-				}
-				// handle response here...
-			} catch (Exception ex) {
-				// handle exception here
-				Log.d("MAYANKIN BROWSE", ex.toString());
-				ex.printStackTrace();
-			} finally {
-				httpClient.getConnectionManager().shutdown();
-			}
-			return 1;
+            HttpResponse response1 = httpClient.execute(request);
+            // get response
+            HttpEntity res = response1.getEntity();
 
-		}
+            JSONArray r = new JSONArray(EntityUtils.toString(res));
+            Log.d("MAYANK123", r.toString());
 
-		protected void onPostExecute(Integer result) {
+            for (int i = 0; i < r.length(); i++) {
+                JSONObject current = r.getJSONObject(i);
+                Event e = Event.JSONToEvent(current);
+                adapter.add(e);
+            }
+            // handle response here...
+        } catch (Exception ex) {
+            // handle exception here
+            Log.d("MAYANKIN BROWSE", ex.toString());
+            ex.printStackTrace();
+        } finally {
+            httpClient.getConnectionManager().shutdown();
+        }
+        return 1;
 
-			adapter.notifyDataSetChanged();
+    }
 
-		}
+    protected void onPostExecute(Integer result) {
 
-	}
+        adapter.notifyDataSetChanged();
+
+    }
+
+}
 
 

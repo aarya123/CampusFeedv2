@@ -1,7 +1,6 @@
 package com.purdue.CampusFeed.Activities;
 
 import android.app.Fragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,23 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
+import com.purdue.CampusFeed.AsyncTasks.SearchEvents;
 
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Api.Callback;
-import com.purdue.CampusFeed.Adapters.RowGenerator_ArrayAdapter;
-import com.purdue.CampusFeed.Model.Event;
-import com.purdue.CampusFeed.R.id;
-import com.purdue.CampusFeed.R.layout;
+import com.purdue.CampusFeed.API.Event;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,135 +29,53 @@ import java.util.List;
  */
 
 public class AdvancedSearch_Fragment extends Fragment {
-        public static String query;
-    ListView resultsView;
-        public static ArrayList<Event> results = new ArrayList<Event>();
+
+    EventArrayAdapter adapter;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.advanced_search, container, false);
-    }
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
-        super.onActivityCreated(savedInstanceState);
+        View view = inflater.inflate(R.layout.advanced_search, container, false);
         Api test = new Api(getActivity());
         test.asyncSearchEvent("", new Callback<List<com.purdue.CampusFeed.API.Event>>() {
 
-			@Override
-			public void call(List<com.purdue.CampusFeed.API.Event> data) {
-				if(data != null) {
-					Log.i("test", data.toString());
-				}
-				else {
-					Log.i("test", "null");
-				}
-			}
-        
+            @Override
+            public void call(List<com.purdue.CampusFeed.API.Event> data) {
+                if (data != null) {
+                    Log.i("test", data.toString());
+                } else {
+                    Log.i("test", "null");
+                }
+            }
+
         });
         try {
-			test.close();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        //lv = (ListView) getActivity().findViewById(R.id.browse_listview);
-        Button searchButton = (Button) getActivity().findViewById(R.id.searchButton);
-     resultsView = (ListView)getActivity().findViewById(R.id.search_list);
-
-
+            test.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        Button searchButton = (Button) view.findViewById(R.id.searchButton);
+        ListView resultsView = (ListView) view.findViewById(R.id.search_list);
+        adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
 
         resultsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                /*String text = (String) adapterView.getItemAtPosition(pos);
-                Toast.makeText(getActivity(), text + " selected", Toast.LENGTH_SHORT).show();*/
-            Event e = results.get(pos);
-
-            EventPageFragment fragment = new EventPageFragment();
-            fragment.setEvent(e);
-            getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
-        }
-    });
-        
-        searchButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-			//	getFragmentManager().beginTransaction().replace(R.id.content_frame, new EventPageFragment()).commit();
-				// TODO Auto-generated method stub
-                EditText text = (EditText)getActivity().findViewById(R.id.searchName);
-                query = text.getText().toString();
-                new DOWNLOADER().execute("sdf");
-				
-				
-			}
-		});
-    }
-
-    class DOWNLOADER extends AsyncTask<String,Void,Integer>
-    {
             @Override
-        protected Integer doInBackground(String... cat) {
-            // clear out results from last time
-                results = null;
-                results = new ArrayList<Event>();
-            HttpClient httpClient = new DefaultHttpClient();
-
-            try {
-                HttpPost request = new HttpPost("http://54.213.17.69:9000/search_event");
-
-
-                JSONObject query = new JSONObject();
-
-                query.put("query",AdvancedSearch_Fragment.query);
-                StringEntity params =new StringEntity(query.toString());
-                request.addHeader("content-type", "application/json");
-                request.setEntity(params);
-                HttpResponse response1= httpClient.execute(request);
-                // get response
-                HttpEntity res = response1.getEntity();
-
-                JSONArray r = new JSONArray( EntityUtils.toString(res));
-                if(r.length()==0)
-                {
-                    return 0;
-                }
-                for(int i=0;i<r.length();i++)
-                {
-                    JSONObject current = r.getJSONObject(i);
-                    Event e=Event.JSONToEvent(current);
-                    results.add(e);
-                }
-                return 1;
-
-            }catch (Exception ex) {
-                // handle exception here
-                Log.d("MAYANKIN BROWSE", ex.toString());
-                ex.printStackTrace();
-                return 0;
-            } finally {
-                httpClient.getConnectionManager().shutdown();
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                Event e = (Event) adapterView.getAdapter().getItem(pos);
+                EventPageFragment fragment = new EventPageFragment();
+                fragment.setEvent(e);
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
             }
+        });
 
+        searchButton.setOnClickListener(new OnClickListener() {
 
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-
-            // might want to change "executed" for the returned string passed
-            // into onPostExecute() but that is upto you
-            if(result==0)
-            {
-                Event e = Event.JSONToEvent(new JSONObject());
-                e.setEventName("No Results Found");
-                results.add(e);
-
+            @Override
+            public void onClick(View v) {
+                EditText text = (EditText) getActivity().findViewById(R.id.searchName);
+                String query = text.getText().toString();
+                new SearchEvents(adapter).execute(query);
             }
-            RowGenerator_ArrayAdapter rs = new RowGenerator_ArrayAdapter(getActivity(),results);
-            resultsView.setAdapter(rs);
-            rs.notifyDataSetChanged();
-
-        }
-
+        });
+        return view;
     }
 }
 

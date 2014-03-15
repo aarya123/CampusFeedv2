@@ -3,9 +3,7 @@ package com.purdue.CampusFeed.Activities;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.TimePickerDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +13,13 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.AsyncTasks.ModifyEvent;
-import com.purdue.CampusFeed.Model.Event;
-import com.purdue.CampusFeed.R.id;
-import com.purdue.CampusFeed.R.layout;
+import com.purdue.CampusFeed.API.Event;
 
 import java.util.Calendar;
 

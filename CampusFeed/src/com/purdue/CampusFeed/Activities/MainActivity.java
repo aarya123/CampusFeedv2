@@ -2,7 +2,6 @@ package com.purdue.CampusFeed.Activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -21,23 +20,11 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
+import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
 import com.purdue.CampusFeed.R;
-import com.purdue.CampusFeed.Adapters.NavigationDrawer_ArrayAdapter;
 import com.purdue.CampusFeed.AsyncTasks.Login;
-import com.purdue.CampusFeed.R.array;
-import com.purdue.CampusFeed.R.drawable;
-import com.purdue.CampusFeed.R.id;
-import com.purdue.CampusFeed.R.layout;
-import com.purdue.CampusFeed.R.string;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
+import com.purdue.CampusFeed.Utils.Utils;
 
 public class MainActivity extends FragmentActivity {
 	
@@ -82,25 +69,8 @@ public class MainActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+        Utils.init(getApplicationContext());
 
-	    
-	    /*this was needed to set up the login test fragment before, but
-	     * now we have added all the required functions from the
-	     * login test fragment to this class (but we may need this code later)
-	     */
-	    
-	    /*if (savedInstanceState == null) {
-	        // Add the fragment on initial activity setup
-	        loginTestFragment = new LoginTestFragment();
-	        getSupportFragmentManager()
-	        .beginTransaction()
-	        .add(android.R.id.content, loginTestFragment)
-	        .commit();
-	    } else {
-	        // Or set the fragment from restored state info
-	    	loginTestFragment = (LoginTestFragment) getSupportFragmentManager()
-	        .findFragmentById(android.R.id.content);
-	    }*/
         HomepageFragment homepageFragment = new HomepageFragment();
 	    //fragmentManager = getSupportFragmentManager();
         getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
@@ -117,7 +87,7 @@ public class MainActivity extends FragmentActivity {
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         
         //Set custom adapter for list view
-        drawerList.setAdapter(new NavigationDrawer_ArrayAdapter(this, drawerItems));
+        drawerList.setAdapter(new NavigationArrayAdapter(this, drawerItems));
 
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
