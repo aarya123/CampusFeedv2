@@ -28,16 +28,16 @@
               android:weightSum="100"
               android:baselineAligned="false">
 
-    <fragment class="com.purdue.CampusFeed.ContactsListFragment"
-              android:id="@+id/contact_list"
-              android:layout_height="match_parent"
-              android:layout_width="0dp"
-              android:layout_weight="@integer/contact_list_percent"/>
+	<fragment class="com.purdue.CampusFeed.Activities.ContactsListFragment"
+	          android:id="@+id/contact_list"
+	          android:layout_height="match_parent"
+	          android:layout_width="0dp"
+	          android:layout_weight=".35"/>
 
-    <fragment class="com.purdue.CampusFeed.ContactDetailFragment"
-              android:id="@+id/contact_detail"
-              android:layout_height="match_parent"
-              android:layout_width="0dp"
-              android:layout_weight="@integer/contact_detail_percent"/>
+	<fragment class="com.purdue.CampusFeed.Activities.ContactDetailFragment"
+	          android:id="@+id/contact_detail"
+	          android:layout_height="match_parent"
+	          android:layout_width="0dp"
+	          android:layout_weight=".65"/>
 
 </LinearLayout>
