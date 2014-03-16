@@ -37,5 +37,6 @@
     <string name="no_intent_found">No application found to handle this action</string>
     <string name="activity_invite">Invite Your Friends</string>
     <string name="search">Search</string>
+    <style name="app_theme" parent="android:Theme.Holo.Light.DarkActionBar"></style>
     
 </resources>
