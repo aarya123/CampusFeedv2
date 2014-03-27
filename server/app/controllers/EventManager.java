@@ -62,6 +62,7 @@ public class EventManager extends Controller{
 		int visibility = request.get("visibility").intValue();
 		// this will be the tag
 		String category = request.get("category").textValue();
+		String[] multiple_categories = category.split(",");
 		
 		
 		// convert time to date
@@ -134,16 +135,61 @@ public class EventManager extends Controller{
 		// START TAGGING----------------------------
 		// now setup tagging for it
 		// first check if the tag is there
+
+		// for each tag
+for(int i=0;i<multiple_categories.length;i++){
 		
+		String current_category = multiple_categories[i];
 		try(Connection conn = DB.getConnection()) {
 			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM CampusFeed.Tags WHERE tag LIKE ? LIMIT 1");
-			stmt.setString(1,  category);		
+			stmt.setString(1,  current_category);		
 			stmt.execute();
 			ResultSet rs = stmt.getResultSet();
 			if(!rs.next())
 			{
 				
-				return ok("no tag like that found");
+				// tag was not found.
+				
+				// add tag first, then insert for event.
+				
+				// add tag
+				ResultSet key = null;
+				int tag_id=-1;
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Tags (tag) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
+					stmt2.setString(1, current_category);
+					stmt2.executeUpdate();
+					return_info = stmt.getGeneratedKeys();
+					// get the generated primary key
+					if(key.next())
+					{
+						// then get tag_id
+						tag_id = key.getInt(1);
+						
+					}
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return ok("{\"response\":\"error, sql exception\"}");
+				}
+				// end add tag
+				
+				// now insert for event.
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
+					stmt2.setInt(1, event_id);
+					// set the tag id
+					stmt2.setInt(2, tag_id);
+					stmt2.executeUpdate();
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return ok("{\"response\":\"error, sql exception\"}");
+				}
 				
 				
 			}
@@ -151,6 +197,24 @@ public class EventManager extends Controller{
 			{
 				// it exists
 				// just set the tag for event
+				// get the tag_id
+				int tag_id = rs.getInt(1);
+				// now insert for event.
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
+					stmt2.setInt(1, event_id);
+					// set the tag id
+					stmt2.setInt(2, tag_id);
+					stmt2.executeUpdate();
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return ok("{\"response\":\"error, sql exception\"}");
+				}
+				
+				
 			}
 		
 		
@@ -161,7 +225,7 @@ public class EventManager extends Controller{
 			response().setContentType("application/json");
 			return ok("{\"response\":\"error, sql exception in find tag\"}");
 		}
-		
+	}
 		//END TAGGING -------------------------------
 		
 		
