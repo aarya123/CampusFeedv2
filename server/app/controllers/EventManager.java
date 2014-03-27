@@ -138,7 +138,7 @@ public class EventManager extends Controller{
 		try(Connection conn = DB.getConnection()) {
 			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM CampusFeed.Tags WHERE tag LIKE ? LIMIT 1");
 			stmt.setString(1,  category);		
-			stmt.executeUpdate();
+			stmt.execute();
 			ResultSet rs = stmt.getResultSet();
 			if(!rs.next())
 			{
