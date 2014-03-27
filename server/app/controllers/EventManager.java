@@ -159,7 +159,7 @@ for(int i=0;i<multiple_categories.length;i++){
 					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Tags (tag) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
 					stmt2.setString(1, current_category);
 					stmt2.executeUpdate();
-					return_info = stmt2.getGeneratedKeys();
+					key = stmt2.getGeneratedKeys();
 					// get the generated primary key
 					if(key.next())
 					{
@@ -195,7 +195,7 @@ for(int i=0;i<multiple_categories.length;i++){
 			}
 			else
 			{
-				// it exists
+				// tag exists already
 				// just set the tag for event
 				// get the tag_id
 				int tag_id = rs.getInt(1);
