@@ -60,7 +60,9 @@ public class EventManager extends Controller{
 		String location = request.get("location").textValue();
 		String time_string = request.get("date_time").textValue();
 		int visibility = request.get("visibility").intValue();
+		// this will be the tag
 		String category = request.get("category").textValue();
+		
 		
 		// convert time to date
 		Date datetime=null;
@@ -83,12 +85,11 @@ public class EventManager extends Controller{
 
 		int event_id=-1;
 		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility,category) VALUES (?,?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility) VALUES (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
 			
 			stmt.setString(1, title);
 			stmt.setString(2, location);
 			stmt.setTimestamp(3, sqlTimestamp);
-			stmt.setString(6, category);
 			stmt.setString(4, desc);
 			stmt.setInt(5, visibility);
 			
@@ -130,7 +131,42 @@ public class EventManager extends Controller{
 			response().setContentType("application/json");
 			return ok("{\"response\":\"error, sql exception\"}");
 		}
+		// START TAGGING----------------------------
+		// now setup tagging for it
+		// first check if the tag is there
 		
+		try(Connection conn = DB.getConnection()) {
+			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM CampusFeed.Tags WHERE tag LIKE ? LIMIT 1");
+			stmt.setString(1,  category);		
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getResultSet();
+			if(!rs.next())
+			{
+				
+				return ok("no tag like that found");
+				
+				
+			}
+			else
+			{
+				// it exists
+				// just set the tag for event
+			}
+		
+		
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			response().setContentType("application/json");
+			return ok("{\"response\":\"error, sql exception in find tag\"}");
+		}
+		
+		//END TAGGING -------------------------------
+		
+		
+		
+		// final response
 		
 		response().setContentType("application/json");
 		return ok("{\"response\":\"success\"}+ category="+category);
