@@ -445,6 +445,7 @@ private static void addCategoriesToEventJson(ObjectNode event, ResultSet rs) thr
 	while(rs.next()) {
 		categories.add(rs.getString("tag"));
 	}
+	event.put("categories", categories);
 }
 public static Result search() {
 	JsonNode request = request().body().asJson();
