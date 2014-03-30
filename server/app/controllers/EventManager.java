@@ -233,7 +233,7 @@ for(int i=0;i<multiple_categories.length;i++){
 		// final response
 		
 		response().setContentType("application/json");
-		return ok("{\"response\":\"success\"}+ category="+category);
+		return ok("{\"response\":\"success\"}");
 	}
 	
 	
@@ -247,7 +247,7 @@ for(int i=0;i<multiple_categories.length;i++){
 		String category = request.get("category").textValue();
 		String time_string = request.get("date_time").textValue();
 		// visibility =1 auto
-		
+		String[] multiple_categories = category.split(",");
 		// convert time to date
 		Date datetime=null;
 		try {
@@ -313,6 +313,101 @@ for(int i=0;i<multiple_categories.length;i++){
 			return -1;
 		}
 		
+		// START TAGGING----------------------------
+		// now setup tagging for it
+		// first check if the tag is there
+
+		// for each tag
+for(int i=0;i<multiple_categories.length;i++){
+		
+		String current_category = multiple_categories[i];
+		try(Connection conn = DB.getConnection()) {
+			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM CampusFeed.Tags WHERE tag LIKE ? LIMIT 1");
+			stmt.setString(1,  current_category);		
+			stmt.execute();
+			ResultSet rs = stmt.getResultSet();
+			if(!rs.next())
+			{
+				
+				// tag was not found.
+				
+				// add tag first, then insert for event.
+				
+				// add tag
+				ResultSet key = null;
+				int tag_id=-1;
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Tags (tag) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
+					stmt2.setString(1, current_category);
+					stmt2.executeUpdate();
+					key = stmt2.getGeneratedKeys();
+					// get the generated primary key
+					if(key.next())
+					{
+						// then get tag_id
+						tag_id = key.getInt(1);
+						
+					}
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return -1;
+				}
+				// end add tag
+				
+				// now insert for event.
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
+					stmt2.setInt(1, event_id);
+					// set the tag id
+					stmt2.setInt(2, tag_id);
+					stmt2.executeUpdate();
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return -1;
+				}
+				
+				
+			}
+			else
+			{
+				// tag exists already
+				// just set the tag for event
+				// get the tag_id
+				int tag_id = rs.getInt(1);
+				// now insert for event.
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
+					stmt2.setInt(1, event_id);
+					// set the tag id
+					stmt2.setInt(2, tag_id);
+					stmt2.executeUpdate();
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return -1;
+				}
+				
+				
+			}
+		
+		
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			response().setContentType("application/json");
+			return -1;
+		}
+	}
+		//END TAGGING -------------------------------
 		
 		
 		
