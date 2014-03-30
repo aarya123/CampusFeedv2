@@ -122,8 +122,6 @@ public class EventManager extends Controller{
 					stmt.setLong(1, event_id);
 					stmt.setLong(2, tag_id);
 					stmt.executeUpdate();
-					conn.commit();
-					conn.close();
 				}
 				conn.commit();
 				conn.close();
