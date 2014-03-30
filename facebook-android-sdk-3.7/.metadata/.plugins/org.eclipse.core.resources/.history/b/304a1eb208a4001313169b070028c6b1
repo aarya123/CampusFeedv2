@@ -1,0 +1,22 @@
+package com.example.crab;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.view.View;
+import android.widget.AdapterView;
+import android.provider.ContactsContract;
+
+public class ContactsFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>,
+        AdapterView.OnItemClickListener {
+
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+}
+
+

@@ -1,0 +1,2 @@
+INDEX VERSION 1.126+/Users/kathywang/facebook-android-sdk-3.7/.metadata/.plugins/org.eclipse.jdt.core
+1874323525.index
