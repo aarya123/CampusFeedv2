@@ -25,11 +25,11 @@ public class BrowseFragment extends Fragment {
     EventArrayAdapter adapter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.browse_fragment, container, false);
+        /*View view = inflater.inflate(R.layout.browse_fragment, container, false);
         LinearLayout browseTagList = (LinearLayout) view.findViewById(R.id.browseTagList);
         for (int i = 0; i < 10; i++)
-            browseTagList.addView(inflater.inflate(R.layout.browse_tag, browseTagList));
-        /*ListView listView = new ListView(getActivity());
+            browseTagList.addView(inflater.inflate(R.layout.browse_tag, browseTagList));*/
+        ListView listView = new ListView(getActivity());
         adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -44,7 +44,7 @@ public class BrowseFragment extends Fragment {
             }
         });
         new GetEventsByTag(adapter).execute("ds");
-        return listView;*/
-        return view;
+        return listView;
+        //return view;
     }
 }
