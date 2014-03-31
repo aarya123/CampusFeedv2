@@ -21,12 +21,13 @@ import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.AsyncTasks.ModifyEvent;
 import com.purdue.CampusFeed.API.Event;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
  * Created by Sean on 3/8/14.
  */
-public class EditEventFragment extends Fragment {
+public class EditEventFragment extends Fragment{
     public Event myEvent;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;

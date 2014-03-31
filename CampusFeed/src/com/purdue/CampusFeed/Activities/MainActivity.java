@@ -158,9 +158,9 @@ public class MainActivity extends FragmentActivity {
                 break;
             case 3:
                 fragToDisplay = new CreateEventFragment();
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
-                //Intent intent  = new Intent(this, SingleFragmentActivity.class);
-                //intent.putExtra("com.purdue.CampusFeed.Activities.StartFragment", (Serializable)fragToDisplay);
+                Intent intent  = new Intent(this, SingleFragmentActivity.class);
+                intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
+                startActivity(intent);
                 break;
             case 4:
                 fragToDisplay = new AdvancedSearch_Fragment();

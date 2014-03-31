@@ -1,6 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -49,7 +50,11 @@ public class AdvancedSearch_Fragment extends Fragment {
                 Event e = (Event) adapterView.getAdapter().getItem(pos);
                 EventPageFragment fragment = new EventPageFragment();
                 fragment.setEvent(e);
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                //getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment).commit();
+                Intent intent = new Intent(getActivity(), SingleFragmentActivity.class);
+                intent.putExtra(getString(R.string.START_FRAGMENT), "EventPageFragment");
+                intent.putExtra(getString(R.string.EVENT), e);
+                startActivity(intent);
             }
         });
 

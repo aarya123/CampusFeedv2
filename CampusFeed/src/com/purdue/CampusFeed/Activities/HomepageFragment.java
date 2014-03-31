@@ -1,6 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,9 +38,14 @@ public class HomepageFragment extends Fragment {
                     Event e = adapter.getItem(pos);
                     EventPageFragment fragment = new EventPageFragment();
                     fragment.setEvent(e);
+                    /*
                     getFragmentManager().beginTransaction()
                             .replace(R.id.content_frame, fragment)
-                            .commit();
+                            .commit();*/
+                    Intent intent  = new Intent(getActivity(), SingleFragmentActivity.class);
+                    intent.putExtra(getString(R.string.START_FRAGMENT), "EventPageFragment");
+                    intent.putExtra(getString(R.string.EVENT),e);
+                    startActivity(intent);
                 } catch (ClassCastException e) {
 
                 } catch (Exception e) {
