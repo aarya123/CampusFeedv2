@@ -608,7 +608,7 @@ public static Result updateEvent()
 		stmt2.setInt(5, visibility);
 		stmt2.setLong(6, id);
 		stmt2.executeUpdate();
-		stmt2 = conn.prepareStatement("DELETE Event_has_Tags FROM Event_has_Tags INNER JOIN Event ON Event_has_Tags.Event_id = Event.id  WHERE (Event.id = 21)");
+		stmt2 = conn.prepareStatement("DELETE Event_has_Tags FROM Event_has_Tags INNER JOIN Event ON Event_has_Tags.Event_id = Event.id  WHERE (Event.id = ?)");
 		stmt2.setLong(1, id);
 		stmt2.executeUpdate();
 		String[] categoriesStr = new String[categories.size()];
@@ -616,13 +616,15 @@ public static Result updateEvent()
 			categoriesStr[i] = categories.get(i).textValue();
 		}
 		addTags(conn, id, categoriesStr);
+		conn.commit();
+		conn.close();
+		return ok("success");
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
 		return internalServerError();
 	}
 	
-	return ok("success");
 }
 
 public static Result all()
