@@ -55,7 +55,7 @@ public class EventPageFragment extends Fragment implements OnClickListener {
        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, new EditEventFragment(myEvent)).commit();
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, EditEventFragment.create(myEvent)).commit();
             }
         });
     }

@@ -60,7 +60,12 @@ public class EventManager extends Controller{
 			location = request.get("location").textValue();
 			timestamp = request.get("date_time").asLong();
 			visibility = request.get("visibility").intValue();
+			if(request.has("categories")) {
 			categories = (ArrayNode) request.get("categories");
+			}
+			else {
+				throw new Exception("categories");
+			}
 		}
 		catch(Exception e) {
 			return badRequest(JsonNodeFactory.instance.objectNode()
@@ -582,7 +587,6 @@ public static Result updateEvent()
 	long timestamp, id;
 	int visibility;
 	ArrayNode categories;
-	
 	try {
 		title = request.get("title").textValue();
 		desc = request.get("desc").textValue();
@@ -591,9 +595,13 @@ public static Result updateEvent()
 		visibility = request.get("visibility").intValue();
 		id = request.get("id").longValue();
 		categories = (ArrayNode) request.get("categories");
+		if(categories == null) {
+			throw new Exception("categories");
+		}
 		
 	}
 	catch(Exception e) {
+		e.printStackTrace();
 		return badRequest(JsonNodeFactory.instance.objectNode()
 				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
 	}
@@ -608,7 +616,7 @@ public static Result updateEvent()
 		stmt2.setInt(5, visibility);
 		stmt2.setLong(6, id);
 		stmt2.executeUpdate();
-		stmt2 = conn.prepareStatement("DELETE Event_has_Tags FROM Event_has_Tags INNER JOIN Event ON Event_has_Tags.Event_id = Event.id  WHERE (Event.id = 21)");
+		stmt2 = conn.prepareStatement("DELETE Event_has_Tags FROM Event_has_Tags INNER JOIN Event ON Event_has_Tags.Event_id = Event.id  WHERE (Event.id = ?)");
 		stmt2.setLong(1, id);
 		stmt2.executeUpdate();
 		String[] categoriesStr = new String[categories.size()];
@@ -616,13 +624,15 @@ public static Result updateEvent()
 			categoriesStr[i] = categories.get(i).textValue();
 		}
 		addTags(conn, id, categoriesStr);
+		conn.commit();
+		conn.close();
+		return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
 		return internalServerError();
 	}
 	
-	return ok("success");
 }
 
 public static Result all()
