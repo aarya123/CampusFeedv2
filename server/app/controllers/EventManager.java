@@ -587,7 +587,6 @@ public static Result updateEvent()
 	long timestamp, id;
 	int visibility;
 	ArrayNode categories;
-	System.out.println("Request : " + request.toString());
 	try {
 		title = request.get("title").textValue();
 		desc = request.get("desc").textValue();
@@ -602,6 +601,7 @@ public static Result updateEvent()
 		
 	}
 	catch(Exception e) {
+		e.printStackTrace();
 		return badRequest(JsonNodeFactory.instance.objectNode()
 				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
 	}
