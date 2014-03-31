@@ -608,7 +608,7 @@ public static Result updateEvent()
 		stmt2.setInt(5, visibility);
 		stmt2.setLong(6, id);
 		stmt2.executeUpdate();
-		stmt2 = conn.prepareStatement("DELETE FROM `Event_has_tags` INNER JOIN `Event` ON `Event_has_tags`.`Event_id` = `Event`.`id`  WHERE `Event`.`id` = ?");
+		stmt2 = conn.prepareStatement("DELETE Event_has_Tags FROM Event_has_Tags INNER JOIN Event ON Event_has_Tags.Event_id = Event.id  WHERE (Event.id = 21)");
 		stmt2.setLong(1, id);
 		stmt2.executeUpdate();
 		String[] categoriesStr = new String[categories.size()];
