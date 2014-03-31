@@ -60,7 +60,12 @@ public class EventManager extends Controller{
 			location = request.get("location").textValue();
 			timestamp = request.get("date_time").asLong();
 			visibility = request.get("visibility").intValue();
+			if(request.has("categories")) {
 			categories = (ArrayNode) request.get("categories");
+			}
+			else {
+				throw new Exception("categories");
+			}
 		}
 		catch(Exception e) {
 			return badRequest(JsonNodeFactory.instance.objectNode()
@@ -591,6 +596,9 @@ public static Result updateEvent()
 		visibility = request.get("visibility").intValue();
 		id = request.get("id").longValue();
 		categories = (ArrayNode) request.get("categories");
+		if(categories == null) {
+			throw new Exception("categories");
+		}
 		
 	}
 	catch(Exception e) {
@@ -618,7 +626,7 @@ public static Result updateEvent()
 		addTags(conn, id, categoriesStr);
 		conn.commit();
 		conn.close();
-		return ok("success");
+		return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
