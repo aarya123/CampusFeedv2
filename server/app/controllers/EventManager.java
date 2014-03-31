@@ -92,37 +92,11 @@ public class EventManager extends Controller{
 				stmt.setLong(2, user_id);
 				stmt.setInt(3, 1);
 				stmt.executeUpdate();
+				String[] categoriesStr = new String[categories.size()];
 				for(int i = 0; i < categories.size(); ++i) {
-					String cat = categories.get(i).asText();
-					stmt = conn.prepareStatement("SELECT id FROM CampusFeed.Tags WHERE tag LIKE ? LIMIT 1");
-					stmt.setString(1,  cat);		
-					stmt.execute();
-					rs = stmt.getResultSet();
-					long tag_id = 0;
-					if(!rs.next()) {
-						stmt = conn.prepareStatement("INSERT INTO CampusFeed.Tags (tag) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
-						stmt.setString(1, cat);
-						stmt.executeUpdate();
-						rs = stmt.getGeneratedKeys();
-						// get the generated primary key
-						if(rs.next())
-						{
-							// then get tag_id
-							tag_id = rs.getLong(1);
-							
-						}
-						else {
-							throw new SQLException();
-						}
-					}
-					else {
-						tag_id = rs.getLong(1);
-					}
-					stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
-					stmt.setLong(1, event_id);
-					stmt.setLong(2, tag_id);
-					stmt.executeUpdate();
+					categoriesStr[i] = categories.get(i).textValue();
 				}
+				addTags(conn, event_id, categoriesStr);
 				conn.commit();
 				conn.close();
 				return ok(JsonNodeFactory.instance.objectNode().put("event_id", event_id));
@@ -561,45 +535,92 @@ public static Result popularByCategory()
 	
 	return ok(list.toString());
 }
-public static Result updateEvent()
-{JsonNode request = request().body().asJson();
-String id = request.get("id").textValue();
-String title = request.get("title").textValue();
-String desc = request.get("desc").textValue();
-String location = request.get("location").textValue();
 
-String time_string = request.get("date_time").textValue();
-try(Connection conn2 = DB.getConnection()) {
-	PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=?, location=?,description=?,time=?   WHERE `Event`.`id` = ?");
-	stmt2.setString(1, title);
-	stmt2.setString(2, location);
-	stmt2.setString(3, desc);
-	Date datetime=null;
+
+private static void addTags(Connection conn, long eventId, String[] tags) throws SQLException{
+	PreparedStatement lookupTag = conn.prepareStatement("SELECT id FROM Tags WHERE tag = ?");
+	PreparedStatement addTag = conn.prepareStatement("INSERT INTO Tags (tag) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+	PreparedStatement linkTag = conn.prepareStatement("INSERT INTO Event_has_Tags (Event_id, Tags_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+	for(String tag : tags) {
+		lookupTag.setString(1, tag);
+		lookupTag.execute();
+		ResultSet rs;
+		long tag_id = -1;
+		if((rs = lookupTag.getResultSet()).next()) {
+			tag_id = rs.getLong(1);
+		}
+		else {
+			addTag.setString(1, tag);
+			addTag.execute();
+			if((rs = addTag.getGeneratedKeys()).next()) {
+				tag_id = rs.getLong(1);
+			}
+		}
+		linkTag.setLong(1, eventId);
+		linkTag.setLong(2, tag_id);
+		linkTag.execute();
+	}
+	lookupTag.close();
+	addTag.close();
+	linkTag.close();
+}
+public static Result updateEvent()
+{
+	/* OAuth*/
+	JsonNode request = request().body().asJson();
 	try {
-		datetime = new SimpleDateFormat("M-d-yyyy k:m").parse(time_string);
-	} catch (ParseException e1) {
-		// TODO Auto-generated catch block
-		
-		e1.printStackTrace();
-		response().setContentType("application/json");
-		return ok("{\"response\":\"error, bad date\"}");
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	String title, desc, location;
+	long timestamp, id;
+	int visibility;
+	ArrayNode categories;
+	
+	try {
+		title = request.get("title").textValue();
+		desc = request.get("desc").textValue();
+		location = request.get("location").textValue();
+		timestamp = request.get("date_time").asLong();
+		visibility = request.get("visibility").intValue();
+		id = request.get("id").longValue();
+		categories = (ArrayNode) request.get("categories");
 		
 	}
-	long t = datetime.getTime();
-			 
-	java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(t);
-
-	stmt2.setTimestamp(4, sqlTimestamp);
-	stmt2.setString(5, id);
-	stmt2.executeUpdate();
-	
-	
-}
-catch(SQLException e) {
-	e.printStackTrace();
-
-	return internalServerError();
-}
+	catch(Exception e) {
+		return badRequest(JsonNodeFactory.instance.objectNode()
+				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
+	}
+	Connection conn = DB.getConnection();
+	try {
+		conn.setAutoCommit(false);
+		PreparedStatement stmt2 = conn.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=?, location=?,description=?,time=?,visibility=?   WHERE `Event`.`id` = ?");
+		stmt2.setString(1, title);
+		stmt2.setString(2, location);
+		stmt2.setString(3, desc);
+		stmt2.setTimestamp(4, new Timestamp(timestamp));
+		stmt2.setInt(5, visibility);
+		stmt2.setLong(6, id);
+		stmt2.executeUpdate();
+		stmt2 = conn.prepareStatement("DELETE FROM `Event_has_tags` INNER JOIN `Event` ON `Event_has_tags`.`Event_id` = `Event`.`id`  WHERE `Event`.`id` = ?");
+		stmt2.setLong(1, id);
+		stmt2.executeUpdate();
+		String[] categoriesStr = new String[categories.size()];
+		for(int i = 0; i < categories.size(); ++i) {
+			categoriesStr[i] = categories.get(i).textValue();
+		}
+		addTags(conn, id, categoriesStr);
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
 	
 	return ok("success");
 }
