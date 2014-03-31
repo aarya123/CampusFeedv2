@@ -546,7 +546,7 @@ private static void addTags(Connection conn, long eventId, String[] tags) throws
 		lookupTag.execute();
 		ResultSet rs;
 		long tag_id = -1;
-		if((rs = lookupTag.getGeneratedKeys()).next()) {
+		if((rs = lookupTag.getResultSet()).next()) {
 			tag_id = rs.getLong(1);
 		}
 		else {
