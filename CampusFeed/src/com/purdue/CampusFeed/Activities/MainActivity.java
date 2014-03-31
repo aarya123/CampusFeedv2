@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,8 @@ import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.AsyncTasks.Login;
 
 import com.purdue.CampusFeed.Utils.Utils;
+
+import java.io.Serializable;
 
 public class MainActivity extends FragmentActivity {
 	
@@ -144,22 +147,26 @@ public class MainActivity extends FragmentActivity {
         {
             case 1:
                 fragToDisplay = new HomepageFragment();
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 2:
                 fragToDisplay = new BrowseFragment();
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 3:
                 fragToDisplay = new CreateEventFragment();
+                Intent intent  = new Intent(this, SingleFragmentActivity.class);
+                intent.putExtra("com.purdue.CampusFeed.Activities.StartFragment", (Serializable)fragToDisplay);
                 break;
             case 4:
                 fragToDisplay = new AdvancedSearch_Fragment();
+                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             default:
                 break;
         }
-        if(fragToDisplay!=null){
-            getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
-        }
+
+        drawerLayout.closeDrawer(Gravity.LEFT);
     }
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

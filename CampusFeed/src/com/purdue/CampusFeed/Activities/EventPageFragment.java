@@ -27,7 +27,7 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-    	final View fragmentView = inflater.inflate(R.layout.event_page, container, false); 
+    	final View fragmentView = inflater.inflate(R.layout.eventpage, container, false);
     	Button button= (Button) fragmentView.findViewById(R.id.inviteButton);
         button.setOnClickListener(this);
         return fragmentView;
@@ -40,8 +40,16 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         super.onActivityCreated(savedInstanceState);
         Button editButton = (Button)getActivity().findViewById(R.id.editButton);
       //  EditText descriptionText = (EditText)getActivity().findViewById(R.id.eventdescription_eventpage);
+        TextView name = (TextView) getActivity().findViewById(R.id.eventpage_name);
+        TextView dateAndTime = (TextView) getActivity().findViewById(R.id.dateAndTime);
+        TextView loc = (TextView) getActivity().findViewById(R.id.eventpage_location);
         TextView desc = (TextView)getActivity().findViewById(R.id.event_page_info);
-        desc.setText(myEvent.getEventName()+" @ "+myEvent.getDatetime()+"\n\n\n\n"+myEvent.getEventDescription()+"\n\n\n\n"+myEvent.getEventLocation());
+
+        name.setText(myEvent.getEventName());
+        dateAndTime.setText(myEvent.getDatetime());
+        loc.setText(myEvent.getEventLocation());
+        desc.setText(myEvent.getEventDescription());
+        //desc.setText(myEvent.getEventName()+" @ "+myEvent.getDatetime()+"\n\n\n\n"+myEvent.getEventDescription()+"\n\n\n\n"+myEvent.getEventLocation());
 
 
        editButton.setOnClickListener(new View.OnClickListener() {
