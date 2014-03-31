@@ -1,0 +1,13 @@
+package com.example.crab;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.widget.AdapterView;
+import android.provider.ContactsContract;
+
+public class ContactsFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<Cursor>,
+        AdapterView.OnItemClickListener {
+	
+	
+}

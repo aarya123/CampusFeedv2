@@ -12,6 +12,16 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true" />
 
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="February 27"
+        android:textSize="12pt"
+        android:id="@+id/button"
+        android:layout_below="@id/imageView"
+        android:layout_alignParentLeft="true" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,14 +32,4 @@
         android:layout_below="@id/imageView"
         android:layout_alignBaseline="@id/button"
         android:layout_alignParentRight="true" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="February 27"
-        android:textSize="12pt"
-        android:id="@+id/button"
-        android:layout_below="@id/imageView"
-        android:layout_alignParentLeft="true" />
 </RelativeLayout>

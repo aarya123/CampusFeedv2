@@ -39,10 +39,6 @@ public class EventManager extends Controller{
 	{
 		/* OAuth*/
 		JsonNode request = request().body().asJson();
-		if(request==null)
-		{
-			return internalServerError();
-		}
 		try {
     		Application.checkReqValid(request);
     	}
@@ -53,41 +49,36 @@ public class EventManager extends Controller{
     		e.printStackTrace();
     		return internalServerError();
     	}
+		String title, desc, location;
+		long timestamp;
+		int visibility;
+		ArrayNode categories;
 		
-		
-		String title = request.get("title").textValue();
-		String desc = request.get("desc").textValue();
-		String location = request.get("location").textValue();
-		String time_string = request.get("date_time").textValue();
-		int visibility = request.get("visibility").intValue();
-		// this will be the tag
-		String category = request.get("category").textValue();
-		String[] multiple_categories = category.split(",");
-		
-		
-		// convert time to date
-		Date datetime=null;
 		try {
-			datetime = new SimpleDateFormat("M-d-yyyy k:m").parse(time_string);
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			
-			e1.printStackTrace();
-			response().setContentType("application/json");
-			return ok("{\"response\":\"error, bad date\"}");
-			
+			title = request.get("title").textValue();
+			desc = request.get("desc").textValue();
+			location = request.get("location").textValue();
+			timestamp = request.get("date_time").asLong();
+			visibility = request.get("visibility").intValue();
+			if(request.has("categories")) {
+			categories = (ArrayNode) request.get("categories");
+			}
+			else {
+				throw new Exception("categories");
+			}
 		}
-		long t = datetime.getTime();
+		catch(Exception e) {
+			return badRequest(JsonNodeFactory.instance.objectNode()
+					.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
+		}
+		// convert time to date
 				 
-		java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(t);
+		java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(timestamp);
 
-		// insert into database
-		ResultSet return_info;
-
-		int event_id=-1;
-		try(Connection conn = DB.getConnection()) {
+		Connection conn = DB.getConnection();
+		try {
+			conn.setAutoCommit(false);
 			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event (name,location,time,description,visibility) VALUES (?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
-			
 			stmt.setString(1, title);
 			stmt.setString(2, location);
 			stmt.setTimestamp(3, sqlTimestamp);
@@ -95,145 +86,40 @@ public class EventManager extends Controller{
 			stmt.setInt(5, visibility);
 			
 			stmt.executeUpdate();
-			return_info = stmt.getGeneratedKeys();
+			ResultSet rs = stmt.getGeneratedKeys();
 			// get the generated primary key
-			if(return_info.next())
+			if(rs.next())
 			{
-				event_id = return_info.getInt(1);
-				
+				long event_id = rs.getLong(1);
+				long user_id =Application.getUserId(request);
+				stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (event_id,user_id,is_admin) VALUES (?,?,?)");
+				stmt.setLong(1,  event_id);
+				stmt.setLong(2, user_id);
+				stmt.setInt(3, 1);
+				stmt.executeUpdate();
+				String[] categoriesStr = new String[categories.size()];
+				for(int i = 0; i < categories.size(); ++i) {
+					categoriesStr[i] = categories.get(i).textValue();
+				}
+				addTags(conn, event_id, categoriesStr);
+				conn.commit();
+				conn.close();
+				return ok(JsonNodeFactory.instance.objectNode().put("event_id", event_id));
 			}
-			
-			
+			else {
+				throw new SQLException();
+			}
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-			//return -1;
-			response().setContentType("application/json");
-			return ok("{\"response\":\"error, sql exception\"}");
-		}
-		// now insert into event has users
-		// get the user id of current user
-	
-		long user_id =Application.getUserId(request);
-		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (event_id,user_id,is_admin) VALUES (?,?,?)");
-			stmt.setInt(1,  event_id);
-			stmt.setLong(2, user_id);
-			stmt.setInt(3, 1);
-			
-			
-			stmt.executeUpdate();
-		
-		
-			
-		}
-		catch(SQLException e) {
-			e.printStackTrace();
-			response().setContentType("application/json");
-			return ok("{\"response\":\"error, sql exception\"}");
-		}
-		// START TAGGING----------------------------
-		// now setup tagging for it
-		// first check if the tag is there
-
-		// for each tag
-for(int i=0;i<multiple_categories.length;i++){
-		
-		String current_category = multiple_categories[i];
-		try(Connection conn = DB.getConnection()) {
-			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM CampusFeed.Tags WHERE tag LIKE ? LIMIT 1");
-			stmt.setString(1,  current_category);		
-			stmt.execute();
-			ResultSet rs = stmt.getResultSet();
-			if(!rs.next())
-			{
-				
-				// tag was not found.
-				
-				// add tag first, then insert for event.
-				
-				// add tag
-				ResultSet key = null;
-				int tag_id=-1;
-				try(Connection conn2 = DB.getConnection()) {
-					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Tags (tag) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
-					stmt2.setString(1, current_category);
-					stmt2.executeUpdate();
-					key = stmt2.getGeneratedKeys();
-					// get the generated primary key
-					if(key.next())
-					{
-						// then get tag_id
-						tag_id = key.getInt(1);
-						
-					}
-					
-				}
-				catch(SQLException e) {
-					e.printStackTrace();
-					response().setContentType("application/json");
-					return ok("{\"response\":\"error, sql exception\"}");
-				}
-				// end add tag
-				
-				// now insert for event.
-				try(Connection conn2 = DB.getConnection()) {
-					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
-					stmt2.setInt(1, event_id);
-					// set the tag id
-					stmt2.setInt(2, tag_id);
-					stmt2.executeUpdate();
-					
-				}
-				catch(SQLException e) {
-					e.printStackTrace();
-					response().setContentType("application/json");
-					return ok("{\"response\":\"error, sql exception\"}");
-				}
-				
-				
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
 			}
-			else
-			{
-				// tag exists already
-				// just set the tag for event
-				// get the tag_id
-				int tag_id = rs.getInt(1);
-				// now insert for event.
-				try(Connection conn2 = DB.getConnection()) {
-					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
-					stmt2.setInt(1, event_id);
-					// set the tag id
-					stmt2.setInt(2, tag_id);
-					stmt2.executeUpdate();
-					
-				}
-				catch(SQLException e) {
-					e.printStackTrace();
-					response().setContentType("application/json");
-					return ok("{\"response\":\"error, sql exception\"}");
-				}
-				
-				
-			}
-		
-		
-			
+			return internalServerError();
 		}
-		catch(SQLException e) {
-			e.printStackTrace();
-			response().setContentType("application/json");
-			return ok("{\"response\":\"error, sql exception in find tag\"}");
-		}
-	}
-		//END TAGGING -------------------------------
 		
-		
-		
-		// final response
-		
-		response().setContentType("application/json");
-		return ok("{\"response\":\"success\"}+ category="+category);
 	}
 	
 	
@@ -247,7 +133,7 @@ for(int i=0;i<multiple_categories.length;i++){
 		String category = request.get("category").textValue();
 		String time_string = request.get("date_time").textValue();
 		// visibility =1 auto
-		
+		String[] multiple_categories = category.split(",");
 		// convert time to date
 		Date datetime=null;
 		try {
@@ -313,6 +199,101 @@ for(int i=0;i<multiple_categories.length;i++){
 			return -1;
 		}
 		
+		// START TAGGING----------------------------
+		// now setup tagging for it
+		// first check if the tag is there
+
+		// for each tag
+for(int i=0;i<multiple_categories.length;i++){
+		
+		String current_category = multiple_categories[i];
+		try(Connection conn = DB.getConnection()) {
+			PreparedStatement stmt = conn.prepareStatement("SELECT id FROM CampusFeed.Tags WHERE tag LIKE ? LIMIT 1");
+			stmt.setString(1,  current_category);		
+			stmt.execute();
+			ResultSet rs = stmt.getResultSet();
+			if(!rs.next())
+			{
+				
+				// tag was not found.
+				
+				// add tag first, then insert for event.
+				
+				// add tag
+				ResultSet key = null;
+				int tag_id=-1;
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Tags (tag) VALUES (?)",Statement.RETURN_GENERATED_KEYS);
+					stmt2.setString(1, current_category);
+					stmt2.executeUpdate();
+					key = stmt2.getGeneratedKeys();
+					// get the generated primary key
+					if(key.next())
+					{
+						// then get tag_id
+						tag_id = key.getInt(1);
+						
+					}
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return -1;
+				}
+				// end add tag
+				
+				// now insert for event.
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
+					stmt2.setInt(1, event_id);
+					// set the tag id
+					stmt2.setInt(2, tag_id);
+					stmt2.executeUpdate();
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return -1;
+				}
+				
+				
+			}
+			else
+			{
+				// tag exists already
+				// just set the tag for event
+				// get the tag_id
+				int tag_id = rs.getInt(1);
+				// now insert for event.
+				try(Connection conn2 = DB.getConnection()) {
+					PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_Tags (Event_id,Tags_id) VALUES (?,?)");
+					stmt2.setInt(1, event_id);
+					// set the tag id
+					stmt2.setInt(2, tag_id);
+					stmt2.executeUpdate();
+					
+				}
+				catch(SQLException e) {
+					e.printStackTrace();
+					response().setContentType("application/json");
+					return -1;
+				}
+				
+				
+			}
+		
+		
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+			response().setContentType("application/json");
+			return -1;
+		}
+	}
+		//END TAGGING -------------------------------
 		
 		
 		
@@ -429,6 +410,20 @@ private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
 	searchResult.put("status", rs.getInt("status"));
 	return searchResult;
 }
+
+/**
+ * Helper function to add categories to event json
+ * @param event
+ * @param rs
+ * @throws SQLException
+ */
+private static void addCategoriesToEventJson(ObjectNode event, ResultSet rs) throws SQLException {
+	ArrayNode categories = JsonNodeFactory.instance.arrayNode();
+	while(rs.next()) {
+		categories.add(rs.getString("tag"));
+	}
+	event.put("categories", categories);
+}
 public static Result search() {
 	JsonNode request = request().body().asJson();
 	//check params
@@ -444,7 +439,14 @@ public static Result search() {
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
     		if(rs.next()) {
     			do {
-    				searchResults.add(createEventJson(rs));
+    				ObjectNode eventRes = createEventJson(rs);
+    				try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
+    					stmtTag.setLong(1, rs.getLong("id"));
+    					stmtTag.execute();
+    					ResultSet rsTag = stmtTag.getResultSet();
+    					addCategoriesToEventJson(eventRes, rsTag);
+    				}
+    				searchResults.add(eventRes);
     			}
     			while(rs.next());
     		}
@@ -538,47 +540,99 @@ public static Result popularByCategory()
 	
 	return ok(list.toString());
 }
-public static Result updateEvent()
-{JsonNode request = request().body().asJson();
-String id = request.get("id").textValue();
-String title = request.get("title").textValue();
-String desc = request.get("desc").textValue();
-String location = request.get("location").textValue();
 
-String time_string = request.get("date_time").textValue();
-try(Connection conn2 = DB.getConnection()) {
-	PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=?, location=?,description=?,time=?   WHERE `Event`.`id` = ?");
-	stmt2.setString(1, title);
-	stmt2.setString(2, location);
-	stmt2.setString(3, desc);
-	Date datetime=null;
+
+private static void addTags(Connection conn, long eventId, String[] tags) throws SQLException{
+	PreparedStatement lookupTag = conn.prepareStatement("SELECT id FROM Tags WHERE tag = ?");
+	PreparedStatement addTag = conn.prepareStatement("INSERT INTO Tags (tag) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+	PreparedStatement linkTag = conn.prepareStatement("INSERT INTO Event_has_Tags (Event_id, Tags_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+	for(String tag : tags) {
+		lookupTag.setString(1, tag);
+		lookupTag.execute();
+		ResultSet rs;
+		long tag_id = -1;
+		if((rs = lookupTag.getResultSet()).next()) {
+			tag_id = rs.getLong(1);
+		}
+		else {
+			addTag.setString(1, tag);
+			addTag.execute();
+			if((rs = addTag.getGeneratedKeys()).next()) {
+				tag_id = rs.getLong(1);
+			}
+		}
+		linkTag.setLong(1, eventId);
+		linkTag.setLong(2, tag_id);
+		linkTag.execute();
+	}
+	lookupTag.close();
+	addTag.close();
+	linkTag.close();
+}
+public static Result updateEvent()
+{
+	/* OAuth*/
+	JsonNode request = request().body().asJson();
 	try {
-		datetime = new SimpleDateFormat("M-d-yyyy k:m").parse(time_string);
-	} catch (ParseException e1) {
-		// TODO Auto-generated catch block
-		
-		e1.printStackTrace();
-		response().setContentType("application/json");
-		return ok("{\"response\":\"error, bad date\"}");
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	String title, desc, location;
+	long timestamp, id;
+	int visibility;
+	ArrayNode categories;
+	try {
+		title = request.get("title").textValue();
+		desc = request.get("desc").textValue();
+		location = request.get("location").textValue();
+		timestamp = request.get("date_time").asLong();
+		visibility = request.get("visibility").intValue();
+		id = request.get("id").longValue();
+		categories = (ArrayNode) request.get("categories");
+		if(categories == null) {
+			throw new Exception("categories");
+		}
 		
 	}
-	long t = datetime.getTime();
-			 
-	java.sql.Timestamp sqlTimestamp = new java.sql.Timestamp(t);
-
-	stmt2.setTimestamp(4, sqlTimestamp);
-	stmt2.setString(5, id);
-	stmt2.executeUpdate();
+	catch(Exception e) {
+		e.printStackTrace();
+		return badRequest(JsonNodeFactory.instance.objectNode()
+				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
+	}
+	Connection conn = DB.getConnection();
+	try {
+		conn.setAutoCommit(false);
+		PreparedStatement stmt2 = conn.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=?, location=?,description=?,time=?,visibility=?   WHERE `Event`.`id` = ?");
+		stmt2.setString(1, title);
+		stmt2.setString(2, location);
+		stmt2.setString(3, desc);
+		stmt2.setTimestamp(4, new Timestamp(timestamp));
+		stmt2.setInt(5, visibility);
+		stmt2.setLong(6, id);
+		stmt2.executeUpdate();
+		stmt2 = conn.prepareStatement("DELETE Event_has_Tags FROM Event_has_Tags INNER JOIN Event ON Event_has_Tags.Event_id = Event.id  WHERE (Event.id = ?)");
+		stmt2.setLong(1, id);
+		stmt2.executeUpdate();
+		String[] categoriesStr = new String[categories.size()];
+		for(int i = 0; i < categories.size(); ++i) {
+			categoriesStr[i] = categories.get(i).textValue();
+		}
+		addTags(conn, id, categoriesStr);
+		conn.commit();
+		conn.close();
+		return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
 	
-	
-}
-catch(SQLException e) {
-	e.printStackTrace();
-
-	return internalServerError();
-}
-	
-	return ok("success");
 }
 
 public static Result all()

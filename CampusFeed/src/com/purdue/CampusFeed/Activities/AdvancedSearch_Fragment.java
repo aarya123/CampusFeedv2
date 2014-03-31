@@ -1,9 +1,13 @@
 package com.purdue.CampusFeed.Activities;
 
 import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -11,13 +15,12 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
 import com.purdue.CampusFeed.AsyncTasks.SearchEvents;
-
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.API.Api;
-import com.purdue.CampusFeed.API.Api.Callback;
 import com.purdue.CampusFeed.API.Event;
 
 import java.io.IOException;
@@ -35,24 +38,7 @@ public class AdvancedSearch_Fragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     	
         View view = inflater.inflate(R.layout.advanced_search, container, false);
-        Api test = new Api(getActivity());
-        test.asyncSearchEvent("", new Callback<List<com.purdue.CampusFeed.API.Event>>() {
-
-            @Override
-            public void call(List<com.purdue.CampusFeed.API.Event> data) {
-                if (data != null) {
-                    Log.i("test", data.toString());
-                } else {
-                    Log.i("test", "null");
-                }
-            }
-
-        });
-        try {
-            test.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
+        Api test = Api.getInstance(getActivity());
         Button searchButton = (Button) view.findViewById(R.id.searchButton);
         ListView resultsView = (ListView) view.findViewById(R.id.search_list);
         adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
@@ -79,4 +65,9 @@ public class AdvancedSearch_Fragment extends Fragment {
         return view;
     }
 }
+
+
+
+
+
 
