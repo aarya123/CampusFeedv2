@@ -112,7 +112,7 @@ public class CreateEventFragment extends Fragment {
 				location = locationText.getText().toString();
 
 				month = month + 1;
-				CreateEvent c = new CreateEvent();
+				CreateEvent c = new CreateEvent(getActivity());
 				c.execute("create");
 				Toast.makeText(getActivity(), "event created",
 						Toast.LENGTH_LONG).show();

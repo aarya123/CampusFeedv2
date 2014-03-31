@@ -45,13 +45,11 @@ public class EditEventFragment extends Fragment {
     EditText nameText;
     EditText descriptionText;
     EditText locationText;
-    public EditEventFragment(){
-    	new EditEventFragment(Event.JSONToEvent(new JSONObject()));
-    }
-    public EditEventFragment(Event event)
-    {
-        super();
-        myEvent = event;
+    
+    public static EditEventFragment create(Event event) {
+    	EditEventFragment frag = new EditEventFragment();
+    	frag.myEvent = event;
+    	return frag;
     }
     
     @Override

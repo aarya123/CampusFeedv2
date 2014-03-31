@@ -17,7 +17,6 @@ import com.purdue.CampusFeed.AsyncTasks.SearchEvents;
 
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.API.Api;
-import com.purdue.CampusFeed.API.Api.Callback;
 import com.purdue.CampusFeed.API.Event;
 
 import java.io.IOException;
@@ -34,24 +33,7 @@ public class AdvancedSearch_Fragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.advanced_search, container, false);
-        Api test = new Api(getActivity());
-        test.asyncSearchEvent("", new Callback<List<com.purdue.CampusFeed.API.Event>>() {
-
-            @Override
-            public void call(List<com.purdue.CampusFeed.API.Event> data) {
-                if (data != null) {
-                    Log.i("test", data.toString());
-                } else {
-                    Log.i("test", "null");
-                }
-            }
-
-        });
-        try {
-            test.close();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
+        Api test = Api.getInstance(getActivity());
         Button searchButton = (Button) view.findViewById(R.id.searchButton);
         ListView resultsView = (ListView) view.findViewById(R.id.search_list);
         adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
