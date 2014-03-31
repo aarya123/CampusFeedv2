@@ -1,5 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -8,10 +10,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.facebook.Request;
@@ -23,11 +28,12 @@ import com.facebook.model.GraphUser;
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.AsyncTasks.Login;
-
 import com.purdue.CampusFeed.Utils.Utils;
 
 public class MainActivity extends FragmentActivity {
 	
+   //private static final boolean testing = true;
+   
    //Data members required for the drawer layout
    private String[] drawerItems;
    private DrawerLayout drawerLayout;
@@ -70,12 +76,14 @@ public class MainActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
         Utils.init(getApplicationContext());
+        
+
 
         HomepageFragment homepageFragment = new HomepageFragment();
 	    //fragmentManager = getSupportFragmentManager();
         getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
 
-	    uiHelper = new UiLifecycleHelper(this, callback);
+        uiHelper = new UiLifecycleHelper(this, callback);
 	    uiHelper.onCreate(savedInstanceState);
 	    
 	    setContentView(R.layout.activity_main);
@@ -175,7 +183,7 @@ public class MainActivity extends FragmentActivity {
         //Pass the event to ActionBarDrawerToggle, if it returns
         //true, then it has handled the app icon touch event
         if (drawerToggle.onOptionsItemSelected(item)) {
-        	//Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show();
+        	Toast.makeText(this, item.toString(), Toast.LENGTH_SHORT).show();
             return true;
         }
         //Handle other action bar items
@@ -272,5 +280,23 @@ public class MainActivity extends FragmentActivity {
 	public void onSaveInstanceState(Bundle outState) {
 	    super.onSaveInstanceState(outState);
 	    uiHelper.onSaveInstanceState(outState);
-	} 
+	}  
+	
+	//setting up the search widget
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    // Inflate the options menu from XML
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.options_menu, menu);
+
+	    // Get the SearchView and set the searchable configuration
+	    SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	    SearchView searchView = (SearchView) menu.findItem(R.id.simple_search).getActionView();
+	    // Assumes current activity is the searchable activity
+	    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+	    searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
+
+	    return true;
+	}
+	
 }

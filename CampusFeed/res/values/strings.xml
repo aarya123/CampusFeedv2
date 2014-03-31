@@ -38,5 +38,7 @@
     <string name="activity_invite">Invite Your Friends</string>
     <string name="search">Search</string>
     <style name="app_theme" parent="android:Theme.Holo.Light.DarkActionBar"></style>
+    <string name="search_hint">Search Events</string>
+    <string name="search_title">Event Search</string>
      
 </resources>

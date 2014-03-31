@@ -33,6 +33,7 @@ public class AdvancedSearch_Fragment extends Fragment {
     EventArrayAdapter adapter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    	
         View view = inflater.inflate(R.layout.advanced_search, container, false);
         Api test = new Api(getActivity());
         test.asyncSearchEvent("", new Callback<List<com.purdue.CampusFeed.API.Event>>() {

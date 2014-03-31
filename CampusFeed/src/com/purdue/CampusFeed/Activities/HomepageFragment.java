@@ -25,6 +25,8 @@ public class HomepageFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+    	
         ListView listView = new ListView(getActivity());
         adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
         listView.setAdapter(adapter);
