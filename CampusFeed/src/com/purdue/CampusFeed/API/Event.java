@@ -9,16 +9,26 @@ import com.purdue.CampusFeed.Utils.Utils;
 
 public class Event {
 
-    String eventName, eventDescription, eventLocation, datetime, id;
+    String eventName, eventDescription, eventLocation, datetime;
+    long id;
+    String[] categories;
+    
+    public Event() {
+    	eventName = "";
+    	eventDescription = "";
+    	eventLocation = "";
+    	datetime = "";
+    	id = 0;
+    	categories = new String[]{};
+    }
 
     public Event(String eventName, String eventDescription,
-                 String eventLocation, String datetime, String id) {
-        super();
+                 String eventLocation, String datetime, String[] categories) {
         this.eventName = eventName;
         this.eventDescription = eventDescription;
         this.eventLocation = eventLocation;
         this.datetime = datetime;
-        this.id = id;
+        this.categories = categories;
     }
 
     public String getEventName() {
@@ -53,24 +63,19 @@ public class Event {
         this.datetime = datetime;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
-
-    public String toString() {
-        return GsonHelper.createCampusFeedGson().toJson(this);
+    
+    public void setId(long id) {
+    	this.id = id;
     }
-
-    public static Event JSONToEvent(JSONObject json) {
-        try {
-            return new Event(json.getString("title"),
-                    json.getString("desc"),
-                    json.getString("location"),
-                    json.getString("date_time"),
-                    json.getString("id"));
-        } catch (JSONException e) {
-            Log.e(Utils.TAG, e.getMessage());
-            return new Event("", "", "", "", "");
-        }
+    
+    public String[] getCategories() {
+    	return categories;
+    }
+    
+    public void setCategories(String[] categories) {
+    	this.categories = categories;
     }
 }
