@@ -604,7 +604,7 @@ public static Result updateEvent()
 	catch(Exception e) {
 		return badRequest(JsonNodeFactory.instance.objectNode()
 				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)")
-				.put("req", request().body().asJson()));
+				.put("req", request));
 	}
 	Connection conn = DB.getConnection();
 	try {
