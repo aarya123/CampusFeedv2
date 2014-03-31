@@ -540,7 +540,7 @@ public static Result popularByCategory()
 private static void addTags(Connection conn, long eventId, String[] tags) throws SQLException{
 	PreparedStatement lookupTag = conn.prepareStatement("SELECT id FROM Tags WHERE tag = ?");
 	PreparedStatement addTag = conn.prepareStatement("INSERT INTO Tags (tag) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
-	PreparedStatement linkTag = conn.prepareStatement("INSERT INTO Event_has_tags (Event_id, Tags_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+	PreparedStatement linkTag = conn.prepareStatement("INSERT INTO Event_has_Tags (Event_id, Tags_id) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
 	for(String tag : tags) {
 		lookupTag.setString(1, tag);
 		lookupTag.execute();
