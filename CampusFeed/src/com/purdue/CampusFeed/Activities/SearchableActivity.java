@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -16,20 +17,18 @@ import android.widget.Toast;
 public class SearchableActivity extends ListActivity {
 	
 	ListView list;
+	private MenuItem searchWidget_menuItem;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.simple_search);
-
+    	
+	    //set action bar title
+	    setTitle("Search Results");
+	    
 	    //collapse the search widget in the main activity
 	    MainActivity.searchWidget_menuItem.collapseActionView();
-	    
-	    // Get the intent, verify the action and get the query
-	    /*Intent intent = getIntent();
-	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-	      String query = intent.getStringExtra(SearchManager.QUERY);
-	      doMySearch(query);
-	    }*/
 	    handleIntent(getIntent()); 
 	}
 	
@@ -39,6 +38,9 @@ public class SearchableActivity extends ListActivity {
 
 	public void onNewIntent(Intent intent) { 
 		setIntent(intent); 
+		
+		//collapse search widget
+		searchWidget_menuItem.collapseActionView();
 		handleIntent(intent); 
 	} 
 
@@ -56,6 +58,9 @@ public class SearchableActivity extends ListActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
 
+        //store menu item
+        searchWidget_menuItem = menu.findItem(R.id.simple_search);
+        
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.simple_search).getActionView();

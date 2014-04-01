@@ -82,7 +82,7 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.init(getApplicationContext());
-
+        
         HomepageFragment homepageFragment = new HomepageFragment();
         //fragmentManager = getSupportFragmentManager();
         getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
@@ -104,7 +104,8 @@ public class MainActivity extends FragmentActivity {
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                selectItem(pos);
+            	selectItem(pos);
+            
             }
         });
 
@@ -154,27 +155,31 @@ public class MainActivity extends FragmentActivity {
         android.app.Fragment fragToDisplay = null;
         switch (position) {
             case 1:
+            	
                 fragToDisplay = new HomepageFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 2:
+
                 fragToDisplay = new BrowseFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 3:
+            	
                 fragToDisplay = new CreateEventFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 //Intent intent  = new Intent(this, SingleFragmentActivity.class);
                 //intent.putExtra("com.purdue.CampusFeed.Activities.StartFragment", (Serializable)fragToDisplay);
                 break;
             case 4:
+        
                 fragToDisplay = new AdvancedSearch_Fragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             default:
                 break;
         }
-
+        
         drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
