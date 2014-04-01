@@ -52,6 +52,11 @@ public class MainActivity extends FragmentActivity {
     public static String facebook_profileName;
     public static String facebook_accessToken;
 
+    
+    //Data members for search widget
+    
+    public static MenuItem searchWidget_menuItem;
+    
     //for debugging purposes
     private static final String TAG = "Facebook OAUTH";
 
@@ -294,6 +299,9 @@ public class MainActivity extends FragmentActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
 
+        //stores the menu item
+        searchWidget_menuItem = menu.findItem(R.id.simple_search);
+        
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.simple_search).getActionView();

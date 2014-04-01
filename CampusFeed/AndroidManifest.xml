@@ -65,7 +65,7 @@
 
 	<!--  for the search widget -->
 	<activity android:name="com.purdue.CampusFeed.Activities.SearchableActivity"
-	    	  android:launchMode="singleTop" >
+	    	  android:launchMode="singleTask" >
         <intent-filter>
             <action android:name="android.intent.action.SEARCH" />
         </intent-filter>
