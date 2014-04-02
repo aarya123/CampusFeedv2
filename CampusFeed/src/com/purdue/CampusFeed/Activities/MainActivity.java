@@ -52,6 +52,11 @@ public class MainActivity extends FragmentActivity {
     public static String facebook_profileName;
     public static String facebook_accessToken;
 
+    
+    //Data members for search widget
+    
+    public static MenuItem searchWidget_menuItem;
+    
     //for debugging purposes
     private static final String TAG = "Facebook OAUTH";
 
@@ -77,7 +82,7 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.init(getApplicationContext());
-
+        
         HomepageFragment homepageFragment = new HomepageFragment();
         //fragmentManager = getSupportFragmentManager();
         getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
@@ -99,7 +104,8 @@ public class MainActivity extends FragmentActivity {
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                selectItem(pos);
+            	selectItem(pos);
+            
             }
         });
 
@@ -149,27 +155,31 @@ public class MainActivity extends FragmentActivity {
         android.app.Fragment fragToDisplay = null;
         switch (position) {
             case 1:
+            	
                 fragToDisplay = new HomepageFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 2:
+
                 fragToDisplay = new BrowseFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 3:
+            	
                 fragToDisplay = new CreateEventFragment();
                 Intent intent  = new Intent(this, SingleFragmentActivity.class);
                 intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
                 startActivity(intent);
                 break;
             case 4:
+        
                 fragToDisplay = new AdvancedSearch_Fragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             default:
                 break;
         }
-
+        
         drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
@@ -294,6 +304,9 @@ public class MainActivity extends FragmentActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
 
+        //stores the menu item
+        searchWidget_menuItem = menu.findItem(R.id.simple_search);
+        
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.simple_search).getActionView();

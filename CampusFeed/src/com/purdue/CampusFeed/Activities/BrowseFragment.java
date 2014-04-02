@@ -52,4 +52,5 @@ public class BrowseFragment extends Fragment {
         return listView;
         //return view;
     }
+
 }
