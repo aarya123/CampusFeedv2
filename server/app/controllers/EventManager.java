@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,8 +11,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -454,6 +457,78 @@ public static Result search() {
 		}
 	}
 	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+}
+
+public static Result advSearch() {
+	JsonNode request = request().body().asJson();
+	//check params
+	String query;
+	if(!request.has("name") && !(request.has("start_date") && request.has("end_date")) &&
+			!request.has("desc") && !request.has("tags")){
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: name (text) or (start_date (date) and end_date (date)) or desc (text) or tags (array)"));
+	}
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = null;
+		List<Object> params = new ArrayList<Object>();
+		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
+		if(request.has("name")) {
+			sql += "name like ?";
+			params.add("%" + request.get("name").textValue() + "%");
+		}
+		if(request.has("start_date") && request.has("end_date")) {
+			if(params.size() != 0) {
+				sql += " AND ";
+			}
+			sql += "UNIX_TIMESTAMP(time) BETWEEN ? AND ?";
+			params.add(request.get("start_date").asLong());
+			params.add(request.get("end_date").asLong());
+		}
+		if(request.has("desc")) {
+			if(params.size() != 0) {
+				sql += " AND ";
+			}
+			sql += "description like ?";
+			params.add("%" + request.get("desc").textValue() + "%");
+		}
+		if(request.has("tags")) {
+			ArrayNode tags = (ArrayNode) request.get("tags");
+			if(params.size() != 1) {
+				sql += " AND ";
+			}
+			for(int i = 0; i < tags.size(); ++i) {
+				sql += "Tags.tag LIKE ?";
+				params.add("%" + tags.get(i).textValue() + "%");
+				if(i < tags.size() - 1) {
+					sql += " OR ";
+				}
+			}
+		}
+		stmt = conn.prepareStatement(sql);
+		for(int i = 0; i < params.size(); ++i) {
+			stmt.setObject(i + 1, params.get(i));
+		}
+		stmt.execute();
+		ResultSet rs = stmt.executeQuery();
+		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
+		if(rs.next()) {
+			do {
+				ObjectNode eventRes = createEventJson(rs);
+				try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
+					stmtTag.setLong(1, rs.getLong("id"));
+					stmtTag.execute();
+					ResultSet rsTag = stmtTag.getResultSet();
+					addCategoriesToEventJson(eventRes, rsTag);
+				}
+				searchResults.add(eventRes);
+			}
+			while(rs.next());
+		}
+		return ok(searchResults);
+	}
+	catch(Exception e) {
 		e.printStackTrace();
 		return internalServerError();
 	}
