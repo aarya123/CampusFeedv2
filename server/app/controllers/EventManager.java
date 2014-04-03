@@ -475,7 +475,7 @@ public static Result advSearch() {
 			stmt.setString(1, "%" + request.get("name").textValue() + "%");
 		}
 		else if(request.has("start_date") && request.has("end_date")) {
-			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where time between ? and ?");
+			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where ? <= time and time <= ?");
 			stmt.setTimestamp(1, new Timestamp(request.get("start_date").asLong()));
 			stmt.setTimestamp(2, new Timestamp(request.get("end_date").asLong()));
 		}
