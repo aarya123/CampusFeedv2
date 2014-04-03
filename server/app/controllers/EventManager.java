@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -454,6 +455,63 @@ public static Result search() {
 		}
 	}
 	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+}
+
+public static Result advSearch() {
+	JsonNode request = request().body().asJson();
+	//check params
+	String query;
+	if(!request.has("name") && !(request.has("start_date") && request.has("end_date")) &&
+			!request.has("desc") && !request.has("tags")){
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: name (text) or (start_date (date) and end_date (date)) or desc (text) or tags (array)"));
+	}
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = null;
+		if(request.has("name")) {
+			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where name like ?");
+			stmt.setString(1, request.get("name").textValue());
+		}
+		else if(request.has("start_date") && request.has("end_date")) {
+			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where time >= ? and time <= ?");
+			stmt.setTimestamp(1, new Timestamp(request.get("start_date").asLong()));
+			stmt.setTimestamp(2, new Timestamp(request.get("end_date").asLong()));
+		}
+		else if(request.has("desc")) {
+			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where description like ?");
+			stmt.setString(1, request.get("desc").textValue());
+		}
+		else if(request.has("tags")) {
+			stmt = conn.prepareStatement("select Event.id as id, Event.name as name, Event.location as location, unix_timestamp(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_tags.Event_id inner join Tags on Event_has_tags.Tags_id = Tags.id where Tags.tag in ?");
+			ArrayNode tags = (ArrayNode) request.get("tags");
+			String[] tagsStr = new String[tags.size()];
+			for(int i = 0; i < tags.size(); ++i) {
+				tagsStr[i] = tags.get(i).textValue();
+			}
+			Array tagsArr = conn.createArrayOf("text", tagsStr);
+			stmt.setArray(1, tagsArr);
+		}
+		stmt.execute();
+		ResultSet rs = stmt.executeQuery();
+		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
+		if(rs.next()) {
+			do {
+				ObjectNode eventRes = createEventJson(rs);
+				try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
+					stmtTag.setLong(1, rs.getLong("id"));
+					stmtTag.execute();
+					ResultSet rsTag = stmtTag.getResultSet();
+					addCategoriesToEventJson(eventRes, rsTag);
+				}
+				searchResults.add(eventRes);
+			}
+			while(rs.next());
+		}
+		return ok(searchResults);
+	}
+	catch(Exception e) {
 		e.printStackTrace();
 		return internalServerError();
 	}

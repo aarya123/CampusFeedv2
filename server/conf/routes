@@ -34,6 +34,9 @@ POST /update_event	controllers.EventManager.updateEvent()
 #Search Event
 POST	/search_event	controllers.EventManager.search()
 
+#Advanced Search event
+POST	/adv_search_event	controllers.EventManager.advSearch()
+
 #List Event
 POST	/list_event		controllers.EventManager.listEvent()
 
