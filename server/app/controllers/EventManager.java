@@ -471,20 +471,20 @@ public static Result advSearch() {
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = null;
 		if(request.has("name")) {
-			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where name like ?");
+			stmt = conn.prepareStatement("select id, name, location, UNIX_TIMESTAMP(time) as time, description, status from Event where name like ?");
 			stmt.setString(1, "%" + request.get("name").textValue() + "%");
 		}
 		else if(request.has("start_date") && request.has("end_date")) {
-			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where ? <= unix_timestamp(time) and unix_timestamp(time) <= ?");
+			stmt = conn.prepareStatement("select id, name, location, UNIX_TIMESTAMP(time) as time, description, status from Event where ? <= UNIX_TIMESTAMP(time) and UNIX_TIMESTAMP(time) <= ?");
 			stmt.setTimestamp(1, new Timestamp(request.get("start_date").asLong()));
 			stmt.setTimestamp(2, new Timestamp(request.get("end_date").asLong()));
 		}
 		else if(request.has("desc")) {
-			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where description like ?");
+			stmt = conn.prepareStatement("select id, name, location, UNIX_TIMESTAMP(time) as time, description, status from Event where description like ?");
 			stmt.setString(1, "%" + request.get("desc").textValue() + "%");
 		}
 		else if(request.has("tags")) {
-			String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, unix_timestamp(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
+			String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
 			ArrayNode tags = (ArrayNode) request.get("tags");
 			for(int i = 0; i < tags.size(); ++i) {
 				sql += "Tags.tag LIKE ?";
