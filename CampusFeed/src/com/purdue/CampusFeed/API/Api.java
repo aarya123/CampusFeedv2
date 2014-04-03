@@ -129,10 +129,10 @@ public class Api implements Closeable {
     }
     
     public static class AdvSearchQuery {
-    	public long start_date = 0;
-    	public long end_date = Long.MAX_VALUE;
-    	public String title = null;
-    	public String desc = null;
+    	private long start_date = 0;
+    	private long end_date = Long.MAX_VALUE;
+    	private String title = null;
+    	private String desc = null;
     	
     	public void setStartDate(long startDate) {
     		start_date = startDate;
