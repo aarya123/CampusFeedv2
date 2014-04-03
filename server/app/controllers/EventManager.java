@@ -11,8 +11,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -470,32 +472,43 @@ public static Result advSearch() {
 	}
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = null;
+		List<Object> params = new ArrayList<Object>();
+		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
 		if(request.has("name")) {
-			stmt = conn.prepareStatement("select id, name, location, UNIX_TIMESTAMP(time) as time, description, status from Event where name like ?");
-			stmt.setString(1, "%" + request.get("name").textValue() + "%");
+			sql += "name like ?";
+			params.add("%" + request.get("name").textValue() + "%");
 		}
-		else if(request.has("start_date") && request.has("end_date")) {
-			stmt = conn.prepareStatement("select id, name, location, UNIX_TIMESTAMP(time) as time, description, status from Event where UNIX_TIMESTAMP(time) BETWEEN ? AND ?");
-			stmt.setLong(1, request.get("start_date").asLong());
-			stmt.setLong(2, request.get("end_date").asLong());
+		if(request.has("start_date") && request.has("end_date")) {
+			if(params.size() != 0) {
+				sql += " AND ";
+			}
+			sql += "UNIX_TIMESTAMP(time) BETWEEN ? AND ?";
+			params.add(request.get("start_date").asLong());
+			params.add(request.get("end_date").asLong());
 		}
-		else if(request.has("desc")) {
-			stmt = conn.prepareStatement("select id, name, location, UNIX_TIMESTAMP(time) as time, description, status from Event where description like ?");
-			stmt.setString(1, "%" + request.get("desc").textValue() + "%");
+		if(request.has("desc")) {
+			if(params.size() != 0) {
+				sql += " AND ";
+			}
+			sql += "description like ?";
+			params.add("%" + request.get("desc").textValue() + "%");
 		}
-		else if(request.has("tags")) {
-			String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
+		if(request.has("tags")) {
 			ArrayNode tags = (ArrayNode) request.get("tags");
+			if(params.size() != 1) {
+				sql += " AND ";
+			}
 			for(int i = 0; i < tags.size(); ++i) {
 				sql += "Tags.tag LIKE ?";
+				params.add("%" + tags.get(i).textValue() + "%");
 				if(i < tags.size() - 1) {
 					sql += " OR ";
 				}
 			}
-			stmt = conn.prepareStatement(sql);
-			for(int i = 0; i < tags.size(); ++i) {
-				stmt.setString(i + 1, "%" + tags.get(i).textValue() + "%");
-			}
+		}
+		stmt = conn.prepareStatement(sql);
+		for(int i = 0; i < params.size(); ++i) {
+			stmt.setObject(i, params.get(i));
 		}
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
