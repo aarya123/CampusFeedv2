@@ -484,14 +484,18 @@ public static Result advSearch() {
 			stmt.setString(1, request.get("desc").textValue());
 		}
 		else if(request.has("tags")) {
-			stmt = conn.prepareStatement("select Event.id as id, Event.name as name, Event.location as location, unix_timestamp(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_tags.Event_id inner join Tags on Event_has_tags.Tags_id = Tags.id where Tags.tag in ?");
+			String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, unix_timestamp(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_tags.Event_id inner join Tags on Event_has_tags.Tags_id = Tags.id where ";
 			ArrayNode tags = (ArrayNode) request.get("tags");
-			String[] tagsStr = new String[tags.size()];
 			for(int i = 0; i < tags.size(); ++i) {
-				tagsStr[i] = tags.get(i).textValue();
+				sql += "Tags.tag LIKE ?";
+				if(i < tags.size() - 1) {
+					sql += " OR ";
+				}
 			}
-			Array tagsArr = conn.createArrayOf("text", tagsStr);
-			stmt.setArray(1, tagsArr);
+			stmt = conn.prepareStatement(sql);
+			for(int i = 0; i < tags.size(); ++i) {
+				stmt.setString(i + 1, "%" + tags.get(i).textValue() + "%");
+			}
 		}
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
