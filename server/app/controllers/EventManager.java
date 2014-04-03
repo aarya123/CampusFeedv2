@@ -508,7 +508,7 @@ public static Result advSearch() {
 		}
 		stmt = conn.prepareStatement(sql);
 		for(int i = 0; i < params.size(); ++i) {
-			stmt.setObject(i, params.get(i));
+			stmt.setObject(i + 1, params.get(i));
 		}
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
