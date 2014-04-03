@@ -472,7 +472,7 @@ public static Result advSearch() {
 		PreparedStatement stmt = null;
 		if(request.has("name")) {
 			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where name like ?");
-			stmt.setString(1, request.get("name").textValue());
+			stmt.setString(1, "%" + request.get("name").textValue() + "%");
 		}
 		else if(request.has("start_date") && request.has("end_date")) {
 			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where time >= ? and time <= ?");
@@ -481,7 +481,7 @@ public static Result advSearch() {
 		}
 		else if(request.has("desc")) {
 			stmt = conn.prepareStatement("select id, name, location, unix_timestamp(time) as time, description, status from Event where description like ?");
-			stmt.setString(1, request.get("desc").textValue());
+			stmt.setString(1, "%" + request.get("desc").textValue() + "%");
 		}
 		else if(request.has("tags")) {
 			String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, unix_timestamp(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
