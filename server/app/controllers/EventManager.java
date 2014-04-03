@@ -484,7 +484,7 @@ public static Result advSearch() {
 			stmt.setString(1, request.get("desc").textValue());
 		}
 		else if(request.has("tags")) {
-			String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, unix_timestamp(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_tags.Tags_id = Tags.id where ";
+			String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, unix_timestamp(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
 			ArrayNode tags = (ArrayNode) request.get("tags");
 			for(int i = 0; i < tags.size(); ++i) {
 				sql += "Tags.tag LIKE ?";
