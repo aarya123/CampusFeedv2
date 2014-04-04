@@ -14,20 +14,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
+import com.facebook.*;
 import com.facebook.model.GraphUser;
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
-import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.AsyncTasks.Login;
-
+import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
-
-import java.io.Serializable;
 
 public class MainActivity extends FragmentActivity {
 
