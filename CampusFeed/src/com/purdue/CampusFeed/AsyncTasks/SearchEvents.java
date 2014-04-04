@@ -14,12 +14,16 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class SearchEvents extends AsyncTask<String, Void, Integer> {
 
     EventArrayAdapter adapter;
+    ArrayList<Event> eventArray;
 
     public SearchEvents(EventArrayAdapter adapter) {
         this.adapter = adapter;
+        eventArray = new ArrayList<Event>();
     }
 
     protected Integer doInBackground(String... cat) {
@@ -42,7 +46,8 @@ public class SearchEvents extends AsyncTask<String, Void, Integer> {
             for (int i = 0; i < r.length(); i++) {
                 JSONObject current = r.getJSONObject(i);
                 Event e = Event.JSONToEvent(current);
-                adapter.add(e);
+                //adapter.add(e);
+                eventArray.add(e);
             }
             return 1;
 
@@ -64,6 +69,7 @@ public class SearchEvents extends AsyncTask<String, Void, Integer> {
             adapter.add(e);
 
         }
+        adapter.addAll(eventArray);
         adapter.notifyDataSetChanged();
     }
 }
