@@ -1,5 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -8,11 +10,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 import com.facebook.*;
 import com.facebook.model.GraphUser;
@@ -39,6 +40,11 @@ public class MainActivity extends FragmentActivity {
     public static String SERVER_LONG_TOKEN;
     public static String facebook_profileName;
     public static String facebook_accessToken;
+
+
+    //Data members for search widget
+
+    public static MenuItem searchWidget_menuItem;
 
     //for debugging purposes
     private static final String TAG = "Facebook OAUTH";
@@ -88,6 +94,7 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 selectItem(pos);
+
             }
         });
 
@@ -137,20 +144,24 @@ public class MainActivity extends FragmentActivity {
         android.app.Fragment fragToDisplay = null;
         switch (position) {
             case 1:
+
                 fragToDisplay = new HomepageFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 2:
+
                 fragToDisplay = new BrowseFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 3:
+
                 fragToDisplay = new CreateEventFragment();
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
-                //Intent intent  = new Intent(this, SingleFragmentActivity.class);
-                //intent.putExtra("com.purdue.CampusFeed.Activities.StartFragment", (Serializable)fragToDisplay);
+                Intent intent = new Intent(this, SingleFragmentActivity.class);
+                intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
+                startActivity(intent);
                 break;
             case 4:
+
                 fragToDisplay = new AdvancedSearch_Fragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
@@ -273,5 +284,25 @@ public class MainActivity extends FragmentActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
+    }
+
+    //setting up the search widget
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the options menu from XML
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+
+        //stores the menu item
+        searchWidget_menuItem = menu.findItem(R.id.simple_search);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.simple_search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
+
+        return true;
     }
 }

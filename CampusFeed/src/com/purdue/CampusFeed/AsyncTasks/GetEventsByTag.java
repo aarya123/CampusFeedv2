@@ -13,12 +13,16 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class GetEventsByTag extends AsyncTask<String, Void, Integer> {
 
     EventArrayAdapter adapter;
+    ArrayList<Event> eventArray;
 
     public GetEventsByTag(EventArrayAdapter adapter) {
         this.adapter = adapter;
+        eventArray = new ArrayList<Event>();
     }
 
     protected Integer doInBackground(String... cat) {
@@ -38,7 +42,7 @@ public class GetEventsByTag extends AsyncTask<String, Void, Integer> {
             for (int i = 0; i < r.length(); i++) {
                 JSONObject current = r.getJSONObject(i);
                 Event e = Event.JSONToEvent(current);
-                adapter.add(e);
+                eventArray.add(e);
             }
             // handle response here...
         } catch (Exception ex) {
@@ -53,7 +57,7 @@ public class GetEventsByTag extends AsyncTask<String, Void, Integer> {
     }
 
     protected void onPostExecute(Integer result) {
-
+        adapter.addAll(eventArray);
         adapter.notifyDataSetChanged();
 
     }

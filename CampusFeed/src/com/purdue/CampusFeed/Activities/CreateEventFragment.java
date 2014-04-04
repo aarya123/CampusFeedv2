@@ -29,6 +29,7 @@ import com.purdue.CampusFeed.R.id;
 import com.purdue.CampusFeed.R.layout;
 import com.purdue.CampusFeed.AsyncTasks.CreateEvent;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**

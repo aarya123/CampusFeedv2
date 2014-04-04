@@ -18,6 +18,9 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="action_websearch">Web search</string>
     <string name="app_not_available">Sorry, there\'s no web browser available</string>
+
+    <string name="START_FRAGMENT">com.purdue.CampusFeed.Activities.StartFragment</string>
+    <string name="EVENT">com.purdue.CampusFeed.API.Event</string>
     
     <string name="activity_contacts_list">Contacts List</string>
     <string name="activity_contact_detail">Contact Detail</string>
@@ -38,5 +41,7 @@
     <string name="activity_invite">Invite Your Friends</string>
     <string name="search">Search</string>
     <style name="app_theme" parent="android:Theme.Holo.Light.DarkActionBar"></style>
+    <string name="simple_search_hint">Search Events</string>
+    <string name="search_title">Event Search</string>
      
 </resources>

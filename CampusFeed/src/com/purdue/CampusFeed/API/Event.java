@@ -7,7 +7,11 @@ import android.util.Log;
 
 import com.purdue.CampusFeed.Utils.Utils;
 
-public class Event {
+import java.io.Serializable;
+/*
+    TODO: probably make parcelable later instead of Serializable
+ */
+public class Event implements Serializable{
 
     String eventName, eventDescription, eventLocation, datetime;
     long id;
