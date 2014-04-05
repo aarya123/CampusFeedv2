@@ -30,6 +30,16 @@
 			android:paddingTop="10dp"
 			android:paddingBottom="10dp"/>
 
+	<MultiAutoCompleteTextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/tagText"
+			android:singleLine="true"
+			android:completionThreshold="1"
+			android:hint="Tag(s)"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+
 	<LinearLayout
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"

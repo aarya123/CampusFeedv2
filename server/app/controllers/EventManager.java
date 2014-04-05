@@ -62,11 +62,11 @@ public class EventManager extends Controller{
     		Application.checkReqValid(request);
     	}
     	catch(AuthorizationException e) {
-    		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+    		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
     	}
     	catch(SQLException e) {
     		e.printStackTrace();
-    		return internalServerError();
+    		return ok();
     	}
 		String title, desc, location;
 		long timestamp;
@@ -87,7 +87,7 @@ public class EventManager extends Controller{
 			}
 		}
 		catch(Exception e) {
-			return badRequest(JsonNodeFactory.instance.objectNode()
+			return ok(JsonNodeFactory.instance.objectNode()
 					.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
 		}
 		// convert time to date
@@ -136,7 +136,7 @@ public class EventManager extends Controller{
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-			return internalServerError();
+			return ok();
 		}
 		
 	}
@@ -326,17 +326,17 @@ public static Result rsvp_to_event()
 	JsonNode request = request().body().asJson();
 	if(request==null)
 	{
-		return internalServerError();
+		return ok();
 	}
 	try {
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 	// add user to rsvp
 	// get the user id
@@ -376,7 +376,7 @@ public static Result rsvp_to_event()
 			catch(SQLException e) {
 				e.printStackTrace();
 
-				return internalServerError();
+				return ok();
 			}
 			
 		}
@@ -387,7 +387,7 @@ public static Result rsvp_to_event()
 	catch(SQLException e) {
 		e.printStackTrace();
 
-		return internalServerError();
+		return ok();
 	}
 	if(should_add){
 	// main thing, add to rsvp 
@@ -402,7 +402,7 @@ public static Result rsvp_to_event()
 	catch(SQLException e) {
 		e.printStackTrace();
 
-		return internalServerError();
+		return ok();
 	}
 	
 	}
@@ -451,18 +451,18 @@ public static Result advSearch() {
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 	// get the user id
 	long user_id =Application.getUserId(request);
 	//check params
 	if(!request.has("name") && !(request.has("start_date") && request.has("end_date")) &&
 			!request.has("desc") && !request.has("tags")){
-		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: name (text) or (start_date (date) and end_date (date)) or desc (text) or tags (array)"));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: name (text) or (start_date (date) and end_date (date)) or desc (text) or tags (array)"));
 	}
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = null;
@@ -511,7 +511,7 @@ public static Result advSearch() {
 	}
 	catch(Exception e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 }
 
@@ -521,11 +521,11 @@ public static Result listEvent() {
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 	// get the user id
 	long user_id =Application.getUserId(request);
@@ -535,7 +535,7 @@ public static Result listEvent() {
 		page = request.get("page").intValue();
 	}
 	catch(Exception e) {
-		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
 	}
 	try(Connection conn = DB.getConnection()) {
 		try(PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " LIMIT 25 OFFSET ?")) {
@@ -547,7 +547,7 @@ public static Result listEvent() {
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 }
 
@@ -586,11 +586,11 @@ public static Result updateEvent()
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 	String title, desc, location;
 	long timestamp, id;
@@ -611,7 +611,7 @@ public static Result updateEvent()
 	}
 	catch(Exception e) {
 		e.printStackTrace();
-		return badRequest(JsonNodeFactory.instance.objectNode()
+		return ok(JsonNodeFactory.instance.objectNode()
 				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
 	}
 	Connection conn = DB.getConnection();
@@ -639,7 +639,7 @@ public static Result updateEvent()
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 	
 }
@@ -650,11 +650,11 @@ public static Result top5() {
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return internalServerError();
+		return ok();
 	}
 	// get the user id
 	long user_id =Application.getUserId(request);
@@ -665,7 +665,7 @@ public static Result top5() {
 	}
 	catch(Exception e) {
 		e.printStackTrace();
-		return badRequest(JsonNodeFactory.instance.objectNode()
+		return ok(JsonNodeFactory.instance.objectNode()
 				.put("error", "Parameters: category (text)"));
 	}
 	try(Connection conn = DB.getConnection()) {
@@ -677,7 +677,7 @@ public static Result top5() {
 		
 	}
 	catch(SQLException e) {
-		return internalServerError(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 }
 

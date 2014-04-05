@@ -73,9 +73,9 @@ public class Api implements Closeable {
             HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + endpoint).openConnection();
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             conn.setRequestProperty("Content-Length", Integer.toString(json.length()));
-            conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod(method);
-            conn.setDoInput(true);
+            //conn.setDoInput(true);
+            HttpURLConnection.setFollowRedirects(false);
             if (method.equals("POST")) {
                 conn.setDoOutput(true);
                 OutputStream output = new BufferedOutputStream(conn.getOutputStream());
