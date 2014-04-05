@@ -653,7 +653,7 @@ public static Result top5() {
 				.put("error", "Parameters: category (text)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
+		PreparedStatement stmt = conn.prepareStatement("select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
 		stmt.setString(1, category);
 		ResultSet rs = stmt.executeQuery();
 		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
