@@ -21,47 +21,45 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
-              android:paddingTop="10dp"
-              android:paddingLeft="10dp"
+              android:paddingTop="@dimen/padding"
+              android:paddingLeft="@dimen/padding"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-	<TextView
-			android:id="@+id/contact_detail_header"
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			style="@android:style/TextAppearance.Small"
-			android:textAllCaps="true"
-			android:textStyle="bold"/>
+    <TextView
+            android:id="@+id/contact_detail_header"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            style="@style/addressHeader"/>
 
-	<LinearLayout android:orientation="horizontal"
-	              android:layout_width="match_parent"
-	              android:layout_height="wrap_content"
-	              android:showDividers="middle"
-	              android:dividerPadding="12dp"
-	              android:minHeight="48dp"
-	              android:divider="?android:attr/listDivider">
+    <LinearLayout android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:showDividers="middle"
+                  android:dividerPadding="12dp"
+                  android:minHeight="48dp"
+                  android:divider="?android:attr/listDivider">
 
-		<TextView
-				android:id="@+id/contact_detail_item"
-				android:layout_height="wrap_content"
-				android:layout_width="0dp"
-				android:layout_weight="1"
-				android:paddingRight="10dp"
-				android:layout_gravity="center"
-				style="@android:style/TextAppearance.Medium"
-				android:textIsSelectable="true"/>
+        <TextView
+                android:id="@+id/contact_detail_item"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:paddingRight="@dimen/padding"
+                android:layout_gravity="center"
+                style="@style/addressDetail"/>
 
-		<ImageButton
-				android:id="@+id/contact_detail_item_sms_button"
-				android:src="@drawable/ic_action_add"
-				android:layout_height="match_parent"
-				android:layout_width="wrap_content"
-				android:paddingTop="8dp"
-				android:paddingBottom="8dp"
-				android:layout_gravity="center"
-				android:contentDescription="@string/address_button_description"/>
+        <ImageButton
+            android:id="@+id/contact_detail_item_sms_button"
+            android:src="@drawable/ic_action_add"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/address_button_description"
+            style="@style/addressButton"/>
 
-	</LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

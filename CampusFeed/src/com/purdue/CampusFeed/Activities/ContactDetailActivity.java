@@ -16,9 +16,6 @@
 
 package com.purdue.CampusFeed.Activities;
 
-import com.purdue.CampusFeed.BuildConfig;
-import com.purdue.CampusFeed.Utils.Utils;
-
 import android.annotation.TargetApi;
 import android.net.Uri;
 import android.os.Build;
@@ -27,6 +24,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
+
+import com.purdue.CampusFeed.BuildConfig;
+import com.purdue.CampusFeed.Utils.Utils;
 
 
 /**
