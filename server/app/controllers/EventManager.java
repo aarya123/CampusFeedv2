@@ -494,8 +494,8 @@ public static Result advSearch() {
 				sql += " AND ";
 			}
 			for(int i = 0; i < tags.size(); ++i) {
-				sql += "Tags.tag LIKE ?";
-				params.add("%" + tags.get(i).textValue() + "%");
+				sql += "Tags.tag = ?";
+				params.add(tags.get(i).textValue());
 				if(i < tags.size() - 1) {
 					sql += " OR ";
 				}
