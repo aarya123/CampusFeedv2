@@ -5,6 +5,7 @@ import android.net.http.HttpResponseCache;
 import android.util.Log;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import com.purdue.CampusFeed.Utils.Utils;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -84,6 +85,7 @@ public class Api implements Closeable {
             InputStream input = new BufferedInputStream(conn.getInputStream());
             Scanner in = new Scanner(input).useDelimiter("\\A");
             String raw = in.next();
+            Log.d(Utils.TAG, raw);
             Object response = gson.fromJson(raw, type);
             input.close();
             return response;
@@ -117,7 +119,7 @@ public class Api implements Closeable {
     }
 
     public List<Event> advSearchEvent(AdvSearchQuery query) {
-    	query.setAuth(login);
+        query.setAuth(login);
         return (List<Event>) getResponse("POST", "adv_search_event", gson.toJson(query), new TypeToken<List<Event>>() {
         }.getType());
     }

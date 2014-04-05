@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 
-public class CreateEvent extends AsyncTask<Event, Void, String> {
+public class CreateEvent extends AsyncTask<Event, Void, Integer> {
 
     private Context context;
 
@@ -13,8 +13,8 @@ public class CreateEvent extends AsyncTask<Event, Void, String> {
         this.context = context;
     }
 
-    protected String doInBackground(Event... event) {
+    protected Integer doInBackground(Event... event) {
         Api.getInstance(context).createEvent(event[0]);
-        return "";
+        return 0;
     }
 }
