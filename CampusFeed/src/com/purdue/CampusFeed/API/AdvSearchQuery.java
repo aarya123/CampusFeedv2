@@ -16,6 +16,7 @@ public class AdvSearchQuery implements Parcelable {
     private String desc = null;
     private final int CATEGORY_SIZE = 10;
     private String[] categories = new String[CATEGORY_SIZE];
+    private Auth auth;
 
     public AdvSearchQuery() {
     }
@@ -78,6 +79,10 @@ public class AdvSearchQuery implements Parcelable {
 
     public int describeContents() {
         return 0;
+    }
+    
+    public void setAuth(Auth auth) {
+    	this.auth = auth;
     }
 
     public void writeToParcel(Parcel dest, int flags) {

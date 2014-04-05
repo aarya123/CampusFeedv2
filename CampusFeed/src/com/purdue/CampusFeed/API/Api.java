@@ -116,20 +116,8 @@ public class Api implements Closeable {
 
     }
 
-    public List<Event> searchEvent(String query) {
-        class SearchEventRequest {
-            public String query;
-
-            public SearchEventRequest(String query) {
-                this.query = query;
-            }
-        }
-        return (List<Event>) getResponse("POST", "search_event", gson.toJson(new SearchEventRequest(query)), new TypeToken<List<Event>>() {
-        }.getType());
-    }
-
-
     public List<Event> advSearchEvent(AdvSearchQuery query) {
+    	query.setAuth(login);
         return (List<Event>) getResponse("POST", "adv_search_event", gson.toJson(query), new TypeToken<List<Event>>() {
         }.getType());
     }
