@@ -100,4 +100,8 @@ public class Event implements Serializable{
         this.categories = categories;
     }
     
+    public static Event JSONToEvent(JSONObject json) {
+    	return new Event();
+    }
+    
 }
