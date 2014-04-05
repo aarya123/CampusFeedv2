@@ -29,6 +29,15 @@
 
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+			
+			<!-- Allow web apps to launch Campus Feed by linking to http://campusfeed.com/scan. -->
+      		<!-- <intent-filter>
+        		<action android:name="android.intent.action.VIEW"/>
+        		<category android:name="android.intent.category.DEFAULT"/>
+        		<category android:name="android.intent.category.BROWSABLE"/>
+        		<data android:scheme="http" android:host="campusfeed.com" android:path="/scan"/>
+      		</intent-filter> -->
+      		
 		</activity>
 
 		<meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
@@ -60,7 +69,7 @@
 				 http://developer.android.com/guide/components/tasks-and-back-stack.html
 			-->
 			<meta-data android:name="android.support.PARENT_ACTIVITY"
-			           android:value=".ContactsListActivity" />
+			           android:value="com.purdue.CampusFeed.Activities.ContactsListActivity" />
 		</activity>
 
 	<!--  for the search widget -->
@@ -73,7 +82,7 @@
                    android:resource="@xml/searchable"/>
     </activity>
     
-    <activity android:name=".Activities.SingleFragmentActivity" />
+    <activity android:name="com.purdue.CampusFeed.Activities.SingleFragmentActivity" />
 
     </application>
 
