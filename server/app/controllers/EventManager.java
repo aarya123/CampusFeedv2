@@ -410,7 +410,7 @@ private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
 	searchResult.put("time", rs.getInt("time"));
 	searchResult.put("description", rs.getString("description"));
 	//searchResult.put("category", rs.getString("category"));
-	searchResult.put("status", rs.getInt("status"));
+	searchResult.put("visibility", rs.getInt("visibility"));
 	return searchResult;
 }
 
@@ -452,7 +452,7 @@ public static Result advSearch() {
 		PreparedStatement stmt = null;
 		List<Object> params = new ArrayList<Object>();
 		params.add(user_id);
-		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
+		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
 		if(request.has("name")) {
 			sql += "name like ?";
 			params.add("%" + request.get("name").textValue() + "%");
@@ -524,7 +524,7 @@ public static Result listEvent() {
 		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status FROM Event LIMIT 25 OFFSET ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, visibility FROM Event LIMIT 25 OFFSET ?")) {
     		stmt.setInt(1, page * 25);
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
@@ -653,7 +653,7 @@ public static Result top5() {
 				.put("error", "Parameters: category (text)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
+		PreparedStatement stmt = conn.prepareStatement("select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
 		stmt.setString(1, category);
 		ResultSet rs = stmt.executeQuery();
 		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
