@@ -81,7 +81,7 @@ import java.util.List;
 public class ContactDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, OnClickListener {
 
-	private Event myEvent;
+	public static Event myEvent;
     public static final String EXTRA_CONTACT_URI =
             "com.purdue.CampusFeed.EXTRA_CONTACT_URI";
 
@@ -761,6 +761,8 @@ public class ContactDetailFragment extends Fragment implements
 	}
 	
 	public void setEvent(Event event) {
-		this.myEvent = event;
+		if (event != null) {
+			this.myEvent = event;
+		}
 	}
 }

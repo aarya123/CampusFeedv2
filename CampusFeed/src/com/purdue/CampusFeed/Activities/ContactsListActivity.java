@@ -36,7 +36,7 @@ public class ContactsListActivity extends FragmentActivity implements
 
     // Defines a tag for identifying log entries
     private static final String TAG = "ContactsListActivity";
-    private Event myEvent;
+    public static Event myEvent;
     private ContactDetailFragment mContactDetailFragment;
 
     // If true, this is a larger screen device which fits two panes

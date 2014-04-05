@@ -36,12 +36,7 @@
 		
 		<receiver android:name="InviteReceiver">
 			<!-- Allow web apps to launch Campus Feed by linking to http://campusfeed.com/scan. -->
-      		<intent-filter>
-        		<action android:name="android.intent.action.VIEW"/>
-        		<category android:name="android.intent.category.DEFAULT"/>
-        		<category android:name="android.intent.category.BROWSABLE"/>
-        		<data android:scheme="http" android:host="campusfeed.com" android:pathPattern="/invite/.*"/>
-      		</intent-filter>
+      		
 		</receiver>
 
 		<meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
@@ -86,7 +81,16 @@
                    android:resource="@xml/searchable"/>
     </activity>
     
-    <activity android:name="com.purdue.CampusFeed.Activities.SingleFragmentActivity" />
+    <activity android:name="com.purdue.CampusFeed.Activities.SingleFragmentActivity">
+        <intent-filter>
+        	<action android:name="android.intent.action.VIEW"/>
+        	<category android:name="android.intent.category.DEFAULT"/>
+        	<category android:name="android.intent.category.BROWSABLE"/>
+        	<data android:scheme="http" android:host="campusfeed.com" android:pathPattern="/invite/.*"/>
+      	</intent-filter>   
+    </activity>
+    
+    	
 
     </application>
 
