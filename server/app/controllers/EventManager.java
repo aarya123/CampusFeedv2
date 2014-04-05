@@ -511,7 +511,7 @@ public static Result listEvent() {
 		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event LIMIT 25 OFFSET ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status FROM Event LIMIT 25 OFFSET ?")) {
     		stmt.setInt(1, page * 25);
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
