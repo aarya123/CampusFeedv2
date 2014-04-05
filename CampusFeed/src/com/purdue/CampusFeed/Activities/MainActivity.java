@@ -80,7 +80,7 @@ public class MainActivity extends FragmentActivity {
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				Log.i("TEST", "" + api.advSearchEvent(new AdvSearchQuery()));
+				Log.i("TEST", "" + api.login("1", "1"));
 				return null;
 			}
         	
