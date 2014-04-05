@@ -457,7 +457,6 @@ public static Result advSearch() {
 		e.printStackTrace();
 		return internalServerError();
 	}
-	// add user to rsvp
 	// get the user id
 	long user_id =Application.getUserId(request);
 	//check params
@@ -646,6 +645,18 @@ public static Result updateEvent()
 
 public static Result top5() {
 	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	// get the user id
+	long user_id =Application.getUserId(request);
 	String category;
 	try {
 		category = request.get("category").textValue();
@@ -657,21 +668,11 @@ public static Result top5() {
 				.put("error", "Parameters: category (text)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
-		stmt.setString(1, category);
+		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " AND Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
+		stmt.setLong(1, user_id);
+		stmt.setString(2, category);
 		ResultSet rs = stmt.executeQuery();
-		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
-		while(rs.next()) {
-			ObjectNode eventRes = createEventJson(rs);
-			try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
-				stmtTag.setLong(1, rs.getLong("id"));
-				stmtTag.execute();
-				ResultSet rsTag = stmtTag.getResultSet();
-				addCategoriesToEventJson(eventRes, rsTag);
-			}
-			searchResults.add(eventRes);
-		}
-		return ok(searchResults);
+		return ok(buildEventResults(conn, rs));
 		
 	}
 	catch(SQLException e) {
