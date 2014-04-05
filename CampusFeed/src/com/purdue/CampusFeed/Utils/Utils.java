@@ -41,7 +41,7 @@ import com.purdue.CampusFeed.Activities.ContactDetailActivity;
 import com.purdue.CampusFeed.Activities.ContactsListActivity;
 
 /**
- * This class contains static utility methods.
+ * This class contains static utility methods. 
  */
 public class Utils {
 
