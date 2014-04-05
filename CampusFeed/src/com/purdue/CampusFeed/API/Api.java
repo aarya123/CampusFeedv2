@@ -84,7 +84,6 @@ public class Api implements Closeable {
             InputStream input = new BufferedInputStream(conn.getInputStream());
             Scanner in = new Scanner(input).useDelimiter("\\A");
             String raw = in.next();
-            Log.i("raw", raw);
             Object response = gson.fromJson(raw, type);
             input.close();
             return response;
