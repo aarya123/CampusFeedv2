@@ -84,6 +84,7 @@ public class Api implements Closeable {
             InputStream input = new BufferedInputStream(conn.getInputStream());
             Scanner in = new Scanner(input).useDelimiter("\\A");
             String raw = in.next();
+            Log.i("raw", raw);
             Object response = gson.fromJson(raw, type);
             input.close();
             return response;
@@ -92,20 +93,20 @@ public class Api implements Closeable {
             return null;
         }
     }
+    static class LoginRequest {
+        public String fb_user_id;
+        public String access_token;
 
+        public LoginRequest(String fb_user_id, String access_token) {
+            this.fb_user_id = fb_user_id;
+            this.access_token = access_token;
+        }
+    }
+
+    static class LoginResponse {
+        public String access_token;
+    }
     public boolean login(String fb_user_id, String access_token) {
-        class LoginRequest {
-            public String fb_user_id;
-            public String access_token;
-
-            public LoginRequest(String fb_user_id, String access_token) {
-                this.fb_user_id = fb_user_id;
-                this.access_token = access_token;
-            }
-        }
-        class LoginResponse {
-            public String access_token;
-        }
         LoginResponse resp = (LoginResponse) getResponse("POST", "login", gson.toJson(new LoginRequest(fb_user_id, access_token)), LoginResponse.class);
         if (resp != null) {
             login = new Auth(fb_user_id, resp.access_token);
