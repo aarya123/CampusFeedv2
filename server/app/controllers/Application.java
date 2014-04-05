@@ -131,7 +131,7 @@ public class Application extends Controller {
     	}
     	//return long lived access token to use as auth
     	JsonNode resp = JsonNodeFactory.instance.objectNode().put("access_token", accessToken);
-    	return Application.ok(resp);
+    	return ok(resp);
     }
     
     public static void checkReqValid(JsonNode req) throws AuthorizationException, SQLException {
@@ -195,5 +195,6 @@ public class Application extends Controller {
 			return -1;
 		}
 	}
+	
 
 }
