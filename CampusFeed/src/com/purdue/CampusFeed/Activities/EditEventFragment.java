@@ -11,8 +11,6 @@ import android.widget.*;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.AsyncTasks.ModifyEvent;
 import com.purdue.CampusFeed.R;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.util.Calendar;
 
@@ -20,24 +18,41 @@ import java.util.Calendar;
  * Created by Sean on 3/8/14.
  */
 public class EditEventFragment extends Fragment {
+    private static final String[] tagSuggestions = new String[]{"Social", "Cultural", "Education"};
+    public static int year, month, day, hour, minute, visibility;
+    /*Called when the user finishes selecting a date from the dialog*/
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+            year = selectedYear;
+            month = selectedMonth;
+            day = selectedMonth;
+
+            //Change spinner's text view to selected date
+            dateSpinner.setText(new StringBuilder().append(month + 1)
+                    .append("-").append(day).append("-").append(year).append(" "));
+        }
+    };
+    public static String title, description, location, date_time;
+    public static String[] categories;
     public Event myEvent;
+    public EditText dateSpinner, timeSpinner;
+    EditText nameText, descriptionText, locationText;
+    MultiAutoCompleteTextView multiAutoCompleteTextView;
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
-    public EditText dateSpinner;
-    public EditText timeSpinner;
-    public static int year;
-    public static int month;
-    public static int day;
-    public static int hour;
-    public static String date_time;
-    public static int minute;
     private Button doneButton;
-    public static String title;
-    public static String description;
-    public static String location;
-    EditText nameText;
-    EditText descriptionText;
-    EditText locationText;
+    /*Called when the user finishes selecting the time of the event*/
+    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+            hour = selectedHour;
+            minute = selectedMinute;
+
+            //update spinner text
+            timeSpinner.setText(new StringBuilder().append(hour).append(":").append(minute));
+        }
+    };
 
     public static EditEventFragment create(Event event) {
         EditEventFragment frag = new EditEventFragment();
@@ -58,7 +73,9 @@ public class EditEventFragment extends Fragment {
         dateSpinner = (EditText) getActivity().findViewById(R.id.dateSpinner);
         timeSpinner = (EditText) getActivity().findViewById(R.id.timeSpinner);
         doneButton = (Button) getActivity().findViewById(R.id.done);
-
+        multiAutoCompleteTextView = (MultiAutoCompleteTextView) getActivity().findViewById(R.id.tagText);
+        multiAutoCompleteTextView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, tagSuggestions));
+        multiAutoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         //set default text field values
         nameText.setText(myEvent.getEventName());
         descriptionText.setText(myEvent.getEventDescription());
@@ -103,8 +120,6 @@ public class EditEventFragment extends Fragment {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HttpClient httpClient = new DefaultHttpClient();
-
                 EditText nameText = (EditText) getActivity().findViewById(R.id.nameText);
                 EditText descriptionText = (EditText) getActivity().findViewById(R.id.descriptionText);
                 EditText locationText = (EditText) getActivity().findViewById(R.id.locationText);
@@ -113,44 +128,20 @@ public class EditEventFragment extends Fragment {
                 myEvent.setEventName(nameText.getText().toString());
                 myEvent.setEventDescription(descriptionText.getText().toString());
                 myEvent.setEventLocation(locationText.getText().toString());
-                month = month + 1;//account for months indexed at 0
                 myEvent.setDatetime("" + month + "-" + day + "-" + year + " " + hour + ":" + minute);
                 title = myEvent.getEventName();
                 description = myEvent.getEventDescription();
                 location = myEvent.getEventLocation();
                 date_time = myEvent.getDatetime();
-
-                new ModifyEvent(myEvent).execute("fsdf");
+                visibility = ((RadioButton) EditEventFragment.this.getActivity().findViewById(R.id.privateEvent)).isChecked() ? Event.PRIVATE : Event.PUBLIC;
+                categories = multiAutoCompleteTextView.getText().toString().split(",");
+                for (int i = 0; i < categories.length; i++)
+                    categories[i] = categories[i].replace(" ", "");
+                new ModifyEvent(myEvent, EditEventFragment.this.getActivity()).execute("fsdf");
                 Toast.makeText(getActivity(), "Event updated to: " + myEvent.getEventLocation() + "" + myEvent.getDatetime(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-    /*Called when the user finishes selecting a date from the dialog*/
-    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
-            year = selectedYear;
-            month = selectedMonth;
-            day = selectedMonth;
-
-            //Change spinner's text view to selected date
-            dateSpinner.setText(new StringBuilder().append(month + 1)
-                    .append("-").append(day).append("-").append(year).append(" "));
-        }
-    };
-
-    /*Called when the user finishes selecting the time of the event*/
-    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-            hour = selectedHour;
-            minute = selectedMinute;
-
-            //update spinner text
-            timeSpinner.setText(new StringBuilder().append(hour).append(":").append(minute));
-        }
-    };
 
 
 }

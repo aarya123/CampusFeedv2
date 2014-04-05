@@ -31,7 +31,7 @@ import views.html.*;
 
 public class ScraperHandler extends Controller {
 	
-	public static int SCRAPER_ID = 2;
+	public static int SCRAPER_ID = 28;
 	public static Result scrapedPage()
 	{
 		JsonNode request = request().body().asJson();

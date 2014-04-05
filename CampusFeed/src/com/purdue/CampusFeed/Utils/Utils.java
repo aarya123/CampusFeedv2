@@ -16,10 +16,24 @@
 
 package com.purdue.CampusFeed.Utils;
 
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -27,10 +41,98 @@ import com.purdue.CampusFeed.Activities.ContactDetailActivity;
 import com.purdue.CampusFeed.Activities.ContactsListActivity;
 
 /**
- * This class contains static utility methods.
+ * This class contains static utility methods. 
  */
 public class Utils {
 
+	//---------GCM variables------------------
+    public static final String EXTRA_MESSAGE = "message";
+    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+	
+    /**
+     * Substitute you own sender ID here. This is the project number you got
+     * from the API Console, as described in "Getting Started."
+     */
+    static String SENDER_ID = "872065754556";
+    
+    /**
+     * Tag used on log messages.
+     */
+    static final String GCM_DEBUG_TAG = "GCMDemo";
+    TextView mDisplay;
+    static GoogleCloudMessaging gcm;
+    AtomicInteger msgId = new AtomicInteger();
+    SharedPreferences prefs;
+    Context context;
+    static String gcmRegid;
+    
+    //--------------------------------------//
+    
+    //---------------GCM Functions----------//
+
+    /**
+     * Registers the application with GCM servers asynchronously.
+     * <p/>
+     * Stores the registration ID and app versionCode in the application's
+     * shared preferences.
+     */
+    @SuppressWarnings("unchecked")
+	private static void registerInBackground(final Context context) {
+        new AsyncTask() {
+            protected Object doInBackground(Object[] params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(context);
+                    }
+                    gcmRegid = gcm.register(SENDER_ID);
+                    msg = "Device registered, registration ID=" + gcmRegid;
+
+                    
+                    // You should send the registration ID to your server over HTTP,
+                    // so it can use GCM/HTTP or CCS to send messages to your app.
+                    // The request to your server should be authenticated if your app
+                    // is using accounts.
+                    //sendRegistrationIdToBackend();
+
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    gcmRegid = "FAIL";
+                    Log.d("PRANAV", ex.toString());
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform
+                    // exponential back-off.
+                }
+                return msg;
+            }
+            
+            @Override
+            protected void onPostExecute(Object msg) {
+            	Toast.makeText(context, "id = "+gcmRegid, Toast.LENGTH_SHORT).show();
+            }
+        }.execute(null, null, null);
+    }
+    
+    
+    
+    /**
+     * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
+     * or CCS to send messages to your app. Not needed for this demo since the
+     * device sends upstream messages to a server that echoes back the message
+     * using the 'from' address in the message.
+     */
+    private static void sendRegistrationIdToBackend() {
+        // Your implementation here.
+    }
+    
+    public static boolean checkPlayServices(Context context) {
+        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS ? true : false;
+    }
+    
+    //-----------------------------------------//
+    
     // Prevents instantiation.
     private Utils() {
     }
@@ -39,12 +141,26 @@ public class Utils {
     private static ImageLoader mImageLoader;
 
     public static void init(Context c) {
+    	//init contact stuff
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true).cacheOnDisc(true).build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
                 c).defaultDisplayImageOptions(defaultOptions).build();
         mImageLoader = ImageLoader.getInstance();
         mImageLoader.init(config);
+        
+        
+        
+        //init GCM stuff (added by Pranav)
+        
+        if (checkPlayServices(c)) {
+        	//register for GCM everytime, crappy implementation
+        	//will change later
+        	
+            gcm = GoogleCloudMessaging.getInstance(c);
+             registerInBackground(c);
+        }else
+            Log.i(GCM_DEBUG_TAG, "No valid Google Play Services APK found.");
     }
 
     public static ImageLoader getImageLoader() {
