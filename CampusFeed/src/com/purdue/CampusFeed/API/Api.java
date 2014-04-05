@@ -202,6 +202,16 @@ public class Api implements Closeable {
     public List<Event> top5(String category) {
     	return (List<Event>) getResponse("POST", "top5", gson.toJson(new Top5Request(category)), new TypeToken<List<Event>>(){}.getType());
     }
+    
+    
+    class TagResponse {
+    	public String[] tags;
+    }
+    
+    public String[] allTags() {
+    	TagResponse response = (TagResponse) getResponse("GET", "all_tags", null, TagResponse.class);
+    	return response.tags;
+    }
 
     @Override
     public void close() throws IOException {
