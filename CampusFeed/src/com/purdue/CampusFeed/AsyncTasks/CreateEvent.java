@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
-import com.purdue.CampusFeed.Activities.CreateEventFragment;
 
 public class CreateEvent extends AsyncTask<Event, Void, String> {
 
@@ -16,6 +15,6 @@ public class CreateEvent extends AsyncTask<Event, Void, String> {
 
     protected String doInBackground(Event... event) {
         Api.getInstance(context).createEvent(event[0]);
-        return "done";
+        return "";
     }
 }
