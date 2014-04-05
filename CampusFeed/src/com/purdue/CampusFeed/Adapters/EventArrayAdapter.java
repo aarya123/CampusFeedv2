@@ -7,11 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
-import com.purdue.CampusFeed.R.id;
-
 
 import java.util.ArrayList;
 
@@ -42,7 +39,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
             holder.eventImage = (ImageView) convertView.findViewById(R.id.event_image);
             holder.eventName = (TextView) convertView.findViewById(R.id.event_name);
             holder.eventTime = (TextView) convertView.findViewById(R.id.event_time);
-            holder.eventDescription = (TextView) convertView.findViewById(id.event_location);
+            holder.eventDescription = (TextView) convertView.findViewById(R.id.event_location);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

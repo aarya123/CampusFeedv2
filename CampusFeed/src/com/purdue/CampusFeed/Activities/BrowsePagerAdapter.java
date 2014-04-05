@@ -19,17 +19,14 @@ public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
         this.categories = categories;
     }
 
-    @Override
     public int getCount() {
         return categories.length;
     }
 
-    @Override
     public CharSequence getPageTitle(int position) {
         return categories[position];
     }
 
-    @Override
     public Fragment getItem(int i) {
         AdvSearchQuery query = new AdvSearchQuery();
         query.addCategory(categories[i]);
