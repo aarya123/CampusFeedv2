@@ -83,6 +83,10 @@ public class GCMHandler extends Controller {
 				if(s.next())
 				{
 					gcm_id = s.getString("gcm_id");
+					if(gcm_id==null || gcm_id=="")
+					{
+						return -1;
+					}
 				}
 				else{
 						// user does not exist
