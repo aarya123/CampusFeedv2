@@ -22,9 +22,6 @@ POST 	/scraper_handle	controllers.ScraperHandler.scrapedPage()
 #RSVP endpoint
 POST /rsvp	controllers.EventManager.rsvp_to_event()
 
-#ALL
-POST /all	controllers.EventManager.all()
-
 #UPDATE EVENTS
 POST /update_event	controllers.EventManager.updateEvent()
 

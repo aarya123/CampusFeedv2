@@ -511,7 +511,7 @@ public static Result listEvent() {
 		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event LIMIT 25 OFFSET ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status FROM Event LIMIT 25 OFFSET ?")) {
     		stmt.setInt(1, page * 25);
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
@@ -625,29 +625,6 @@ public static Result updateEvent()
 		return internalServerError();
 	}
 	
-}
-
-public static Result all()
-{
-	
-	ArrayNode all = JsonNodeFactory.instance.arrayNode();
-	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`")) {
-			try(ResultSet s =stmt.executeQuery()) {
-				while(s.next())
-				{
-					all.add(createEventJson(s));
-				}
-			}
-		}
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-		return internalServerError(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
-	}
-	
-	
-	return ok(all);
 }
 
 public static Result top5() {
