@@ -69,7 +69,6 @@ public class GCMHandler extends Controller {
 		 */
 		public static int sendMessage(String id, String message)
 		{
-		
 			// get the user_id of person
 			String user_id = id;
 			// get the gcm_id of the user
