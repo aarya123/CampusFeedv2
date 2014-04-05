@@ -2,12 +2,10 @@ package com.purdue.CampusFeed.AsyncTasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
-import com.purdue.CampusFeed.Utils.Utils;
 
 import java.util.List;
 
@@ -32,11 +30,8 @@ public class SearchQueryExecutor extends AsyncTask<AdvSearchQuery, Integer, List
 
     protected void onPostExecute(List<Event> list) {
         super.onPostExecute(list);
-        if (list != null) {
-            for (Event e : list)
-                Log.d(Utils.TAG, e.getEventName());
+        if (list != null)
             adapter.addAll(list);
-        }
         adapter.notifyDataSetChanged();
     }
 }

@@ -56,9 +56,9 @@
 	</LinearLayout>
 	<TextView android:layout_width="fill_parent"
 	          android:layout_height="wrap_content"
-			android:text="Event Visibility"
-			android:gravity="center"
-			style="@android:style/TextAppearance.Medium"/>
+	          android:text="Event Visibility"
+	          android:gravity="center"
+	          style="@android:style/TextAppearance.Medium"/>
 	<LinearLayout
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"

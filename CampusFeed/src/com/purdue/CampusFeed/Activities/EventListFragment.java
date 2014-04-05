@@ -1,5 +1,6 @@
 package com.purdue.CampusFeed.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -8,6 +9,7 @@ import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
 import com.purdue.CampusFeed.AsyncTasks.SearchQueryExecutor;
+import com.purdue.CampusFeed.R;
 
 import java.util.ArrayList;
 
@@ -29,7 +31,11 @@ public class EventListFragment extends ListFragment {
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {
-
+        Event e = adapter.getItem(position);
+        Intent intent = new Intent(getActivity(), SingleFragmentActivity.class);
+        intent.putExtra(getString(R.string.START_FRAGMENT), "EventPageFragment");
+        intent.putExtra(getString(R.string.EVENT), e);
+        startActivity(intent);
     }
 
 }
