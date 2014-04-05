@@ -490,7 +490,7 @@ public static Result advSearch() {
 		}
 		if(request.has("tags")) {
 			ArrayNode tags = (ArrayNode) request.get("tags");
-			if(params.size() != 1) {
+			if(params.size() != 0) {
 				sql += " AND (";
 			}
 			for(int i = 0; i < tags.size(); ++i) {
