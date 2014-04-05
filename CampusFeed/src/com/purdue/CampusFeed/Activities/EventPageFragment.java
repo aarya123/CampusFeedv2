@@ -48,8 +48,9 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         loc.setText(myEvent.getEventLocation());
         desc.setText(myEvent.getEventDescription());
         String tags = "Event Tags: ";
-        for (String str : myEvent.getCategories())
-            tags += str + " ";
+        for (int i = 0; i < myEvent.getCategories().length; i++)
+            tags += myEvent.getCategories()[i] + ", ";
+        tags = tags.substring(0, tags.length() - 2);
         eventTags.setText(tags);
         //desc.setText(myEvent.getEventName()+" @ "+myEvent.getDatetime()+"\n\n\n\n"+myEvent.getEventDescription()+"\n\n\n\n"+myEvent.getEventLocation());
 
