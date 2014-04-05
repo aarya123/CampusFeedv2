@@ -11,6 +11,7 @@ public class Event {
 	private String time_start;
 	private String time_end;
 	private String description;
+	private int error;
 	
 	public Event(String url) {
 		this.url = url;
@@ -83,7 +84,15 @@ public class Event {
 	public String getOrganization() {
 		return organization;
 	}
+
+	public int getError() {
+		return error;
+	}
 	
+	public void setError() {
+		error = 1;
+	}
+
 	/*
 	 * Returns a json strong parsable by the database
 	 */

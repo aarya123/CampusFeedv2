@@ -10,17 +10,23 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.sql.Time;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 
 public class Scraper {
-		
+
 	private static void runScanner(String website) {
 		String webURL = "the internet.";
 		try {
 			if (website.equals("BoilerLink")) {
 				webURL = "https://boilerlink.purdue.edu/EventRss/EventsRss";
 				scanBoilerLink(webURL);
+			} else if (website.equals("PurdueNews")) {
+				webURL = "http://www.purdue.edu/newsroom/rss/EventNews.xml";
+				scanPurdueNews(webURL);
 			}
 		} catch (IOException e) {
 			System.out.println("ERROR: Unable to connect to "+website+" at "+webURL+
@@ -35,27 +41,22 @@ public class Scraper {
 		Elements events = scan_homepage.select("item");
 		for (Element event : events) {
 			Event e = parseBoilerEvent(event);
+			System.out.println(e.getSendFormat());
 			// sendData(e);
 		}
 	}
 	
-	public static void sendData(Event e) {
-		HttpClient httpClient = new DefaultHttpClient();
-	    try {
-	        HttpPost request = new HttpPost("http://54.213.17.69:9000/scraper_handle");
-	        StringEntity params = new StringEntity(e.getSendFormat());
-	        request.addHeader("content-type", "application/json");
-	        request.setEntity(params);
-	        HttpResponse response = httpClient.execute(request);
-	        // handle response here...
-	    }catch (Exception ex) {
-	        // handle exception here
-	    	ex.printStackTrace();
-	    	System.exit(2);
-	    } finally {
-	        httpClient.getConnectionManager().shutdown();
-			System.out.println("SENT!");
-	    }
+	private static void scanPurdueNews(String url) throws IOException {
+		Connection com = Jsoup.connect(url);
+		Document scan_homepage = com.ignoreContentType(true).get();
+		Elements events = scan_homepage.select("item");
+		for (Element event : events) {
+			Event e = parsePurdueNewsEvent(event);
+			if (e.getError() == 0) {
+				System.out.println(e.getSendFormat());
+				//sendData(e);
+			}
+		}
 	}
 	
 	public static Event parseBoilerEvent(Element event) {
@@ -139,17 +140,116 @@ public class Scraper {
 			description = alt[0];
 			k.setDescription(description);
 		}
-		//TODO DEBUG TESTING
-		//System.out.println(k.toString() + "\n");
-		System.out.println(k.getSendFormat());
 		return k;
+	}
+	
+	public static Event parsePurdueNewsEvent(Element event) {
+		String page_URL = event.toString().split("<link />")[1].split("<description>")[0].trim();
+		Event k = new Event(page_URL);
+		// Parse and set title
+		String title = event.toString().split("<title>")[1].split("</title>")[0].trim();
+		k.setTitle(title);
+		// Parse and set description
+		String desc = event.toString().split("<description>")[1].split("</description>")[0].trim();
+		k.setDescription(desc);
+		// Set Category
+		String[] cat = {"University Event"};
+		k.setCategories(cat);
+		// Parse date
+		// Parse start and end times from description
+		String[] months = {"null", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+		Pattern date_pattern = Pattern.compile("((January)|(February)|(March)|(April)|(May)|(June)|(July)|(August)|(September)|(October)|(November)|(December))(\\s+)(\\d+)");
+		Matcher date_matcher = date_pattern.matcher(desc);
+		String date = null;
+		int month = 0;
+		int day = 0;
+		while (date_matcher.find()) {
+			date = date_matcher.group();
+			month = 12;
+			while (month > 0 && !months[month].equals(date.split(" ")[0])) {
+				month--;
+			}
+			day = Integer.parseInt(date.split(" ")[1]);
+		}
+		// Indicate invalid month or day
+		if (month == 0 || day == 0) { k.setError(); }
+		String strMonth = String.valueOf(month);
+		if (strMonth.length() < 2) {
+			strMonth = "0" + strMonth;
+		}
+		String strDay = String.valueOf(day);
+		if (strDay.length() < 2) {
+			strDay = "0" + strDay;
+		}
+		// Parse start and end times from description
+		Pattern time_pattern = Pattern.compile("([\\d]*)(:*)([\\d]+)(\\s+?)((a.m.)|(p.m.)){1}");
+		Matcher time_matcher = time_pattern.matcher(desc.toLowerCase());
+		int i = 0;
+		while (time_matcher.find()) {
+			String found = time_matcher.group();
+			String time;
+			if (found.contains("a.m.") && !found.contains(":")) {
+				time = found.split("a.m.")[0].split(" ")[0];
+				if (time.length() < 2) { time = "0" + time; }
+				time += ":00:00";
+			} else if (found.contains("a.m.") && found.contains(":")) {
+				time = found.split("a.m.")[0].split(" ")[0];
+				String tmp[] = time.split(":");
+				tmp[0] = String.valueOf(Integer.valueOf(tmp[0])+ 12);
+				time = tmp[0] + ":" + tmp[1];
+				time += ":00";
+			} else if (found.contains("p.m.") && !found.contains(":")) {
+				time = String.valueOf(Integer.valueOf(found.split("a.m.")[0].split(" ")[0]) + 12);
+				if (time.length() < 2) { time = "0" + time; }
+				time += ":00:00";
+			} else {
+				time = found.split("p.m.")[0].split(" ")[0];
+				String tmp[] = time.split(":");
+				tmp[0] = String.valueOf(Integer.valueOf(tmp[0])+ 12);
+				time = tmp[0] + ":" + tmp[1];
+				time += ":00";
+			}
+			if (i == 0) {
+				k.setStartTime(time);
+			} else if (i == 1) {
+				k.setEndTime(time);
+			}
+			i++;
+		}
+		// Indicate no valid times found
+		if (i == 0) { k.setError(); }
+		// Build event time format
+		k.setStartTime(strMonth + "-" + strDay + "-2014 " + k.getStartTime());
+		// Parse location from description
+		k.setLocation("Purdue University");
+		return k;
+	}
+	
+	public static void sendData(Event e) {
+		HttpClient httpClient = new DefaultHttpClient();
+	    try {
+	        HttpPost request = new HttpPost("http://54.213.17.69:9000/scraper_handle");
+	        StringEntity params = new StringEntity(e.getSendFormat());
+	        request.addHeader("content-type", "application/json");
+	        request.setEntity(params);
+	        HttpResponse response = httpClient.execute(request);
+	        // handle response here...
+	    }catch (Exception ex) {
+	        // handle exception here
+	    	ex.printStackTrace();
+	    	System.exit(2);
+	    } finally {
+	        httpClient.getConnectionManager().shutdown();
+			System.out.println("SENT!");
+	    }
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
 		boolean run = true;
 		int delay = 10; // Seconds
 		while (run) {
-			runScanner("BoilerLink");
+			//runScanner("BoilerLink");
+			runScanner("PurdueNews");
 			// Thread.sleep(delay*1000);
 			// TODO DEBUG
 			run = false;
