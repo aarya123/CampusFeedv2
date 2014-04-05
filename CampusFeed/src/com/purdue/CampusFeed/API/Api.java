@@ -74,9 +74,9 @@ public class Api implements Closeable {
             HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + endpoint).openConnection();
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             conn.setRequestProperty("Content-Length", Integer.toString(json.length()));
-            conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod(method);
-            conn.setDoInput(true);
+            //conn.setDoInput(true);
+            HttpURLConnection.setFollowRedirects(false);
             if (method.equals("POST")) {
                 conn.setDoOutput(true);
                 OutputStream output = new BufferedOutputStream(conn.getOutputStream());
@@ -94,20 +94,20 @@ public class Api implements Closeable {
             return null;
         }
     }
+    static class LoginRequest {
+        public String fb_user_id;
+        public String access_token;
 
+        public LoginRequest(String fb_user_id, String access_token) {
+            this.fb_user_id = fb_user_id;
+            this.access_token = access_token;
+        }
+    }
+
+    static class LoginResponse {
+        public String access_token;
+    }
     public boolean login(String fb_user_id, String access_token) {
-        class LoginRequest {
-            public String fb_user_id;
-            public String access_token;
-
-            public LoginRequest(String fb_user_id, String access_token) {
-                this.fb_user_id = fb_user_id;
-                this.access_token = access_token;
-            }
-        }
-        class LoginResponse {
-            public String access_token;
-        }
         LoginResponse resp = (LoginResponse) getResponse("POST", "login", gson.toJson(new LoginRequest(fb_user_id, access_token)), LoginResponse.class);
         if (resp != null) {
             login = new Auth(fb_user_id, resp.access_token);

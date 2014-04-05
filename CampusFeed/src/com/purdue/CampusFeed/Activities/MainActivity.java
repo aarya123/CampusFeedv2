@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
@@ -15,8 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+
 import com.facebook.*;
 import com.facebook.model.GraphUser;
+import com.purdue.CampusFeed.API.AdvSearchQuery;
+import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
 import com.purdue.CampusFeed.AsyncTasks.Login;
 import com.purdue.CampusFeed.R;
@@ -56,6 +60,16 @@ public class MainActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.init(getApplicationContext());
+        final Api api = Api.getInstance(this);
+        new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				Log.i("TEST", "" + api.login("1", "1"));
+				return null;
+			}
+        	
+        }.execute();
 
         HomepageFragment homepageFragment = new HomepageFragment();
         getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();

@@ -69,13 +69,12 @@ public class GCMHandler extends Controller {
 		 */
 		public static int sendMessage(String id, String message)
 		{
-		
 			// get the user_id of person
 			String user_id = id;
 			// get the gcm_id of the user
 			String gcm_id = null;
 			// api key
-			String api_key =null;
+			String api_key ="AIzaSyByHZpsk-XepjWKY3bshI75WpNFal0NrCE";
 			try(Connection conn = DB.getConnection()) {
 				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `User`  WHERE fb_user_id=?");
 				stmt.setString(1, user_id);
@@ -92,7 +91,6 @@ public class GCMHandler extends Controller {
 						// user does not exist
 					return -1;
 				}
-				
 				s.close();
 				// now that we have the user gcm id, we will send the message
 				JsonNode requestNode =JsonNodeFactory.instance.objectNode().put("registration_ids", gcm_id).put("data", message);
