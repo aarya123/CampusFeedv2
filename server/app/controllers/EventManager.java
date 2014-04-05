@@ -652,8 +652,7 @@ public static Result getEvent() {
 	}
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
-		stmt.setLong(1, user_id);
-		stmt.setLong(2, event_id);
+		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
 		return ok(buildEventResults(conn, rs).get(0));
 	}
