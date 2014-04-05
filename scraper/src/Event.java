@@ -1,4 +1,6 @@
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class Event {
 
@@ -96,21 +98,21 @@ public class Event {
 	/*
 	 * Returns a json strong parsable by the database
 	 */
-	public String getSendFormat() {
+	public String getSendFormat() throws ParseException {
 		// Format categories array to json string object
 		String cat = "[";
 		for (int i = 0; i < categories.length; i++) {
-			cat += categories[i];
+			cat += "\"" + categories[i] + "\"";
 			if (i != categories.length - 1) { cat += ", "; }
 		}
 		cat += "]";
 		
 		String k = "{\"title\":\"" + title +
-					"\",\"categories\":\"" + cat +
-					"\",\"desc\":\"" + description +
+					"\",\"categories\":" + cat +
+					",\"desc\":\"" + description +
 					"\",\"location\":\"" + location +
 					"\",\"visibility\":1,"
-					+ "\"date_time\":\"" + time_start +
+					+ "\"date_time\":\"" + new SimpleDateFormat("M-d-yyyy k:m:s").parse(time_start).getTime() +
 					"\",\"url\":\"" + URLEncoder.encode(url) + "\"}";
 		return k;
 	}

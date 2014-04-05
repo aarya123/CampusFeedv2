@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.sql.Time;
+import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,14 +29,14 @@ public class Scraper {
 				webURL = "http://www.purdue.edu/newsroom/rss/EventNews.xml";
 				scanPurdueNews(webURL);
 			}
-		} catch (IOException e) {
+		} catch (IOException | ParseException e) {
 			System.out.println("ERROR: Unable to connect to "+website+" at "+webURL+
 					"\nTry again in a few seconds.");
 			e.printStackTrace();
 		}
 	}
 	
-	private static void scanBoilerLink(String url) throws IOException {
+	private static void scanBoilerLink(String url) throws IOException, ParseException {
 		Connection com = Jsoup.connect(url);
 		Document scan_homepage = com.ignoreContentType(true).get();
 		Elements events = scan_homepage.select("item");
@@ -46,7 +47,7 @@ public class Scraper {
 		}
 	}
 	
-	private static void scanPurdueNews(String url) throws IOException {
+	private static void scanPurdueNews(String url) throws IOException, ParseException {
 		Connection com = Jsoup.connect(url);
 		Document scan_homepage = com.ignoreContentType(true).get();
 		Elements events = scan_homepage.select("item");
