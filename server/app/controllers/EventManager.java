@@ -62,7 +62,7 @@ public class EventManager extends Controller{
     		Application.checkReqValid(request);
     	}
     	catch(AuthorizationException e) {
-    		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+    		return badRequest(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
     	}
     	catch(SQLException e) {
     		e.printStackTrace();
@@ -332,7 +332,7 @@ public static Result rsvp_to_event()
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
@@ -451,7 +451,7 @@ public static Result advSearch() {
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
@@ -521,7 +521,7 @@ public static Result listEvent() {
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
@@ -586,7 +586,7 @@ public static Result updateEvent()
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
@@ -650,7 +650,7 @@ public static Result top5() {
 		Application.checkReqValid(request);
 	}
 	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+		return badRequest(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
