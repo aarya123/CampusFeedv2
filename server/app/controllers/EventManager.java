@@ -430,8 +430,20 @@ private static void addCategoriesToEventJson(ObjectNode event, ResultSet rs) thr
 
 public static Result advSearch() {
 	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return internalServerError();
+	}
+	// add user to rsvp
+	// get the user id
+	long user_id =Application.getUserId(request);
 	//check params
-	String query;
 	if(!request.has("name") && !(request.has("start_date") && request.has("end_date")) &&
 			!request.has("desc") && !request.has("tags")){
 		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: name (text) or (start_date (date) and end_date (date)) or desc (text) or tags (array)"));
@@ -439,7 +451,8 @@ public static Result advSearch() {
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = null;
 		List<Object> params = new ArrayList<Object>();
-		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id where ";
+		params.add(user_id);
+		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE Event.id = Event_has_User.event_id AND (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1)) AND ";
 		if(request.has("name")) {
 			sql += "name like ?";
 			params.add("%" + request.get("name").textValue() + "%");
