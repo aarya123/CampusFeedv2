@@ -12,12 +12,11 @@ import java.util.Date;
  */
 public class Event implements Serializable {
 
+    public final static int PRIVATE = 1, PUBLIC = 0;
     String name, description, location;
     long id, time, status;
     String[] categories;
-
     int visibility;
-    public final static int PRIVATE = 1, PUBLIC = 0;
 
     public Event() {
         name = "";
@@ -38,6 +37,21 @@ public class Event implements Serializable {
         setDatetime(datetime);
         this.categories = categories;
         this.visibility = visibility;
+    }
+
+    public Event(String eventName, String eventDescription, String eventLocation,
+                 String datetime, String[] categories, int visibility, long id) {
+        this.name = eventName;
+        this.description = eventDescription;
+        this.location = eventLocation;
+        setDatetime(datetime);
+        this.categories = categories;
+        this.visibility = visibility;
+        this.id = id;
+    }
+
+    public static Event JSONToEvent(JSONObject json) {
+        return new Event();
     }
 
     public String getEventName() {
@@ -68,10 +82,6 @@ public class Event implements Serializable {
         return new SimpleDateFormat("M-d-yyyy k:m").format(new Date(time));
     }
 
-    public long getDatetimeLong() {
-        return time;
-    }
-
     public void setDatetime(long datetime) {
         this.time = datetime;
     }
@@ -83,6 +93,10 @@ public class Event implements Serializable {
             e.printStackTrace();
             this.time = 0;
         }
+    }
+
+    public long getDatetimeLong() {
+        return time;
     }
 
     public long getId() {
@@ -107,10 +121,6 @@ public class Event implements Serializable {
 
     public void setVisibility(int visibility) {
         this.visibility = visibility;
-    }
-
-    public static Event JSONToEvent(JSONObject json) {
-        return new Event();
     }
 
 }
