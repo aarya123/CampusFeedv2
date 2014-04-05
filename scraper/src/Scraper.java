@@ -35,14 +35,14 @@ public class Scraper {
 		Elements events = scan_homepage.select("item");
 		for (Element event : events) {
 			Event e = parseBoilerEvent(event);
-			sendData(e);
+			// sendData(e);
 		}
 	}
 	
 	public static void sendData(Event e) {
 		HttpClient httpClient = new DefaultHttpClient();
 	    try {
-	        HttpPost request = new HttpPost("http://yoururl/scraper_handle");
+	        HttpPost request = new HttpPost("http://54.213.17.69:9000/scraper_handle");
 	        StringEntity params = new StringEntity(e.getSendFormat());
 	        request.addHeader("content-type", "application/json");
 	        request.setEntity(params);
@@ -50,28 +50,37 @@ public class Scraper {
 	        // handle response here...
 	    }catch (Exception ex) {
 	        // handle exception here
+	    	ex.printStackTrace();
+	    	System.exit(2);
 	    } finally {
 	        httpClient.getConnectionManager().shutdown();
+			System.out.println("SENT!");
 	    }
 	}
 	
 	public static Event parseBoilerEvent(Element event) {
+		// Create new event from parsed url
 		String page_url = event.text().split("<link />")[0].split(" ")[0];
 		Event k = new Event(page_url);
-		
+		// Get author
 		String auth = event.select("author").text();
 		k.setAuthor(auth);
-		
 		// TODO Implement ORGS
 		//k.setOrganization(org);
-		
-		k.setCategory(event.select("category").text());
-		if (k.getCategory().length() == 0) { k.setCategory("error"); }
+		// Get category
+		String[] categories = event.select("category").text().split("/");
+		if (categories[0].length() == 0) {
+			String[] tmp = new String[1];
+			tmp[0] = "error";
+			k.setCategories(tmp);
+		} else {
+			k.setCategories(categories);
+		}
 		k.setTitle(event.select("title").text());
-		
+		// Prepare body parser
 		String description = event.select("description").text();
 		String[] times = description.split("<span class=\"");
-		
+		// Get start time
 		String startTime = times[1];
 		if (startTime.equals("dtstart\">")) {
 			k.setStartTime("error");
@@ -82,7 +91,9 @@ public class Scraper {
 			}
 			k.setStartTime(startTime);
 		}
+		// Get end time
 		k.setEndTime(times[2].split("</span>")[0].split("title=\"")[1].split("\">")[0]);
+		// Add T constraint to the end of times
 		if (!k.getEndTime().contains("T") && !k.getEndTime().contains("error")) {
 			k.setEndTime(k.getEndTime() + "T00:00:00");
 		}
@@ -97,9 +108,22 @@ public class Scraper {
 		if (!k.getEndTime().contains("error")) {
 			k.setEndTime(k.getEndTime().replace("T", " "));
 		}
-		
+		// MONTH DAY YEAR
+		if (!k.getStartTime().contains("error")) {
+			String[] sta = k.getStartTime().split("-");
+			String time = sta[2].split(" ")[1];
+			sta[2] = sta[2].split(" ")[0];
+			k.setStartTime(sta[1]+"-"+sta[2]+"-"+sta[0]+" "+time);
+		}
+		if (!k.getEndTime().contains("error")) {
+			String[] en = k.getEndTime().split("-");
+			String time = en[2].split(" ")[1];
+			en[2] = en[2].split(" ")[0];
+			k.setEndTime(en[1]+"-"+en[2]+"-"+en[0]+" "+time);
+		}
+		// Parse Location
 		k.setLocation(description.split("<span class=\"location\">")[1].split("</span>")[0]);
-		
+		// Parse Description
 		description = description.split("<div class=\"description\">")[1];
 		if (description.equals("</div>")) {
 			k.setDescription("error");
@@ -126,8 +150,9 @@ public class Scraper {
 		int delay = 10; // Seconds
 		while (run) {
 			runScanner("BoilerLink");
-			Thread.sleep(delay*1000);
-			// run = false;
+			// Thread.sleep(delay*1000);
+			// TODO DEBUG
+			run = false;
 		}
 	}
 }

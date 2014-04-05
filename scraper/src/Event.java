@@ -6,7 +6,7 @@ public class Event {
 	private String title;
 	private String author;
 	private String organization;
-	private String category;
+	private String[] categories;
 	private String location;
 	private String time_start;
 	private String time_end;
@@ -36,12 +36,12 @@ public class Event {
 		return author;
 	}
 	
-	public void setCategory(String category) {
-		this.category = category;
+	public void setCategories(String categories[]) {
+		this.categories = categories;
 	}
 	
-	public String getCategory() {
-		return category;
+	public String[] getCategories() {
+		return categories;
 	}
 	
 	public void setLocation(String location) {
@@ -84,8 +84,20 @@ public class Event {
 		return organization;
 	}
 	
+	/*
+	 * Returns a json strong parsable by the database
+	 */
 	public String getSendFormat() {
+		// Format categories array to json string object
+		String cat = "[";
+		for (int i = 0; i < categories.length; i++) {
+			cat += categories[i];
+			if (i != categories.length - 1) { cat += ", "; }
+		}
+		cat += "]";
+		
 		String k = "{\"title\":\"" + title +
+					"\",\"categories\":\"" + cat +
 					"\",\"desc\":\"" + description +
 					"\",\"location\":\"" + location +
 					"\",\"visibility\":1,"
@@ -100,7 +112,7 @@ public class Event {
 				+ author + "\n"
 				// TODO
 				// + organization + "\n"
-				+ category + "\n"
+				+ categories + "\n"
 				+ location + "\n"
 				+ time_start + "\n"
 				+ time_end + "\n"
