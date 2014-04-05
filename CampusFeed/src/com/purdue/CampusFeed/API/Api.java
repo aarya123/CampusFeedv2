@@ -123,32 +123,31 @@ public class Api implements Closeable {
         return (List<Event>) getResponse("POST", "adv_search_event", gson.toJson(query), new TypeToken<List<Event>>() {
         }.getType());
     }
+    class CreateEventRequest {
+        public String desc;
+        public String location;
+        public String[] categories;
+        public String title;
+        public Auth auth;
+        public int visibility;
+        public long date_time;
 
+        public CreateEventRequest(Event event) {
+            desc = event.description;
+            location = event.location;
+            categories = event.categories;
+            title = event.name;
+            this.auth = Api.this.login;
+            visibility = 1;
+            date_time = event.getDatetimeLong();
+        }
+    }
+    static class EventResponse {
+        public long event_id;
+    }
     public long createEvent(Event event) {
         if (login == null) {
             return -1;
-        }
-        class CreateEventRequest {
-            public String desc;
-            public String location;
-            public String[] categories;
-            public String title;
-            public Auth auth;
-            public int visibility;
-            public long date_time;
-
-            public CreateEventRequest(Event event) {
-                desc = event.description;
-                location = event.location;
-                categories = event.categories;
-                title = event.name;
-                this.auth = Api.this.login;
-                visibility = 1;
-                date_time = event.getDatetimeLong();
-            }
-        }
-        class EventResponse {
-            public long event_id;
         }
         EventResponse resp = (EventResponse) getResponse("POST", "create_event", gson.toJson(new CreateEventRequest(event)), EventResponse.class);
         if (resp != null) {
@@ -157,37 +156,51 @@ public class Api implements Closeable {
             return -1;
         }
     }
+    
+    class UpdateEventRequest {
+        public Auth auth;
+        public String title;
+        public String desc;
+        public String location;
+        public long date_time;
+        public long id;
+        public int visibility;
+        public String[] categories;
+
+        public UpdateEventRequest(Event event) {
+            this.auth = login;
+            this.title = event.description;
+            this.desc = event.description;
+            this.location = event.location;
+            this.date_time = event.time;
+            this.id = event.id;
+            this.visibility = 1;
+            this.categories = event.categories;
+        }
+    }
+    class UpdateResponse {
+        String ok;
+    }
 
     public boolean updateEvent(Event event) {
         if (login == null) {
             return false;
         }
-        class UpdateEventRequest {
-            public Auth auth;
-            public String title;
-            public String desc;
-            public String location;
-            public long date_time;
-            public long id;
-            public int visibility;
-            public String[] categories;
-
-            public UpdateEventRequest(Event event) {
-                this.auth = login;
-                this.title = event.description;
-                this.desc = event.description;
-                this.location = event.location;
-                this.date_time = event.time;
-                this.id = event.id;
-                this.visibility = 1;
-                this.categories = event.categories;
-            }
-        }
-        class UpdateResponse {
-            String ok;
-        }
-        UpdateResponse resp = (UpdateResponse) getResponse("POST", "update_event", gson.toJson(new Object()), UpdateResponse.class);
+        
+        UpdateResponse resp = (UpdateResponse) getResponse("POST", "update_event", gson.toJson(new UpdateEventRequest(event)), UpdateResponse.class);
         return resp != null;
+    }
+    
+    class Top5Request {
+    	public String category;
+    	public Auth auth;
+    	public Top5Request(String category) {
+    		this.category = category;
+    		this.auth = Api.this.login;
+    	}
+    }
+    public List<Event> top5(String category) {
+    	return (List<Event>) getResponse("POST", "top5", gson.toJson(new Top5Request(category)), new TypeToken<List<Event>>(){}.getType());
     }
 
     @Override
