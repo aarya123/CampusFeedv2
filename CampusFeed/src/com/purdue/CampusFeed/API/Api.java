@@ -5,16 +5,14 @@ import android.net.http.HttpResponseCache;
 import android.util.Log;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Make a static instance of this on app creation. Close it on shutdown
@@ -64,13 +62,13 @@ public class Api implements Closeable {
     }
 
     public static Api getInstance(Context context) {
-        if (instance != null) {
+        if (instance == null) {
             instance = new Api(context);
         }
         return instance;
     }
 
-    public <T> T getResponse(String method, String endpoint, String json) {
+    public Object getResponse(String method, String endpoint, String json, Type type) {
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(BASE_URL + endpoint).openConnection();
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
@@ -84,8 +82,9 @@ public class Api implements Closeable {
                 new OutputStreamWriter(output).append(json).close();
             }
             InputStream input = new BufferedInputStream(conn.getInputStream());
-            T response = gson.fromJson(new JsonReader(new InputStreamReader(input)), new TypeToken<T>() {
-            }.getType());
+            Scanner in = new Scanner(input).useDelimiter("\\A");
+            String raw = in.next();
+            Object response = gson.fromJson(raw, type);
             input.close();
             return response;
         } catch (Exception e) {
@@ -107,7 +106,7 @@ public class Api implements Closeable {
         class LoginResponse {
             public String access_token;
         }
-        LoginResponse resp = getResponse("POST", "login", gson.toJson(new LoginRequest(fb_user_id, access_token)));
+        LoginResponse resp = (LoginResponse) getResponse("POST", "login", gson.toJson(new LoginRequest(fb_user_id, access_token)), LoginResponse.class);
         if (resp != null) {
             login = new Auth(fb_user_id, resp.access_token);
             return true;
@@ -125,50 +124,14 @@ public class Api implements Closeable {
                 this.query = query;
             }
         }
-        return getResponse("POST", "search_event", gson.toJson(new SearchEventRequest(query)));
+        return (List<Event>) getResponse("POST", "search_event", gson.toJson(new SearchEventRequest(query)), new TypeToken<List<Event>>() {
+        }.getType());
     }
-    
-    public static class AdvSearchQuery {
-    	private long start_date = 0;
-    	private long end_date = Long.MAX_VALUE;
-    	private String title = null;
-    	private String desc = null;
-    	
-    	public void setStartDate(long startDate) {
-    		start_date = startDate;
-    	}
-    	
-    	public void setEndDate(long endDate) {
-    		end_date = endDate;
-    	}
-    	
-    	public void setTitle(String title) {
-    		this.title = title;
-    	}
-    	
-    	public void setDesc(String desc) {
-    		this.desc = desc;
-    	}
-    	
-    	public long getStartDate() {
-    		return start_date;
-    	}
-    	
-    	public long getEndDate() {
-    		return end_date;
-    	}
-    	
-    	public String getTitle() {
-    		return title;
-    	}
-    	
-    	public String getDesc() {
-    		return desc;
-    	}
-    }
-    
+
+
     public List<Event> advSearchEvent(AdvSearchQuery query) {
-    	return getResponse("POST", "adv_search_event", gson.toJson(query));
+        return (List<Event>) getResponse("POST", "adv_search_event", gson.toJson(query), new TypeToken<List<Event>>() {
+        }.getType());
     }
 
     public long createEvent(Event event) {
@@ -185,25 +148,19 @@ public class Api implements Closeable {
             public long date_time;
 
             public CreateEventRequest(Event event) {
-                desc = event.eventDescription;
-                location = event.eventLocation;
+                desc = event.description;
+                location = event.location;
                 categories = event.categories;
-                title = event.eventName;
+                title = event.name;
                 this.auth = Api.this.login;
                 visibility = 1;
-                try {
-                    date_time = new SimpleDateFormat("M-d-yyyy k:m").parse(event.datetime).getTime();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    date_time = 0;
-                }
-
+                date_time = event.getDatetimeLong();
             }
         }
         class EventResponse {
             public long event_id;
         }
-        EventResponse resp = getResponse("POST", "create_event", gson.toJson(new CreateEventRequest(event)));
+        EventResponse resp = (EventResponse) getResponse("POST", "create_event", gson.toJson(new CreateEventRequest(event)), EventResponse.class);
         if (resp != null) {
             return resp.event_id;
         } else {
@@ -227,16 +184,10 @@ public class Api implements Closeable {
 
             public UpdateEventRequest(Event event) {
                 this.auth = login;
-                this.title = event.eventDescription;
-                this.desc = event.eventDescription;
-                this.location = event.eventLocation;
-                try {
-                    this.date_time = new SimpleDateFormat("M-d-yyyy k:m").parse(event.datetime).getTime();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    this.date_time = 0;
-                }
-                ;
+                this.title = event.description;
+                this.desc = event.description;
+                this.location = event.location;
+                this.date_time = event.time;
                 this.id = event.id;
                 this.visibility = 1;
                 this.categories = event.categories;
@@ -245,7 +196,7 @@ public class Api implements Closeable {
         class UpdateResponse {
             String ok;
         }
-        UpdateResponse resp = getResponse("POST", "update_event", gson.toJson(new Object()));
+        UpdateResponse resp = (UpdateResponse) getResponse("POST", "update_event", gson.toJson(new Object()), UpdateResponse.class);
         return resp != null;
     }
 

@@ -1,65 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical" android:layout_width="match_parent"
-              android:layout_height="match_parent">
-
-	<Space
-			android:layout_width="20px"
-			android:layout_height="25dp"
-			android:layout_marginLeft="10dp"/>
-
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="20dp">
 	<EditText
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/nameText"
-			android:hint="Event Name"/>
+			android:hint="Event Name"
+			android:paddingBottom="10dp"/>
 
 	<EditText
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:inputType="textMultiLine"
 			android:ems="10"
 			android:id="@+id/descriptionText"
-			android:hint="Event Description"/>
+			android:hint="Event Description"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
 
 	<EditText
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/locationText"
-			android:hint="Location"/>
+			android:hint="Location"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
 
-	<RelativeLayout
+	<LinearLayout
 			android:layout_width="fill_parent"
-			android:layout_height="155dp">
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp">
 
 		<EditText
-				android:layout_width="250dp"
+				android:layout_width="0px"
 				android:layout_height="wrap_content"
+				android:layout_weight=".6"
 				android:id="@+id/dateSpinner"
 				android:hint="Date"
 				style="@android:style/Widget.DeviceDefault.Light.Spinner"
-				android:paddingLeft="13dp"
-				android:layout_alignParentTop="true"
-				android:layout_alignParentLeft="true"/>
+				android:paddingLeft="13dp"/>
 
 		<EditText
-				android:layout_width="150dp"
+				android:layout_width="0px"
 				android:layout_height="wrap_content"
+				android:layout_weight=".4"
 				android:id="@+id/timeSpinner"
 				android:hint="Time"
-				style="@android:style/Widget.DeviceDefault.Light.Spinner"
-				android:layout_alignParentTop="true"
-				android:layout_toRightOf="@id/dateSpinner"/>
-
-		<Button
+				style="@android:style/Widget.DeviceDefault.Light.Spinner"/>
+	</LinearLayout>
+	<TextView android:layout_width="fill_parent"
+	          android:layout_height="wrap_content"
+	          android:text="Event Visibility"
+	          android:gravity="center"
+	          style="@android:style/TextAppearance.Medium"/>
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"
+			android:gravity="center">
+		<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="Done"
-				android:id="@+id/done"
-				android:layout_gravity="center_horizontal"
-				android:layout_alignParentBottom="true"
-				android:layout_centerHorizontal="true"/>
-	</RelativeLayout>
-
+				android:text="Public"
+				android:checked="true"
+				android:id="@+id/publicEvent"/>
+		<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Private"
+				android:id="@+id/privateEvent"/>
+	</LinearLayout>
+	<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:text="Done"
+			android:id="@+id/done"/>
 </LinearLayout>

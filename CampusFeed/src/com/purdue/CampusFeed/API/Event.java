@@ -1,70 +1,88 @@
 package com.purdue.CampusFeed.API;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
-import com.purdue.CampusFeed.Utils.Utils;
-
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /*
     TODO: probably make parcelable later instead of Serializable
  */
-public class Event implements Serializable{
+public class Event implements Serializable {
 
-    String eventName, eventDescription, eventLocation, datetime;
-    long id;
+    String name, description, location;
+    long id, time, status;
     String[] categories;
 
+    int visibility;
+    public final static int PRIVATE = 1, PUBLIC = 0;
+
     public Event() {
-        eventName = "";
-        eventDescription = "";
-        eventLocation = "";
-        datetime = "";
+        name = "";
+        description = "";
+        location = "";
+        time = 0;
         id = 0;
+        status = 0;
         categories = new String[]{};
+        visibility = PUBLIC;
     }
 
     public Event(String eventName, String eventDescription,
-                 String eventLocation, String datetime, String[] categories) {
-        this.eventName = eventName;
-        this.eventDescription = eventDescription;
-        this.eventLocation = eventLocation;
-        this.datetime = datetime;
+                 String eventLocation, String datetime, String[] categories, int visibility) {
+        this.name = eventName;
+        this.description = eventDescription;
+        this.location = eventLocation;
+        setDatetime(datetime);
         this.categories = categories;
+        this.visibility = visibility;
     }
 
     public String getEventName() {
-        return eventName;
+        return name;
     }
 
     public void setEventName(String eventName) {
-        this.eventName = eventName;
+        this.name = eventName;
     }
 
     public String getEventDescription() {
-        return eventDescription;
+        return description;
     }
 
     public void setEventDescription(String eventDescription) {
-        this.eventDescription = eventDescription;
+        this.description = eventDescription;
     }
 
     public String getEventLocation() {
-        return eventLocation;
+        return location;
     }
 
     public void setEventLocation(String eventLocation) {
-        this.eventLocation = eventLocation;
+        this.location = eventLocation;
     }
 
     public String getDatetime() {
-        return datetime;
+        return new SimpleDateFormat("M-d-yyyy k:m").format(new Date(time));
+    }
+
+    public long getDatetimeLong() {
+        return time;
+    }
+
+    public void setDatetime(long datetime) {
+        this.time = datetime;
     }
 
     public void setDatetime(String datetime) {
-        this.datetime = datetime;
+        try {
+            this.time = new SimpleDateFormat("M-d-yyyy k:m").parse(datetime).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            this.time = 0;
+        }
     }
 
     public long getId() {
@@ -83,22 +101,16 @@ public class Event implements Serializable{
         this.categories = categories;
     }
 
-    public static Event JSONToEvent(JSONObject json) {
-        try {
-            String[] categories = new String[json.getJSONArray("categories").length()];
-            for (int i = 0; i < json.getJSONArray("categories").length(); i++)
-                categories[i] = json.getJSONArray("categories").getString(i);
-            return new Event(json.getString("title"),
-                    json.getString("desc"),
-                    json.getString("location"),
-                    json.getString("date_time"),
-                    categories);
-
-        } catch (JSONException e) {
-            Log.e(Utils.TAG, e.getMessage());
-            return new Event("", "", "", "", new String[]{""});
-
-        }
-
+    public int getVisibility() {
+        return visibility;
     }
+
+    public void setVisibility(int visibility) {
+        this.visibility = visibility;
+    }
+
+    public static Event JSONToEvent(JSONObject json) {
+        return new Event();
+    }
+
 }
