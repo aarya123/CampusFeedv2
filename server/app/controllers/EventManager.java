@@ -411,6 +411,7 @@ private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
 	searchResult.put("description", rs.getString("description"));
 	//searchResult.put("category", rs.getString("category"));
 	searchResult.put("visibility", rs.getInt("visibility"));
+	searchResult.put("rsvp", rs.getInt("rsvp"));
 	return searchResult;
 }
 
