@@ -490,17 +490,19 @@ public static Result advSearch() {
 		}
 		if(request.has("tags")) {
 			ArrayNode tags = (ArrayNode) request.get("tags");
-			if(params.size() != 1) {
-				sql += " AND ";
+			if(params.size() != 0) {
+				sql += " AND (";
 			}
 			for(int i = 0; i < tags.size(); ++i) {
-				sql += "Tags.tag LIKE ?";
-				params.add("%" + tags.get(i).textValue() + "%");
+				sql += "Tags.tag = ?";
+				params.add(tags.get(i).textValue());
 				if(i < tags.size() - 1) {
 					sql += " OR ";
 				}
 			}
+			sql += ")";
 		}
+		System.out.println(sql);
 		stmt = conn.prepareStatement(sql);
 		for(int i = 0; i < params.size(); ++i) {
 			stmt.setObject(i + 1, params.get(i));
