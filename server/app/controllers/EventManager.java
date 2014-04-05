@@ -502,7 +502,6 @@ public static Result advSearch() {
 			}
 			sql += ")";
 		}
-		System.out.println(sql);
 		stmt = conn.prepareStatement(sql);
 		for(int i = 0; i < params.size(); ++i) {
 			stmt.setObject(i + 1, params.get(i));
@@ -724,6 +723,40 @@ public static Result top5() {
 	catch(SQLException e) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
+}
+
+public static Result getEvent() {
+	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return ok();
+	}
+	// get the user id
+	long user_id =Application.getUserId(request);
+	long event_id;
+	try {
+		event_id = request.get("event_id").longValue();
+	}
+	catch(Exception e) {
+		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: auth, event_id (long)"));
+	}
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " AND Event.id = ?");
+		stmt.setLong(1, user_id);
+		stmt.setLong(2, event_id);
+		ResultSet rs = stmt.executeQuery();
+		return ok(buildEventResults(conn, rs));
+	}
+	catch(SQLException e) {
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	
 }
 
 
