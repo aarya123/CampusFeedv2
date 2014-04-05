@@ -64,7 +64,7 @@ public class Api implements Closeable {
     }
 
     public static Api getInstance(Context context) {
-        if (instance != null) {
+        if (instance == null) {
             instance = new Api(context);
         }
         return instance;
