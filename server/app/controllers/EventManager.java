@@ -38,6 +38,22 @@ import views.html.*;
 
 public class EventManager extends Controller{
 	
+	public static final String EVENT_GET_SQL = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1)";
+	
+	public static ArrayNode buildEventResults(Connection conn, ResultSet rs) throws SQLException {
+		ArrayNode arr = JsonNodeFactory.instance.arrayNode();
+		while(rs.next()) {
+				ObjectNode eventRes = createEventJson(rs);
+				try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
+					stmtTag.setLong(1, rs.getLong("id"));
+					stmtTag.execute();
+					ResultSet rsTag = stmtTag.getResultSet();
+					addCategoriesToEventJson(eventRes, rsTag);
+				}
+				arr.add(eventRes);
+		}
+		return arr;
+	}
 	public static Result create()
 	{
 		/* OAuth*/
@@ -453,7 +469,7 @@ public static Result advSearch() {
 		PreparedStatement stmt = null;
 		List<Object> params = new ArrayList<Object>();
 		params.add(user_id);
-		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
+		String sql = EVENT_GET_SQL;
 		if(request.has("name")) {
 			sql += "name like ?";
 			params.add("%" + request.get("name").textValue() + "%");
@@ -492,21 +508,7 @@ public static Result advSearch() {
 		}
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
-		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
-		if(rs.next()) {
-			do {
-				ObjectNode eventRes = createEventJson(rs);
-				try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
-					stmtTag.setLong(1, rs.getLong("id"));
-					stmtTag.execute();
-					ResultSet rsTag = stmtTag.getResultSet();
-					addCategoriesToEventJson(eventRes, rsTag);
-				}
-				searchResults.add(eventRes);
-			}
-			while(rs.next());
-		}
-		return ok(searchResults);
+		return ok(buildEventResults(conn, rs));
 	}
 	catch(Exception e) {
 		e.printStackTrace();
