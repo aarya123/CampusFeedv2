@@ -23,8 +23,9 @@ public class CreateEventFragment extends Fragment {
     EditText dateSpinner, timeSpinner, nameText, descriptionText, locationText;
     int year, month, day, hour, minute;
     private Button doneButton;
+    MultiAutoCompleteTextView multiAutoCompleteTextView;
+    private static final String[] categories = new String[]{"Social", "Cultural", "Education"};
 
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.create_event, container, false);
@@ -38,6 +39,9 @@ public class CreateEventFragment extends Fragment {
         nameText = (EditText) getActivity().findViewById(R.id.nameText);
         descriptionText = (EditText) getActivity().findViewById(R.id.descriptionText);
         locationText = (EditText) getActivity().findViewById(R.id.locationText);
+        multiAutoCompleteTextView = (MultiAutoCompleteTextView) getActivity().findViewById(R.id.tagText);
+        multiAutoCompleteTextView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, categories));
+        multiAutoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         // get current date
         final Calendar cal = Calendar.getInstance();
         year = cal.get(Calendar.YEAR);
@@ -77,7 +81,10 @@ public class CreateEventFragment extends Fragment {
                 String location = locationText.getText().toString();
                 String time_start = "" + (month + 1) + "-" + day + "-" + year + " " + hour + ":" + minute;
                 int visibility = ((RadioButton) CreateEventFragment.this.getActivity().findViewById(R.id.privateEvent)).isChecked() ? Event.PRIVATE : Event.PUBLIC;
-                new CreateEvent(getActivity()).execute(new Event(title, description, location, time_start, new String[]{"Social"}, visibility));
+                String[] categories = multiAutoCompleteTextView.getText().toString().split(",");
+                for (int i = 0; i < categories.length; i++)
+                    categories[i] = categories[i].replace(" ", "");
+                new CreateEvent(getActivity()).execute(new Event(title, description, location, time_start, categories, visibility));
                 Toast.makeText(getActivity(), "event created", Toast.LENGTH_LONG).show();
             }
         });

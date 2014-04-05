@@ -36,7 +36,7 @@ POST	/list_event		controllers.EventManager.listEvent()
 POST	/top5			controllers.EventManager.top5
 
 #GCM Register
-POST /gcm_register		controllers.GCMHandler.registergcm()
+POST /gcm_register		controllers.GCMHandler.RegisterUser()
 
 
 # Map static resources from the /public folder to the /assets URL path

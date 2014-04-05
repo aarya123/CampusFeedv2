@@ -21,8 +21,6 @@ import java.util.ArrayList;
  */
 public class HomepageFragment extends Fragment {
 
-	private static final String[] categories = new String[]{"Social",
-			"Cultural", "Education"};
 	EventArrayAdapter adapter;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
