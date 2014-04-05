@@ -539,7 +539,8 @@ public static Result listEvent() {
 	}
 	try(Connection conn = DB.getConnection()) {
 		try(PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " LIMIT 25 OFFSET ?")) {
-    		stmt.setInt(1, page * 25);
+			stmt.setLong(1, user_id);
+    		stmt.setInt(2, page * 25);
     		ResultSet rs = stmt.executeQuery();
     		return ok(buildEventResults(conn, rs));
 		}
