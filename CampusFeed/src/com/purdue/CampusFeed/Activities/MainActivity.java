@@ -4,62 +4,44 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
+import com.facebook.*;
 import com.facebook.model.GraphUser;
+import com.purdue.CampusFeed.API.AdvSearchQuery;
+import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
-import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.AsyncTasks.Login;
+import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
-
-import java.io.Serializable;
 
 public class MainActivity extends FragmentActivity {
 
+    private static final String TAG = "Facebook OAUTH";
+    String facebook_userID, facebook_accessToken;
+
+    //Data members required for the Facebook login
+    public static MenuItem searchWidget_menuItem;
     //Data members required for the drawer layout
     private String[] drawerItems;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
+
+
+    //Data members for search widget
     private ActionBarDrawerToggle drawerToggle;
     private CharSequence drawerTitle;
-    //private FragmentManager fragmentManager;
-
-    //------------------------------------------------------------------------
-
-    //Data members required for the Facebook login
-
-    public static String facebook_userID;
-    public static String SERVER_LONG_TOKEN;
-    public static String facebook_profileName;
-    public static String facebook_accessToken;
-
-    
-    //Data members for search widget
-    
-    public static MenuItem searchWidget_menuItem;
-    
-    //for debugging purposes
-    private static final String TAG = "Facebook OAUTH";
-
     /*	Note:
      * 		The UiLifecycleHelper class helps to create,
      * 		automatically open (if applicable), save, and restore the
@@ -75,16 +57,21 @@ public class MainActivity extends FragmentActivity {
         }
     };
 
-    //---------------------------------------------------------------------
-
-    //main onCreate
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.init(getApplicationContext());
-        
+        final Api api = Api.getInstance(this);
+        new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				Log.i("TEST", "" + api.login("1", "1"));
+				return null;
+			}
+        	
+        }.execute();
+
         HomepageFragment homepageFragment = new HomepageFragment();
-        //fragmentManager = getSupportFragmentManager();
         getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
 
         uiHelper = new UiLifecycleHelper(this, callback);
@@ -104,8 +91,8 @@ public class MainActivity extends FragmentActivity {
         drawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-            	selectItem(pos);
-            
+                selectItem(pos);
+
             }
         });
 
@@ -139,7 +126,6 @@ public class MainActivity extends FragmentActivity {
 
         //Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(drawerToggle);
-
     }
 
 	/*
@@ -152,10 +138,10 @@ public class MainActivity extends FragmentActivity {
 
     //Fragment swapping
     private void selectItem(int position) {
-        android.app.Fragment fragToDisplay = null;
+        android.app.Fragment fragToDisplay;
         switch (position) {
             case 1:
-            	
+
                 fragToDisplay = new HomepageFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
@@ -165,21 +151,21 @@ public class MainActivity extends FragmentActivity {
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 3:
-            	
+
                 fragToDisplay = new CreateEventFragment();
-                Intent intent  = new Intent(this, SingleFragmentActivity.class);
+                Intent intent = new Intent(this, SingleFragmentActivity.class);
                 intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
                 startActivity(intent);
                 break;
             case 4:
-        
+
                 fragToDisplay = new AdvancedSearch_Fragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             default:
                 break;
         }
-        
+
         drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
@@ -206,25 +192,10 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    //crashes app for some reason, ask Sean
-    // Called whenever we call invalidateOptionsMenu() 
-   /*public boolean onPrepareOptionsMenu(Menu menu) {
-        //If the nav drawer is open, hide action items related to the content view
-        boolean drawerOpen = drawerLayout.isDrawerOpen(drawerLayout);
-        //menu.findItem(R.id.action_websearch.setVisible(!drawerOpen));
-        return super.onPrepareOptionsMenu(menu);
-    }*/
-
-    //---------------------------------------------------------------------------------
-   
    /*
-    * 
-    * 
-    * 
+    *
     * Functions for Facebook login
-    * 
-    * 
-    * 
+    *
     */
 
     //what to do when the session status changes (logged in or logged out)
@@ -232,7 +203,6 @@ public class MainActivity extends FragmentActivity {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
             facebook_accessToken = session.getAccessToken();
-            //Toast.makeText(this, "A, Toast.LENGTH_SHORT).show();
 
             // If the session is open, make an API call to get user data
             // and define a new callback to handle the response
@@ -243,13 +213,7 @@ public class MainActivity extends FragmentActivity {
                     if (session == Session.getActiveSession()) {
                         if (user != null) {
                             facebook_userID = user.getId();//user id
-                            facebook_profileName = user.getName();//user's profile name
-                            Toast.makeText(getApplicationContext(), "User ID: " + facebook_userID + "\n\nName: " + facebook_profileName + "\n\nAccess token: " + facebook_accessToken, Toast.LENGTH_LONG).show();
-                            //userNameView.setText(user.getName());
-                            Login l = new Login();
-                            l.execute("login");
-
-
+                            new Login(MainActivity.this).execute(facebook_userID, facebook_accessToken);
                         }
                     }
                 }
@@ -259,11 +223,9 @@ public class MainActivity extends FragmentActivity {
 
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
-            Toast.makeText(getApplicationContext(), facebook_profileName + " logged out :(", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "logged out :(", Toast.LENGTH_LONG).show();
             facebook_userID = null;
-            facebook_profileName = null;
             facebook_accessToken = null;
-
         }
     }
 
@@ -296,8 +258,8 @@ public class MainActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
         uiHelper.onSaveInstanceState(outState);
     }
-    
-  //setting up the search widget
+
+    //setting up the search widget
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the options menu from XML
@@ -306,7 +268,7 @@ public class MainActivity extends FragmentActivity {
 
         //stores the menu item
         searchWidget_menuItem = menu.findItem(R.id.simple_search);
-        
+
         // Get the SearchView and set the searchable configuration
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.simple_search).getActionView();
