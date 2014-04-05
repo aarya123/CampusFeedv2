@@ -502,33 +502,29 @@ public static Result advSearch() {
 
 public static Result listEvent() {
 	JsonNode request = request().body().asJson();
-	try {
-		Application.checkReqValid(request);
-	}
-	catch(AuthorizationException e) {
-		return unauthorized(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-		return internalServerError();
-	}
 	//check params
 	int page;
-	if(!request.has("page")) {
+	try {
+		page = request.get("page").intValue();
+	}
+	catch(Exception e) {
 		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
 	}
-	page = request.get("page").intValue();
 	try(Connection conn = DB.getConnection()) {
 		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status, category FROM Event LIMIT 25 OFFSET ?")) {
     		stmt.setInt(1, page * 25);
     		ResultSet rs = stmt.executeQuery();
     		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
-    		if(rs.next()) {
-    			do {
-    				searchResults.add(createEventJson(rs));
-    			}
-    			while(rs.next());
-    		}
+			while(rs.next()) {
+				ObjectNode eventRes = createEventJson(rs);
+				try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
+					stmtTag.setLong(1, rs.getLong("id"));
+					stmtTag.execute();
+					ResultSet rsTag = stmtTag.getResultSet();
+					addCategoriesToEventJson(eventRes, rsTag);
+				}
+				searchResults.add(eventRes);
+			}
     		return ok(searchResults);
 		}
 	}
