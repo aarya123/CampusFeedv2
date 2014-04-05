@@ -150,18 +150,13 @@ public class Api implements Closeable {
             public long date_time;
 
             public CreateEventRequest(Event event) {
-                desc = event.eventDescription;
-                location = event.eventLocation;
+                desc = event.description;
+                location = event.location;
                 categories = event.categories;
-                title = event.eventName;
+                title = event.name;
                 this.auth = Api.this.login;
                 visibility = 1;
-                try {
-                    date_time = new SimpleDateFormat("M-d-yyyy k:m").parse(event.datetime).getTime();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    date_time = 0;
-                }
+                date_time = event.getDatetimeLong();
 
             }
         }
@@ -192,16 +187,10 @@ public class Api implements Closeable {
 
             public UpdateEventRequest(Event event) {
                 this.auth = login;
-                this.title = event.eventDescription;
-                this.desc = event.eventDescription;
-                this.location = event.eventLocation;
-                try {
-                    this.date_time = new SimpleDateFormat("M-d-yyyy k:m").parse(event.datetime).getTime();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    this.date_time = 0;
-                }
-                ;
+                this.title = event.description;
+                this.desc = event.description;
+                this.location = event.location;
+                this.date_time = event.time;
                 this.id = event.id;
                 this.visibility = 1;
                 this.categories = event.categories;
