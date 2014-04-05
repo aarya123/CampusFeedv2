@@ -427,40 +427,6 @@ private static void addCategoriesToEventJson(ObjectNode event, ResultSet rs) thr
 	}
 	event.put("categories", categories);
 }
-public static Result search() {
-	JsonNode request = request().body().asJson();
-	//check params
-	String query;
-	if(!request.has("query")) {
-		return badRequest(JsonNodeFactory.instance.objectNode().put("error", "usage: query (text)"));
-	}
-	query = request.get("query").textValue();
-	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement("SELECT id, name, location, UNIX_TIMESTAMP(time) AS time, description, status FROM Event WHERE name LIKE ?")) {
-    		stmt.setString(1, "%" + query + "%");
-    		ResultSet rs = stmt.executeQuery();
-    		ArrayNode searchResults = JsonNodeFactory.instance.arrayNode();
-    		if(rs.next()) {
-    			do {
-    				ObjectNode eventRes = createEventJson(rs);
-    				try(PreparedStatement stmtTag = conn.prepareStatement("select Tags.tag from Tags INNER JOIN Event_has_Tags ON Tags.id = Event_has_Tags.Tags_id INNER JOIN Event ON Event.id = Event_has_Tags.Event_id WHERE Event.id = ?")) {
-    					stmtTag.setLong(1, rs.getLong("id"));
-    					stmtTag.execute();
-    					ResultSet rsTag = stmtTag.getResultSet();
-    					addCategoriesToEventJson(eventRes, rsTag);
-    				}
-    				searchResults.add(eventRes);
-    			}
-    			while(rs.next());
-    		}
-    		return ok(searchResults);
-		}
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-		return internalServerError();
-	}
-}
 
 public static Result advSearch() {
 	JsonNode request = request().body().asJson();
@@ -571,51 +537,6 @@ public static Result listEvent() {
 		return internalServerError();
 	}
 }
-
-
-public static Result popularByCategory()
-{
-	JsonNode request = request().body().asJson();
-	String category = request.get("category").textValue();
-	JSONArray list = new JSONArray();
-	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `Event`  WHERE category=? LIMIT 0,3");
-		stmt.setString(1, category);
-		ResultSet s =stmt.executeQuery();
-	
-		while(s.next())
-		{
-			try {
-				JSONObject event = new JSONObject();
-				event.put("title", s.getString("name"));
-				event.put("id", s.getString("id"));
-				event.put("desc", s.getString("description"));
-				event.put("date_time",s.getTimestamp("time"));
-				event.put("location", s.getString("location"));
-				event.put("view_count",s.getInt("view_count"));
-				event.put("category", s.getString("category"));
-				list.put(event);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
-		}
-		s.close();
-		
-		
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-		response().setContentType("application/json");
-		return ok("{\"response\":\"error, sql exception\"}");
-	}
-	
-	
-	return ok(list.toString());
-}
-
 
 private static void addTags(Connection conn, long eventId, String[] tags) throws SQLException{
 	PreparedStatement lookupTag = conn.prepareStatement("SELECT id FROM Tags WHERE tag = ?");
