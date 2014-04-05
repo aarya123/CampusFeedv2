@@ -12,6 +12,7 @@ import com.purdue.CampusFeed.API.AdvSearchQuery;
  * Time: 12:00 AM
  */
 public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
+
     String[] categories;
 
     public BrowsePagerAdapter(FragmentManager fm, String[] categories) {

@@ -10,8 +10,6 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -157,7 +155,6 @@ public class Api implements Closeable {
                 this.auth = Api.this.login;
                 visibility = 1;
                 date_time = event.getDatetimeLong();
-
             }
         }
         class EventResponse {
