@@ -1,8 +1,10 @@
 package com.purdue.CampusFeed.Activities;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import com.purdue.CampusFeed.API.AdvSearchQuery;
 
 /**
  * User: AnubhawArya
@@ -29,6 +31,12 @@ public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        return null;
+        AdvSearchQuery query = new AdvSearchQuery();
+        query.addCategory(categories[i]);
+        Bundle args = new Bundle();
+        args.putParcelable("query", query);
+        EventListFragment frag = new EventListFragment();
+        frag.setArguments(args);
+        return frag;
     }
 }

@@ -2,6 +2,8 @@ package com.purdue.CampusFeed.API;
 
 import android.content.Context;
 import android.net.http.HttpResponseCache;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
@@ -127,48 +129,10 @@ public class Api implements Closeable {
         }
         return getResponse("POST", "search_event", gson.toJson(new SearchEventRequest(query)));
     }
-    
-    public static class AdvSearchQuery {
-    	private long start_date = 0;
-    	private long end_date = Long.MAX_VALUE;
-    	private String title = null;
-    	private String desc = null;
-    	
-    	public void setStartDate(long startDate) {
-    		start_date = startDate;
-    	}
-    	
-    	public void setEndDate(long endDate) {
-    		end_date = endDate;
-    	}
-    	
-    	public void setTitle(String title) {
-    		this.title = title;
-    	}
-    	
-    	public void setDesc(String desc) {
-    		this.desc = desc;
-    	}
-    	
-    	public long getStartDate() {
-    		return start_date;
-    	}
-    	
-    	public long getEndDate() {
-    		return end_date;
-    	}
-    	
-    	public String getTitle() {
-    		return title;
-    	}
-    	
-    	public String getDesc() {
-    		return desc;
-    	}
-    }
-    
+
+
     public List<Event> advSearchEvent(AdvSearchQuery query) {
-    	return getResponse("POST", "adv_search_event", gson.toJson(query));
+        return getResponse("POST", "adv_search_event", gson.toJson(query));
     }
 
     public long createEvent(Event event) {
