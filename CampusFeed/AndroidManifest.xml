@@ -30,15 +30,19 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 			
+			
+      		
+		</activity>
+		
+		<receiver android:name="InviteReceiver">
 			<!-- Allow web apps to launch Campus Feed by linking to http://campusfeed.com/scan. -->
-      		 <intent-filter>
+      		<intent-filter>
         		<action android:name="android.intent.action.VIEW"/>
         		<category android:name="android.intent.category.DEFAULT"/>
         		<category android:name="android.intent.category.BROWSABLE"/>
-        		<data android:scheme="http" android:host="campusfeed.com" android:path="/invite"/>
+        		<data android:scheme="http" android:host="campusfeed.com" android:pathPattern="/invite/.*"/>
       		</intent-filter>
-      		
-		</activity>
+		</receiver>
 
 		<meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
 

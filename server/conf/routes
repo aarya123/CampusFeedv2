@@ -1,3 +1,4 @@
+
 # Routes
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
@@ -33,6 +34,13 @@ POST	/list_event		controllers.EventManager.listEvent()
 
 #top5
 POST	/top5			controllers.EventManager.top5
+
+#GCM Register
+POST /gcm_register		controllers.GCMHandler.RegisterUser()
+
+#all tags
+GET /all_tags			controllers.EventManager.allTags()
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -70,7 +70,7 @@ public class ContactDetailActivity extends FragmentActivity {
                 // data Uri
                 ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(uri);
                 contactDetailFragment.setEvent(myEvent);
-                ft.add(android.R.id.content, ContactDetailFragment.newInstance(uri), TAG);
+                ft.add(android.R.id.content, contactDetailFragment, TAG);
                 ft.commit();
             }
         } else {

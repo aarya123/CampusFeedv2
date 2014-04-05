@@ -1,24 +1,22 @@
 package com.purdue.CampusFeed.API;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.util.Log;
-
-import com.purdue.CampusFeed.Utils.Utils;
 
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 /*
     TODO: probably make parcelable later instead of Serializable
  */
-public class Event implements Serializable{
+public class Event implements Serializable {
 
+    public final static int PRIVATE = 1, PUBLIC = 0;
     String name, description, location;
     long id, time, status;
     String[] categories;
+    int visibility;
 
     public Event() {
         name = "";
@@ -28,15 +26,32 @@ public class Event implements Serializable{
         id = 0;
         status = 0;
         categories = new String[]{};
+        visibility = PUBLIC;
     }
 
     public Event(String eventName, String eventDescription,
-                 String eventLocation, String datetime, String[] categories) {
+                 String eventLocation, String datetime, String[] categories, int visibility) {
         this.name = eventName;
         this.description = eventDescription;
         this.location = eventLocation;
         setDatetime(datetime);
         this.categories = categories;
+        this.visibility = visibility;
+    }
+
+    public Event(String eventName, String eventDescription, String eventLocation,
+                 String datetime, String[] categories, int visibility, long id) {
+        this.name = eventName;
+        this.description = eventDescription;
+        this.location = eventLocation;
+        setDatetime(datetime);
+        this.categories = categories;
+        this.visibility = visibility;
+        this.id = id;
+    }
+
+    public static Event JSONToEvent(JSONObject json) {
+        return new Event();
     }
 
     public String getEventName() {
@@ -66,22 +81,22 @@ public class Event implements Serializable{
     public String getDatetime() {
         return new SimpleDateFormat("M-d-yyyy k:m").format(new Date(time));
     }
-    
-    public long getDatetimeLong() {
-    	return time;
-    }
 
     public void setDatetime(long datetime) {
         this.time = datetime;
     }
-    
+
     public void setDatetime(String datetime) {
-    	try {
-			this.time = new SimpleDateFormat("M-d-yyyy k:m").parse(datetime).getTime();
-		} catch (ParseException e) {
-			e.printStackTrace();
-			this.time = 0;
-		}
+        try {
+            this.time = new SimpleDateFormat("M-d-yyyy k:m").parse(datetime).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            this.time = 0;
+        }
+    }
+
+    public long getDatetimeLong() {
+        return time;
     }
 
     public long getId() {
@@ -99,9 +114,13 @@ public class Event implements Serializable{
     public void setCategories(String[] categories) {
         this.categories = categories;
     }
-    
-    public static Event JSONToEvent(JSONObject json) {
-    	return new Event();
+
+    public int getVisibility() {
+        return visibility;
     }
-    
+
+    public void setVisibility(int visibility) {
+        this.visibility = visibility;
+    }
+
 }

@@ -15,7 +15,8 @@ public class AdvSearchQuery implements Parcelable {
     private String title = null;
     private String desc = null;
     private final int CATEGORY_SIZE = 10;
-    private String[] categories = new String[CATEGORY_SIZE];
+    private String[] tags = new String[CATEGORY_SIZE];
+    private Auth auth;
 
     public AdvSearchQuery() {
     }
@@ -25,19 +26,19 @@ public class AdvSearchQuery implements Parcelable {
         end_date = in.readLong();
         title = in.readString();
         desc = in.readString();
-        in.readStringArray(categories);
+        in.readStringArray(tags);
     }
 
     public void addCategory(String category) {
         for (int i = 0; i < CATEGORY_SIZE; i++)
-            if (categories[i] == null) {
-                categories[i] = category;
+            if (tags[i] == null) {
+                tags[i] = category;
                 return;
             }
     }
 
-    public void setCategories(String[] categories) {
-        this.categories = categories;
+    public void settags(String[] tags) {
+        this.tags = tags;
     }
 
     public void setStartDate(long startDate) {
@@ -56,8 +57,8 @@ public class AdvSearchQuery implements Parcelable {
         this.desc = desc;
     }
 
-    public String[] getCategories() {
-        return categories;
+    public String[] gettags() {
+        return tags;
     }
 
     public long getStartDate() {
@@ -79,13 +80,17 @@ public class AdvSearchQuery implements Parcelable {
     public int describeContents() {
         return 0;
     }
+    
+    public void setAuth(Auth auth) {
+    	this.auth = auth;
+    }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(start_date);
         dest.writeLong(end_date);
         dest.writeString(title);
         dest.writeString(desc);
-        dest.writeStringArray(categories);
+        dest.writeStringArray(tags);
     }
 
     public static final Parcelable.Creator<AdvSearchQuery> CREATOR = new Parcelable.Creator<AdvSearchQuery>() {

@@ -62,7 +62,7 @@ public class Application extends Controller {
     		userId = obj.get("fb_user_id").textValue();
     	}
     	else {
-    		return badRequest("usage: json object with fb_user_id, access_token");
+    		return ok("usage: json object with fb_user_id, access_token");
     	}
     	//retrieve user id, first name, last name
     	String firstName;
@@ -76,18 +76,18 @@ public class Application extends Controller {
         			.asJson();
     		if(userInfo.has("id") && userInfo.has("first_name") && userInfo.has("last_name")) {
     			if(!userId.equals(userInfo.get("id").textValue())) {
-    				return badRequest(JsonNodeFactory.instance.objectNode().put("error", "invalid user id for access token"));
+    				return ok(JsonNodeFactory.instance.objectNode().put("error", "invalid user id for access token"));
     			}
     			firstName = userInfo.get("first_name").textValue();
     			lastName = userInfo.get("last_name").textValue();
     		}
     		else {
-    			return badRequest(JsonNodeFactory.instance.objectNode().put("error", "invalid access token"));
+    			return ok(JsonNodeFactory.instance.objectNode().put("error", "invalid access token"));
     		}
     	}
     	catch(Exception e) {
     		e.printStackTrace();
-    		return internalServerError();
+    		return ok();
     	}
     	//token exchange - get long lived access token and time till it expires in seconds
     	Response accessTokenResp = WS.url("https://graph.facebook.com/oauth/access_token")
@@ -101,7 +101,7 @@ public class Application extends Controller {
     	try(InputStream in = accessTokenResp.getBodyAsStream()) {
     		Map<String, String >respVals = queryToMap(in);
     		if(!respVals.containsKey("access_token") || !respVals.containsKey("expires")) {
-    			return internalServerError();
+    			return ok();
     		}
     		else {
     			accessToken = respVals.get("access_token");
@@ -110,7 +110,7 @@ public class Application extends Controller {
     	}
     	catch(IOException e) {
     		e.printStackTrace();
-    		return internalServerError();
+    		return ok();
     	}
     	//write new info or updated info to db
     	try(Connection connection = DB.getConnection()) {
@@ -127,11 +127,11 @@ public class Application extends Controller {
     	}
     	catch(SQLException e) {
     		e.printStackTrace();
-    		return internalServerError();
+    		return ok();
     	}
     	//return long lived access token to use as auth
     	JsonNode resp = JsonNodeFactory.instance.objectNode().put("access_token", accessToken);
-    	return Application.ok(resp);
+    	return ok(resp);
     }
     
     public static void checkReqValid(JsonNode req) throws AuthorizationException, SQLException {
@@ -195,5 +195,6 @@ public class Application extends Controller {
 			return -1;
 		}
 	}
+	
 
 }

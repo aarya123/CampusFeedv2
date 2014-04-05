@@ -30,6 +30,16 @@
 			android:paddingTop="10dp"
 			android:paddingBottom="10dp"/>
 
+	<MultiAutoCompleteTextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/tagText"
+			android:singleLine="true"
+			android:completionThreshold="1"
+			android:hint="Tag(s)"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+
 	<LinearLayout
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
@@ -59,12 +69,13 @@
 	          android:text="Event Visibility"
 	          android:gravity="center"
 	          style="@android:style/TextAppearance.Medium"/>
-	<LinearLayout
+
+	<RadioGroup
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:orientation="horizontal"
 			android:paddingTop="10dp"
 			android:paddingBottom="10dp"
+			android:orientation="horizontal"
 			android:gravity="center">
 		<RadioButton
 				android:layout_width="wrap_content"
@@ -77,7 +88,7 @@
 				android:layout_height="wrap_content"
 				android:text="Private"
 				android:id="@+id/privateEvent"/>
-	</LinearLayout>
+	</RadioGroup>
 	<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
