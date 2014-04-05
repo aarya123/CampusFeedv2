@@ -452,7 +452,7 @@ public static Result advSearch() {
 		PreparedStatement stmt = null;
 		List<Object> params = new ArrayList<Object>();
 		params.add(user_id);
-		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE Event.id = Event_has_User.event_id AND (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1)) AND ";
+		String sql = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.status as status from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1)) AND ";
 		if(request.has("name")) {
 			sql += "name like ?";
 			params.add("%" + request.get("name").textValue() + "%");
@@ -485,6 +485,7 @@ public static Result advSearch() {
 				}
 			}
 		}
+		System.out.println(sql);
 		stmt = conn.prepareStatement(sql);
 		for(int i = 0; i < params.size(); ++i) {
 			stmt.setObject(i + 1, params.get(i));
