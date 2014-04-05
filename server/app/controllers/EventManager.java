@@ -635,6 +635,13 @@ public static Result updateEvent()
 		addTags(conn, id, categoriesStr);
 		conn.commit();
 		conn.close();
+		// send messages to all users
+		ArrayList<String> user_ids = EventManager.get_user_ids();
+		for(int a=0;a<user_ids.size();a++)
+		{
+			GCMHandler.sendMessage(user_ids.get(a), "Update for: "+title+"\n"+"Description:"+desc+"\nLocation:"+location+"\n");
+		}
+		// end messaging.
 		return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
 	}
 	catch(SQLException e) {
@@ -643,7 +650,43 @@ public static Result updateEvent()
 	}
 	
 }
+public static ArrayList<String> get_user_ids()
+{
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `User` WHERE gcm_id IS NOT NULL");
+		ResultSet s =stmt.executeQuery();
+		ArrayList<String> user_ids = new ArrayList<String>();
+		while(s.next())
+		{
+			user_ids.add(s.getString("fb_user_id"));
+		}
+		s.close();
+		return user_ids;
+	}catch(Exception e)
+	{
+		return null;
+	}
 
+}
+public static Result allTags()
+{
+	
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Tags");
+		ResultSet s =stmt.executeQuery();
+		ArrayList<String> tags = new ArrayList<String>();
+		while(s.next())
+		{
+			tags.add(s.getString("tag"));
+		}
+		s.close();
+		JsonNode tags_json=	JsonNodeFactory.instance.objectNode().put("tags", tags.toString());
+		return ok(tags_json);
+	}catch(Exception e)
+	{
+		return ok();
+	}
+}
 public static Result top5() {
 	JsonNode request = request().body().asJson();
 	try {
