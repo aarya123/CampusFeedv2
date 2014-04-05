@@ -24,6 +24,7 @@ import android.support.v4.app.FragmentActivity;
 
 import com.purdue.CampusFeed.BuildConfig;
 import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Utils.Utils;
 
 /**
@@ -35,7 +36,7 @@ public class ContactsListActivity extends FragmentActivity implements
 
     // Defines a tag for identifying log entries
     private static final String TAG = "ContactsListActivity";
-
+    private Event myEvent;
     private ContactDetailFragment mContactDetailFragment;
 
     // If true, this is a larger screen device which fits two panes
@@ -52,7 +53,7 @@ public class ContactsListActivity extends FragmentActivity implements
             Utils.enableStrictMode();
         }
         super.onCreate(savedInstanceState);
-
+        myEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
         setContentView(R.layout.invite_activity_main);
@@ -105,6 +106,7 @@ public class ContactsListActivity extends FragmentActivity implements
             // Otherwise single pane layout, start a new ContactDetailActivity with
             // the contact Uri
             Intent intent = new Intent(this, ContactDetailActivity.class);
+            intent.putExtra(getString(R.string.EVENT), myEvent);
             intent.setData(contactUri);
             startActivity(intent);
         }

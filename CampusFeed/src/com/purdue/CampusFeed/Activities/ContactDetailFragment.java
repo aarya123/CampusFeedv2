@@ -56,6 +56,7 @@ import android.widget.Toast;
 
 import com.purdue.CampusFeed.BuildConfig;
 import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Utils.ImageLoader;
 import com.purdue.CampusFeed.Utils.Utils;
 
@@ -80,6 +81,7 @@ import java.util.List;
 public class ContactDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor>, OnClickListener {
 
+	private Event myEvent;
     public static final String EXTRA_CONTACT_URI =
             "com.purdue.CampusFeed.EXTRA_CONTACT_URI";
 
@@ -747,12 +749,16 @@ public class ContactDetailFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		SmsManager sms = SmsManager.getDefault();
-		String message = "Hi, I am going to the James Blunt Concert this weekend! Join me!";
+		String message = "http://campusfeed.com/invite";
 	    sms.sendTextMessage(this.contactPhoneNumber, null, message, null, null);
 	    Context context = getActivity();
 	    CharSequence text = "Invite Sent!";
 	    int duration = Toast.LENGTH_SHORT;
 	    Toast toast = Toast.makeText(context, text, duration);
 	    toast.show();
+	}
+	
+	public void setEvent(Event event) {
+		this.myEvent = event;
 	}
 }

@@ -26,6 +26,8 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 import com.purdue.CampusFeed.BuildConfig;
+import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Utils.Utils;
 
 
@@ -35,7 +37,8 @@ import com.purdue.CampusFeed.Utils.Utils;
 public class ContactDetailActivity extends FragmentActivity {
     // Defines a tag for identifying the single fragment that this activity holds
     private static final String TAG = "ContactDetailActivity";
-
+    private Event myEvent;
+    
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,8 @@ public class ContactDetailActivity extends FragmentActivity {
             Utils.enableStrictMode();
         }
         super.onCreate(savedInstanceState);
-
+        myEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
+        
         // This activity expects to receive an intent that contains the uri of a contact
         if (getIntent() != null) {
 
@@ -64,6 +68,8 @@ public class ContactDetailActivity extends FragmentActivity {
 
                 // Adds a newly created ContactDetailFragment that is instantiated with the
                 // data Uri
+                ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(uri);
+                contactDetailFragment.setEvent(myEvent);
                 ft.add(android.R.id.content, ContactDetailFragment.newInstance(uri), TAG);
                 ft.commit();
             }

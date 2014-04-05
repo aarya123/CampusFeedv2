@@ -65,6 +65,7 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     @Override
 	public void onClick(View v) {
 		Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
+        intent.putExtra(getString(R.string.EVENT), myEvent);
         startActivity(intent);
 	}
 
