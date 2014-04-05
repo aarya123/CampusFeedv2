@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
 import com.purdue.CampusFeed.R;
 
@@ -20,26 +21,6 @@ public class BrowseFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.browse_fragment, container, false);
-        /*ListView listView = new ListView(getActivity());
-        adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view,
-                                    int pos, long id) {
-                Event e = adapter.getItem(pos);
-                EventPageFragment fragment = new EventPageFragment();
-                fragment.setEvent(e);
-                /*getFragmentManager().beginTransaction()
-                        .replace(R.id.content_frame, fragment).commit();
-                Intent intent = new Intent(getActivity(), SingleFragmentActivity.class);
-                intent.putExtra(getString(R.string.START_FRAGMENT), "EventPageFragment");
-                intent.putExtra(getString(R.string.EVENT),e);
-                startActivity(intent);
-            }
-        });
-        new GetEventsByTag(adapter).execute("ds");
-        return listView;*/
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
