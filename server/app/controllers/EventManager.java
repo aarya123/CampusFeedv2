@@ -654,9 +654,9 @@ public static Result getEvent() {
 		stmt.setLong(1, user_id);
 		stmt.setLong(2, event_id);
 		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs));
+		return ok(buildEventResults(conn, rs).get(0));
 	}
-	catch(SQLException e) {
+	catch(Exception e) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	
