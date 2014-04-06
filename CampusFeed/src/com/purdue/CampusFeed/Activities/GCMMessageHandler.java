@@ -42,16 +42,15 @@ public class GCMMessageHandler extends IntentService {
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString(),extras);
+                sendNotification("Send error: " + extras.toString(), extras);
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
                 sendNotification("Deleted messages on server: " +
-                        extras.toString(),extras);
+                        extras.toString(), extras);
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Post notification of received message.
-
                 sendNotification("Event Coming Up Soon!", extras);
                 Log.i(TAG, "Received: " + extras.toString());
             }
@@ -64,8 +63,8 @@ public class GCMMessageHandler extends IntentService {
     // This is just one simple example of what you might choose to do with
     // a GCM message.
     private void sendNotification(String msg, Bundle extras) {
-    	
-    	Log.d(TAG, "sending notification!");
+
+        Log.d(TAG, "sending notification!");
        /* mNotificationManager = (NotificationManager)
           this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -80,7 +79,7 @@ public class GCMMessageHandler extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());*/
-    	if(extras.getString("mode").equals("update_event")){
+        if (extras.getString("mode").equals("update_event")) {
             String event_id = extras.getString("response");
             Intent intent = new Intent(this, SingleFragmentActivity.class);
             Log.d("campusfeed", "creating pending intent with event id " + event_id);
@@ -90,16 +89,14 @@ public class GCMMessageHandler extends IntentService {
             Notification notification = new Notification.Builder(this).setContentTitle(this.getResources().getString(R.string.app_name))
                     .setContentText(msg).setSmallIcon(R.drawable.ic_launcher)
                     .setContentIntent(pIntent).getNotification();
-        	NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
-        	notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        	notificationManager.notify(0, notification);
-    	
-    	}
-    	else
-    	{
-    		// invite event notification
-    	}
-    	
+            NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            notificationManager.notify(0, notification);
+
+        } else {
+            // invite event notification
+        }
+
 
     }
 }
