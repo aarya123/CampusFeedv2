@@ -1,5 +1,8 @@
 package com.purdue.CampusFeed.Activities;
 
+import java.util.Iterator;
+import java.util.Set;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.purdue.CampusFeed.R;
 
@@ -12,6 +15,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.purdue.CampusFeed.Activities.MainActivity;
 
@@ -44,16 +48,17 @@ public class GCMMessageHandler extends IntentService {
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+                sendNotification("Send error: " + extras.toString(),extras);
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
                 sendNotification("Deleted messages on server: " +
-                        extras.toString());
+                        extras.toString(),extras);
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Post notification of received message.
-                sendNotification("Received: " + extras.toString());
+            	
+                sendNotification("An event has been updated. Click here to see!",extras);
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }
@@ -64,7 +69,7 @@ public class GCMMessageHandler extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg) {
+    private void sendNotification(String msg, Bundle extras) {
     	
     	Log.d(TAG, "sending notification!");
        /* mNotificationManager = (NotificationManager)
@@ -81,6 +86,14 @@ public class GCMMessageHandler extends IntentService {
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());*/
+    	if(extras.getString("mode").equals("update_event")){
+    		int event_id = extras.getInt("response");
+    	
+    	}
+    	else
+    	{
+    		// invite event notification
+    	}
     	
     	Intent intent = new Intent(this, MainActivity.class);
     	PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
