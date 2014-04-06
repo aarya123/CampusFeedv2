@@ -212,7 +212,37 @@ public class Api implements Closeable {
     	TagResponse response = (TagResponse) getResponse("GET", "all_tags", null, TagResponse.class);
     	return response.tags;
     }
-
+    class GCMRegisterRequest{
+        public String fb_user_id;
+        public String gcm_id;
+        public GCMRegisterRequest(String fb_user_id,String gcm_id)
+        {
+            this.fb_user_id = fb_user_id;
+            this.gcm_id = gcm_id;
+        }
+    }
+    class GCMRegisterResponse{
+        public String success;
+    }
+    public String registerGCM(String fb_user_id,String gcm_id)
+    {
+        GCMRegisterResponse response = (GCMRegisterResponse)getResponse("POST", "gcm_register", gson.toJson(new GCMRegisterRequest(fb_user_id,gcm_id)), GCMRegisterResponse.class);
+        if(response==null)
+        {
+            return "FAILED";
+        }
+        return response.success;
+    }
+    class GetEventRequest {
+    	Auth auth = login;
+    	long event_id;
+    	public GetEventRequest(long eventId) {
+    		event_id = eventId;
+    	}
+    }
+    public Event getEvent(long eventId) {
+    	return (Event) getResponse("POST", "get_event", gson.toJson(new GetEventRequest(eventId)), Event.class);
+    }
     @Override
     public void close() throws IOException {
         HttpResponseCache cache = HttpResponseCache.getInstalled();
