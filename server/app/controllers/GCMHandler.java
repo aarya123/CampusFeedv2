@@ -68,7 +68,7 @@ public class GCMHandler extends Controller {
 		 * Messenger 
 		 * 
 		 */
-		public static int sendMessage(ArrayList<String> gcm_ids, int event_id)
+		public static int sendMessage(ArrayList<String> gcm_ids, long event_id)
 		{
 		
 			// api key
