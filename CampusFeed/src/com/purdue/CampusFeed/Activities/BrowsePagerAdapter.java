@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import com.purdue.CampusFeed.API.AdvSearchQuery;
+import com.purdue.CampusFeed.Utils.Utils;
 
 /**
  * User: AnubhawArya
@@ -13,24 +14,21 @@ import com.purdue.CampusFeed.API.AdvSearchQuery;
  */
 public class BrowsePagerAdapter extends FragmentStatePagerAdapter {
 
-    String[] categories;
-
-    public BrowsePagerAdapter(FragmentManager fm, String[] categories) {
+    public BrowsePagerAdapter(FragmentManager fm) {
         super(fm);
-        this.categories = categories;
     }
 
     public int getCount() {
-        return categories.length;
+        return Utils.categories.length;
     }
 
     public CharSequence getPageTitle(int position) {
-        return categories[position];
+        return Utils.categories[position];
     }
 
     public Fragment getItem(int i) {
         AdvSearchQuery query = new AdvSearchQuery();
-        query.addCategory(categories[i]);
+        query.addCategory(Utils.categories[i]);
         Bundle args = new Bundle();
         args.putParcelable("query", query);
         EventListFragment frag = new EventListFragment();

@@ -7,14 +7,18 @@ import com.purdue.CampusFeed.API.Event;
 
 public class CreateEvent extends AsyncTask<Event, Void, Integer> {
 
-    private Context context;
+    private Context c;
 
     public CreateEvent(Context context) {
-        this.context = context;
+        this.c = context;
     }
 
-    protected Integer doInBackground(Event... event) {
-        Api.getInstance(context).createEvent(event[0]);
+    protected Integer doInBackground(Event... events) {
+        Event event = events[0];
+        if (event.getId() == 0)
+            Api.getInstance(c).createEvent(event);
+        else
+            Api.getInstance(c).updateEvent(event);
         return 0;
     }
 }

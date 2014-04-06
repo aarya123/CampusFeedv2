@@ -19,16 +19,11 @@ import java.util.ArrayList;
  */
 public class EventArrayAdapter extends ArrayAdapter<Event> {
 
+    ViewHolder holder;
+
     public EventArrayAdapter(Context context, ArrayList<Event> events) {
         super(context, R.layout.browseevents_rowlayout, events);
     }
-
-    public static class ViewHolder {
-        public TextView eventName, eventTime, eventDescription;
-        public ImageView eventImage;
-    }
-
-    ViewHolder holder;
 
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -46,9 +41,14 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         }
         Event e = getItem(position);
         holder.eventName.setText(e.getEventName());
-        // eventTime.setText(values[position]);
+        holder.eventTime.setText(e.getDatetime());
         holder.eventDescription.setText(e.getEventDescription());
         holder.eventImage.setImageResource(R.drawable.purdue_symbol);
         return convertView;
+    }
+
+    public static class ViewHolder {
+        public TextView eventName, eventTime, eventDescription;
+        public ImageView eventImage;
     }
 } 

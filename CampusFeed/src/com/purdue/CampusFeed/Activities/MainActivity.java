@@ -3,12 +3,14 @@ package com.purdue.CampusFeed.Activities;
 import java.io.IOException;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -75,7 +77,7 @@ public class MainActivity extends FragmentActivity {
         }.execute();
 
         HomepageFragment homepageFragment = new HomepageFragment();
-        getFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
 
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
@@ -141,17 +143,17 @@ public class MainActivity extends FragmentActivity {
 
     //Fragment swapping
     private void selectItem(int position) {
-        android.app.Fragment fragToDisplay;
+        Fragment fragToDisplay;
         switch (position) {
             case 1:
 
                 fragToDisplay = new HomepageFragment();
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 2:
 
                 fragToDisplay = new BrowseFragment();
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             case 3:
 
@@ -163,7 +165,7 @@ public class MainActivity extends FragmentActivity {
             case 4:
 
                 fragToDisplay = new AdvancedSearchFragment();
-                getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             default:
                 break;
@@ -291,6 +293,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     //setting up the search widget
+    private String query;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the options menu from XML
@@ -304,7 +307,25 @@ public class MainActivity extends FragmentActivity {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) menu.findItem(R.id.simple_search).getActionView();
         // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, SingleFragmentActivity.class)));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				return false;
+			}
+
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				Intent i = new Intent();
+				i.setAction(Intent.ACTION_SEARCH);
+				i.setClass(MainActivity.this, SingleFragmentActivity.class);
+				i.putExtra(SearchManager.QUERY, query);
+				startActivity(i);
+				return true;
+			}
+        	
+        });
         searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
 
         return true;

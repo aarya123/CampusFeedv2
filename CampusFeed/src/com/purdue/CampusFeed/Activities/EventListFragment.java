@@ -1,10 +1,13 @@
 package com.purdue.CampusFeed.Activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
@@ -22,12 +25,13 @@ public class EventListFragment extends ListFragment {
 
     EventArrayAdapter adapter;
 
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    @Override
+    public void onAttach(Activity activity) {
+    	super.onAttach(activity);
         AdvSearchQuery query = getArguments().getParcelable("query");
-        adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
+        adapter = new EventArrayAdapter(activity, new ArrayList<Event>());
         setListAdapter(adapter);
-        new SearchQueryExecutor(getActivity(), adapter).execute(query);
+        new SearchQueryExecutor(activity, adapter).execute(query);
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {
