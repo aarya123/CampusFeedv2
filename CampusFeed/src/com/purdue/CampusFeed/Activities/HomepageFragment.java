@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
+import com.purdue.CampusFeed.AsyncTasks.Top5Events;
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
 
@@ -42,7 +42,7 @@ public class HomepageFragment extends Fragment {
                 }
             }
         });
-        // new Top5Events(getActivity(), adapter).execute(Utils.categories);
+        new Top5Events(getActivity(), adapter).execute(Utils.categories);
         return listView;
     }
 

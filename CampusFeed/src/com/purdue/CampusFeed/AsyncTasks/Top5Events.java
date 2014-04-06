@@ -29,7 +29,7 @@ public class Top5Events extends AsyncTask<String[], Integer, ArrayList<Event>> {
         Api api = Api.getInstance(c);
         Log.d(Utils.TAG, "Size " + params.length);
         for (int i = 0; i < params.length; i++) {
-            for (int j = 0; i < params[i].length; j++) {
+            for (int j = 0; j < params[i].length; j++) {
                 Log.d(Utils.TAG, params[i][j]);
                 temp.addAll(api.top5(params[i][j]));
             }
