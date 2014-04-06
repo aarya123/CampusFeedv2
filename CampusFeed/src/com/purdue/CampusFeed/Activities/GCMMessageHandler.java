@@ -88,6 +88,17 @@ public class GCMMessageHandler extends IntentService {
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());*/
     	if(extras.getString("mode").equals("update_event")){
     		int event_id = extras.getInt("response");
+    		 
+    		
+    		Log.d("MAYANK", event_id+"");
+        	Intent intent = new Intent(this, MainActivity.class);
+        	PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        	Notification notification = new Notification.Builder(this).setContentTitle(this.getResources().getString(R.string.app_name))
+        	            .setContentText(msg).setSmallIcon(R.drawable.ic_launcher)
+        	            .setContentIntent(pIntent).getNotification();
+        	NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+        	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        	notificationManager.notify(0, notification);
     	
     	}
     	else
@@ -95,13 +106,6 @@ public class GCMMessageHandler extends IntentService {
     		// invite event notification
     	}
     	
-    	Intent intent = new Intent(this, MainActivity.class);
-    	PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-    	Notification notification = new Notification.Builder(this).setContentTitle(this.getResources().getString(R.string.app_name))
-    	            .setContentText(msg).setSmallIcon(R.drawable.ic_launcher)
-    	            .setContentIntent(pIntent).getNotification();
-    	NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
-    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
-    	notificationManager.notify(0, notification);
+
     }
 }
