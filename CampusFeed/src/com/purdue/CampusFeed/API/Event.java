@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class Event implements Serializable {
 
-    public final static int PRIVATE = 1, PUBLIC = 0;
+    public final static int PRIVATE = 0, PUBLIC = 1;
     String name, description, location;
     long id, time, status;
     String[] categories;
@@ -99,7 +99,7 @@ public class Event implements Serializable {
         return time;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

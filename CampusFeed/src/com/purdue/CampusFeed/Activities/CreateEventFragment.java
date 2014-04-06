@@ -18,13 +18,40 @@ import java.util.Calendar;
  * Created by Sean on 2/27/14.
  */
 public class CreateEventFragment extends Fragment {
-    private DatePickerDialog datePickerDialog;
-    private TimePickerDialog timePickerDialog;
+    private static final String[] categories = new String[]{"Social", "Cultural", "Education"};
     EditText dateSpinner, timeSpinner, nameText, descriptionText, locationText;
     int year, month, day, hour, minute;
-    private Button doneButton;
+    /* Called when the user finishes selecting a date from the dialog */
+    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker datePicker, int selectedYear,
+                              int selectedMonth, int selectedDay) {
+            year = selectedYear;
+            month = selectedMonth;
+            day = selectedMonth;
+
+            // Change spinner's text view to selected date
+            dateSpinner.setText(new StringBuilder().append(month + 1).append("-").append(day).append("-").append(year).append(" "));
+        }
+    };
     MultiAutoCompleteTextView multiAutoCompleteTextView;
-    private static final String[] categories = new String[]{"Social", "Cultural", "Education"};
+    Event event;
+    private DatePickerDialog datePickerDialog;
+    private TimePickerDialog timePickerDialog;
+    private Button doneButton;
+    /* Called when the user finishes selecting the time of the event */
+    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker timePicker, int selectedHour,
+                              int selectedMinute) {
+            hour = selectedHour;
+            minute = selectedMinute;
+
+            // update spinner text
+            timeSpinner.setText(new StringBuilder().append(hour).append(":")
+                    .append(minute));
+        }
+    };
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -42,6 +69,16 @@ public class CreateEventFragment extends Fragment {
         multiAutoCompleteTextView = (MultiAutoCompleteTextView) getActivity().findViewById(R.id.tagText);
         multiAutoCompleteTextView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, categories));
         multiAutoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        if (getArguments() != null)
+            event = (Event) getArguments().getSerializable("event");
+        if (event != null) {
+            nameText.setText(event.getEventName());
+            descriptionText.setText(event.getEventDescription());
+            locationText.setText(event.getEventLocation());
+            String[] date = event.getDatetime().split(" ");
+            dateSpinner.setText(date[0]);
+            timeSpinner.setText(date[1]);
+        }
         // get current date
         final Calendar cal = Calendar.getInstance();
         year = cal.get(Calendar.YEAR);
@@ -51,11 +88,12 @@ public class CreateEventFragment extends Fragment {
         // get current time
         hour = cal.get(Calendar.HOUR_OF_DAY);
         minute = cal.get(Calendar.MINUTE);
-
-        // set default prompt for dateSpinner
-        dateSpinner.setText("Today");
-        // set default prompt for timeSpinner
-        timeSpinner.setText("" + hour + ":" + minute);
+        if (event == null) {
+            // set default prompt for dateSpinner
+            dateSpinner.setText("Today");
+            // set default prompt for timeSpinner
+            timeSpinner.setText("" + hour + ":" + minute);
+        }
         datePickerDialog = new DatePickerDialog(getActivity(), datePickerListener, year, month, day);
         timePickerDialog = new TimePickerDialog(getActivity(), timePickerListener, hour, minute, true);
         /* Called when dateSpinner is clicked */
@@ -84,38 +122,13 @@ public class CreateEventFragment extends Fragment {
                 String[] categories = multiAutoCompleteTextView.getText().toString().split(",");
                 for (int i = 0; i < categories.length; i++)
                     categories[i] = categories[i].replace(" ", "");
-                new CreateEvent(getActivity()).execute(new Event(title, description, location, time_start, categories, visibility));
+                if (event == null)
+                    new CreateEvent(getActivity()).execute(new Event(title, description, location, time_start, categories, visibility));
+                else
+                    new CreateEvent(getActivity()).execute(new Event(title, description, location, time_start, categories, visibility, event.getId()));
                 Toast.makeText(getActivity(), "event created", Toast.LENGTH_LONG).show();
             }
         });
     }
-
-    /* Called when the user finishes selecting a date from the dialog */
-    private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker datePicker, int selectedYear,
-                              int selectedMonth, int selectedDay) {
-            year = selectedYear;
-            month = selectedMonth;
-            day = selectedMonth;
-
-            // Change spinner's text view to selected date
-            dateSpinner.setText(new StringBuilder().append(month + 1).append("-").append(day).append("-").append(year).append(" "));
-        }
-    };
-
-    /* Called when the user finishes selecting the time of the event */
-    private TimePickerDialog.OnTimeSetListener timePickerListener = new TimePickerDialog.OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker timePicker, int selectedHour,
-                              int selectedMinute) {
-            hour = selectedHour;
-            minute = selectedMinute;
-
-            // update spinner text
-            timeSpinner.setText(new StringBuilder().append(hour).append(":")
-                    .append(minute));
-        }
-    };
 }
 
