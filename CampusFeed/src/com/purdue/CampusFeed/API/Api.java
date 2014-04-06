@@ -224,12 +224,22 @@ public class Api implements Closeable {
         }
     }
     class GCMRegisterResponse{
-        public String response;
+        public String success;
     }
     public String registerGCM(String fb_user_id,String gcm_id)
     {
         GCMRegisterResponse response = (GCMRegisterResponse)getResponse("POST", "gcm_register", gson.toJson(new GCMRegisterRequest(fb_user_id,gcm_id)), GCMRegisterResponse.class);
-        return response.response;
+        return response.success;
+    }
+    class GetEventRequest {
+    	Auth auth = login;
+    	long event_id;
+    	public GetEventRequest(long eventId) {
+    		event_id = eventId;
+    	}
+    }
+    public Event getEvent(long eventId) {
+    	return (Event) getResponse("POST", "get_event", gson.toJson(new GetEventRequest(eventId)), Event.class);
     }
     @Override
     public void close() throws IOException {

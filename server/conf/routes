@@ -32,6 +32,9 @@ POST	/adv_search_event	controllers.EventManager.advSearch()
 #List Event
 POST	/list_event		controllers.EventManager.listEvent()
 
+#Get Event
+POST	/get_event	controllers.EventManager.getEvent()
+
 #top5
 POST	/top5			controllers.EventManager.top5
 

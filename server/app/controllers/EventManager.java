@@ -38,6 +38,7 @@ import views.html.*;
 
 public class EventManager extends Controller{
 	
+	public static final String EVENT_GET_SQL_UNRESTRICTED = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id";
 	public static final String EVENT_GET_SQL = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
 	
 	public static ArrayNode buildEventResults(Connection conn, ResultSet rs) throws SQLException {
@@ -405,7 +406,6 @@ public static Result advSearch() {
 			}
 			sql += ")";
 		}
-		System.out.println(sql);
 		stmt = conn.prepareStatement(sql);
 		for(int i = 0; i < params.size(); ++i) {
 			stmt.setObject(i + 1, params.get(i));
@@ -627,6 +627,39 @@ public static Result top5() {
 	catch(SQLException e) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
+}
+
+public static Result getEvent() {
+	JsonNode request = request().body().asJson();
+	try {
+		Application.checkReqValid(request);
+	}
+	catch(AuthorizationException e) {
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	catch(SQLException e) {
+		e.printStackTrace();
+		return ok();
+	}
+	// get the user id
+	long user_id =Application.getUserId(request);
+	long event_id;
+	try {
+		event_id = request.get("event_id").longValue();
+	}
+	catch(Exception e) {
+		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: auth, event_id (long)"));
+	}
+	try(Connection conn = DB.getConnection()) {
+		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
+		stmt.setLong(1, event_id);
+		ResultSet rs = stmt.executeQuery();
+		return ok(buildEventResults(conn, rs).get(0));
+	}
+	catch(Exception e) {
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
+	}
+	
 }
 
 
