@@ -33,7 +33,7 @@ public class SingleFragmentActivity extends FragmentActivity {
             	return;
             }
         }
-        if(getIntent().getAction().equals(Intent.ACTION_SEARCH)) {
+        if(getIntent().getAction()!=null&&getIntent().getAction().equals(Intent.ACTION_SEARCH)) {
         	String title = getIntent().getStringExtra(SearchManager.QUERY); 
         	AdvSearchQuery query = new AdvSearchQuery();
 			query.setTitle(title);
