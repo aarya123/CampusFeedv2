@@ -229,6 +229,7 @@ public class Api implements Closeable {
         GCMRegisterResponse response = (GCMRegisterResponse)getResponse("POST", "gcm_register", gson.toJson(new GCMRegisterRequest(fb_user_id,gcm_id)), GCMRegisterResponse.class);
         if(response==null)
         {
+        	Log.d("PRANAV","gcm response was NULL :(");
             return "FAILED";
         }
         return response.success;

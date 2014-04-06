@@ -1,5 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
+import java.io.IOException;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.facebook.*;
 import com.facebook.model.GraphUser;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
@@ -220,9 +223,28 @@ public class MainActivity extends FragmentActivity {
                             
                             new Login(MainActivity.this).execute(facebook_userID, facebook_accessToken);
 
-                            //register for gcm
-                            Api api = Api.getInstance(getApplicationContext());
-                            api.registerGCM(facebook_userID, Utils.gcmRegid);
+                            
+                            new AsyncTask() {
+                                protected Object doInBackground(Object[] params) {
+                                    String msg = "";
+                                   // try {
+                                    
+                                   //register for gcm
+                                   Api api = Api.getInstance(getApplicationContext());
+                                   api.registerGCM(facebook_userID, Utils.gcmRegid);
+                                    
+                                    /*} catch (IOException ex) {
+                                        msg = "Error :" + ex.getMessage();
+                                        Log.d("PRANAV", ex.toString());
+                                    }*/
+                                    return msg;
+                                }
+                                
+                                @Override
+                                protected void onPostExecute(Object msg) {
+                                	Log.d("PRANAV","called registerGCM!!!");
+                                }
+                            }.execute(null, null, null);
                         }
                     }
                 }
