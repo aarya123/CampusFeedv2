@@ -3,6 +3,8 @@ package com.purdue.CampusFeed.Activities;
 import java.util.ArrayList;
 
 import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.API.AdvSearchQuery;
+import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
 
@@ -46,7 +48,8 @@ public class SearchableActivity extends Activity {
 	public void doMySearch(String query){
 		Toast.makeText(this, "Query: "+query, Toast.LENGTH_LONG).show();
 	    
-	    
+		//events = Api.advSearchEvent(query);
+		
 	    //set the adapter and generate the rows
 		adapter = new EventArrayAdapter(this, events);
 
