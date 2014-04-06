@@ -48,4 +48,4 @@ GET /all_tags			controllers.EventManager.allTags()
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
-GET		/invite/{id}		controllers.Application.invite()
+GET		/invite/{<[0-9]+>}		controllers.Application.invite()
