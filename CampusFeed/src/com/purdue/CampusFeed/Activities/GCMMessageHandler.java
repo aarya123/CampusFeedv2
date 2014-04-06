@@ -51,8 +51,8 @@ public class GCMMessageHandler extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Post notification of received message.
-            	
-                sendNotification("An event has been updated. Click here to see!",extras);
+
+                sendNotification("Event Coming Up Soon!", extras);
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }
