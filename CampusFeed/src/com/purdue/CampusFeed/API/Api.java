@@ -214,11 +214,9 @@ public class Api implements Closeable {
     }
     class GCMRegisterRequest{
         public String fb_user_id;
-        public Auth auth;
         public String gcm_id;
         public GCMRegisterRequest(String fb_user_id,String gcm_id)
         {
-            this.auth = Api.this.login;
             this.fb_user_id = fb_user_id;
             this.gcm_id = gcm_id;
         }
@@ -229,6 +227,10 @@ public class Api implements Closeable {
     public String registerGCM(String fb_user_id,String gcm_id)
     {
         GCMRegisterResponse response = (GCMRegisterResponse)getResponse("POST", "gcm_register", gson.toJson(new GCMRegisterRequest(fb_user_id,gcm_id)), GCMRegisterResponse.class);
+        if(response==null)
+        {
+            return "FAILED";
+        }
         return response.success;
     }
     class GetEventRequest {
