@@ -63,6 +63,7 @@
 				android:id="@+id/timeSpinner"
 				android:hint="Time"
 				style="@android:style/Widget.DeviceDefault.Light.Spinner"/>
+		
 	</LinearLayout>
 	<TextView android:layout_width="fill_parent"
 	          android:layout_height="wrap_content"
