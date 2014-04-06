@@ -16,21 +16,13 @@
 
 package com.purdue.CampusFeed.Utils;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -40,38 +32,32 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.purdue.CampusFeed.Activities.ContactDetailActivity;
 import com.purdue.CampusFeed.Activities.ContactsListActivity;
 
+import java.io.IOException;
+
 /**
- * This class contains static utility methods. 
+ * This class contains static utility methods.
  */
 public class Utils {
 
-	//---------GCM variables------------------
+    //---------GCM variables------------------
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-	
+    public static final String TAG = "CampusFeed";
+    /**
+     * Tag used on log messages.
+     */
+    static final String GCM_DEBUG_TAG = "GCMDemo";
+    public static String gcmRegid;
     /**
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
      */
     static String SENDER_ID = "872065754556";
-    
-    /**
-     * Tag used on log messages.
-     */
-    static final String GCM_DEBUG_TAG = "GCMDemo";
-    TextView mDisplay;
     static GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    SharedPreferences prefs;
-    Context context;
-    public static String gcmRegid;
-    
-    //--------------------------------------//
-    
-    //---------------GCM Functions----------//
+    private static ImageLoader mImageLoader;
 
+    private Utils() {
+    }
     /**
      * Registers the application with GCM servers asynchronously.
      * <p/>
@@ -79,7 +65,7 @@ public class Utils {
      * shared preferences.
      */
     @SuppressWarnings("unchecked")
-	private static void registerInBackground(final Context context) {
+    private static void registerInBackground(final Context context) {
         new AsyncTask() {
             protected Object doInBackground(Object[] params) {
                 String msg = "";
@@ -90,7 +76,7 @@ public class Utils {
                     gcmRegid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + gcmRegid;
 
-                    
+
                     // You should send the registration ID to your server over HTTP,
                     // so it can use GCM/HTTP or CCS to send messages to your app.
                     // The request to your server should be authenticated if your app
@@ -107,16 +93,15 @@ public class Utils {
                 }
                 return msg;
             }
-            
+
             @Override
             protected void onPostExecute(Object msg) {
-            	Toast.makeText(context, "GCMid = "+gcmRegid, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "GCMid = " + gcmRegid, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "id = " + gcmRegid, Toast.LENGTH_SHORT).show();
             }
         }.execute(null, null, null);
     }
-    
-    
-    
+
     /**
      * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
      * or CCS to send messages to your app. Not needed for this demo since the
@@ -126,40 +111,30 @@ public class Utils {
     private static void sendRegistrationIdToBackend() {
         // Your implementation here.
     }
-    
-    public static boolean checkPlayServices(Context context) {
-        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS ? true : false;
-    }
-    
-    //-----------------------------------------//
-    
-    // Prevents instantiation.
-    private Utils() {
-    }
 
-    public static final String TAG = "CampusFeed";
-    private static ImageLoader mImageLoader;
+    public static boolean checkPlayServices(Context context) {
+        return GooglePlayServicesUtil.isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
+    }
 
     public static void init(Context c) {
-    	//init contact stuff
+        //init contact stuff
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true).cacheOnDisc(true).build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
                 c).defaultDisplayImageOptions(defaultOptions).build();
         mImageLoader = ImageLoader.getInstance();
         mImageLoader.init(config);
-        
-        
-        
+
+
         //init GCM stuff (added by Pranav)
-        
+
         if (checkPlayServices(c)) {
-        	//register for GCM everytime, crappy implementation
-        	//will change later
-        	
+            //register for GCM everytime, crappy implementation
+            //will change later
+
             gcm = GoogleCloudMessaging.getInstance(c);
-             registerInBackground(c);
-        }else
+            registerInBackground(c);
+        } else
             Log.i(GCM_DEBUG_TAG, "No valid Google Play Services APK found.");
     }
 

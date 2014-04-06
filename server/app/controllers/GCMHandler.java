@@ -72,7 +72,7 @@ public class GCMHandler extends Controller {
 		{
 		
 			// api key
-			String api_key ="AIzaSyByHZpsk-XepjWKY3bshI75WpNFal0NrCE";
+			String api_key ="AIzaSyDBVU6IDgiH0Asp8FT98y4_TTJTz5sLNWs";
 			
 			// now that we have the user gcm id, we will send the message
 			JSONObject obj = new JSONObject();
@@ -89,7 +89,6 @@ public class GCMHandler extends Controller {
 			
 			
 			System.out.println(obj.toString());
-			System.out.println(gcm_ids.toString());
 			WS.url("https://android.googleapis.com/gcm/send")
 				.setContentType("application/json")
 				.setHeader("Authorization","key="+api_key)

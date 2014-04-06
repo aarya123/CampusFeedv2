@@ -246,13 +246,14 @@ public static Result rsvp_to_event()
 	// get the user id
 	long user_id =Application.getUserId(request);
 	// main thing, only need event_id
-	int event_id = Integer.parseInt(request.get("event_id").textValue());
+	
+	long event_id = request.get("event_id").longValue();
 	// check if user has already rsvp'd
 	boolean should_add = false;
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_User WHERE user_id=? AND event_id=?");
 		stmt.setLong(1, user_id);
-		stmt.setInt(2, event_id);
+		stmt.setLong(2, event_id);
 		stmt.execute();
 		ResultSet rs = stmt.getResultSet();
 		int rsvp=-1;
@@ -272,7 +273,7 @@ public static Result rsvp_to_event()
 			try(Connection conn2 = DB.getConnection()) {
 				PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event_has_User` SET `rsvp` = '1' WHERE `event_has_user`.`event_id` = ? AND `event_has_user`.`user_id` = ?");
 				stmt2.setLong(2, user_id);
-				stmt2.setInt(1, event_id);
+				stmt2.setLong(1, event_id);
 				stmt2.executeUpdate();
 				
 				
@@ -298,7 +299,7 @@ public static Result rsvp_to_event()
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (user_id,event_id,rsvp,is_admin) VALUES (?,?,1,0)");
 		stmt.setLong(1, user_id);
-		stmt.setInt(2, event_id);
+		stmt.setLong(2, event_id);
 		stmt.executeUpdate();
 		
 		
