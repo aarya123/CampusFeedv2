@@ -27,7 +27,7 @@
 			android:theme="@style/app_theme">
 			
 	   <meta-data android:name="com.google.android.gms.version"
-		           android:value="@integer/google_play_services_version"/>
+		          android:value="@integer/google_play_services_version"/>
 			
 	    <!-- enable the search dialog to send searches to SearchableActivity -->
         <meta-data android:name="android.app.default_searchable"

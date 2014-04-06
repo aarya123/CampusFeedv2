@@ -250,4 +250,8 @@ public class Api implements Closeable {
             cache.flush();
         }
     }
+    
+    public Auth getLogin() {
+    	return this.login;
+    }
 }
