@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public class Event implements Serializable {
 
-    public final static int PRIVATE = 1, PUBLIC = 0;
+    public final static int PRIVATE = 0, PUBLIC = 1;
     String name, description, location;
     long id, time, status;
     String[] categories;
@@ -79,11 +79,8 @@ public class Event implements Serializable {
     }
 
     public String getDatetime() {
-        return new SimpleDateFormat("dd/MM/yyyy kk:mm:ss").format(new Date(time * 1000));
-    }
-
-    public void setDatetime(long datetime) {
-        this.time = datetime;
+        String dTime = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss").format(new Date(time * 1000));
+        return dTime.substring(0, dTime.length() - 3);
     }
 
     public void setDatetime(String datetime) {
@@ -95,11 +92,15 @@ public class Event implements Serializable {
         }
     }
 
+    public void setDatetime(long datetime) {
+        this.time = datetime;
+    }
+
     public long getDatetimeLong() {
         return time;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

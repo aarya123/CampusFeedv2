@@ -14,6 +14,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,7 +24,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-public class SearchableActivity extends Activity {
+public class SearchableActivity extends FragmentActivity {
 	
 	EventArrayAdapter adapter;
 	ListView lv;
@@ -68,7 +69,7 @@ public class SearchableActivity extends Activity {
 				Event e = events.get(pos);
 				EventPageFragment fragment = new EventPageFragment();
 				fragment.setEvent(e);
-				getFragmentManager().beginTransaction()
+				getSupportFragmentManager().beginTransaction()
 						.replace(R.id.content_frame, fragment).commit();
 			}
 		});
