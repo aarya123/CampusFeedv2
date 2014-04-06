@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
@@ -105,7 +106,7 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     				
     				@Override
     				public void onPostExecute(String result) {
-    					Log.e("tag", result);
+    					Toast.makeText(getActivity(), "RSVP received, enjoy!", Toast.LENGTH_SHORT);
     				}
         			
         		}.execute();
@@ -115,12 +116,16 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     			maybeButton.setTypeface(null, Typeface.BOLD);
     			goingButton.setTypeface(null, Typeface.NORMAL);
     			declineButton.setTypeface(null, Typeface.NORMAL);
+    			
+    			Toast.makeText(getActivity(), "RSVP(maybe) received!", Toast.LENGTH_SHORT);
 
     			break;
     		case R.id.declineButton:
     			declineButton.setTypeface(null, Typeface.BOLD);
     			goingButton.setTypeface(null, Typeface.NORMAL);
     			maybeButton.setTypeface(null, Typeface.NORMAL);
+    			
+    			Toast.makeText(getActivity(), "RSVP(decline) received!", Toast.LENGTH_SHORT);
     			
     			break;
     	}
