@@ -98,6 +98,9 @@ public class AdvSearchQuery implements Parcelable {
     };
 
 	public void addCategory(String category) {
+		if(tags == null) {
+			tags = new ArrayList<String>();
+		}
 		tags.add(category);
 	}
 }

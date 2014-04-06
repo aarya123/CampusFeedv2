@@ -29,7 +29,6 @@ public class EventListFragment extends ListFragment {
     public void onAttach(Activity activity) {
     	super.onAttach(activity);
         AdvSearchQuery query = getArguments().getParcelable("query");
-        Log.i("ATTACH", query.getTitle());
         adapter = new EventArrayAdapter(activity, new ArrayList<Event>());
         setListAdapter(adapter);
         new SearchQueryExecutor(activity, adapter).execute(query);
