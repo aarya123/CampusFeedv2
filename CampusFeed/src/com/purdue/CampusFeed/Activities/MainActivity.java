@@ -9,16 +9,24 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
-import com.facebook.*;
+
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
@@ -26,7 +34,7 @@ import com.purdue.CampusFeed.AsyncTasks.Login;
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AnimationActivity {
 
     private static final String TAG = "Facebook OAUTH";
     //Data members required for the Facebook login
@@ -56,7 +64,7 @@ public class MainActivity extends FragmentActivity {
         }
     };
     //setting up the search widget
-    private String query;
+   // private String query;
 
 	/*
      *
@@ -199,6 +207,12 @@ public class MainActivity extends FragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+   /*
+    *
+    * Functions for Facebook login
+    *
+    */
+
     //what to do when the session status changes (logged in or logged out)
     private void onSessionStateChange(final Session session, SessionState state, Exception exception) {
         if (state.isOpened()) {
@@ -287,6 +301,8 @@ public class MainActivity extends FragmentActivity {
         uiHelper.onSaveInstanceState(outState);
     }
 
+    //setting up the search widget
+    private String query;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the options menu from XML

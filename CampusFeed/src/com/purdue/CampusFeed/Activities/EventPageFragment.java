@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
@@ -23,6 +23,7 @@ import com.purdue.CampusFeed.R;
 
 public class EventPageFragment extends Fragment implements OnClickListener {
     public Event myEvent;
+    //private final GestureDetector gestureDetector;
 
     public void setEvent(Event e) {
         this.myEvent = e;
@@ -73,6 +74,8 @@ public class EventPageFragment extends Fragment implements OnClickListener {
                 getFragmentManager().beginTransaction().replace(R.id.basic_contentframe, frag).commit();
             }
         });
+
+        //contentFrame.setOnTouchListener(swipeListener);
     }
 
     @Override
