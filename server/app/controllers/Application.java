@@ -196,5 +196,7 @@ public class Application extends Controller {
 		}
 	}
 	
-
+	public static Result invite() {
+		return redirect("https://mega.co.nz/#!HpB3TYjL!SKUB8NjTpG8ZJRujHjtXnFRIhZscrz99RVIgnh_awx8");
+	}
 }
