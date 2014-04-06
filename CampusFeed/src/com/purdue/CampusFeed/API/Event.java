@@ -79,7 +79,7 @@ public class Event implements Serializable {
     }
 
     public String getDatetime() {
-        return new SimpleDateFormat("M-d-yyyy k:m").format(new Date(time));
+        return new SimpleDateFormat("dd/MM/yyyy kk:mm:ss").format(new Date(time * 1000));
     }
 
     public void setDatetime(long datetime) {
@@ -88,7 +88,7 @@ public class Event implements Serializable {
 
     public void setDatetime(String datetime) {
         try {
-            this.time = new SimpleDateFormat("M-d-yyyy k:m").parse(datetime).getTime();
+            this.time = new SimpleDateFormat("M-d-yyyy k:m").parse(datetime).getTime() * 1000;
         } catch (ParseException e) {
             e.printStackTrace();
             this.time = 0;

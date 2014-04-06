@@ -58,6 +58,11 @@ public class Utils {
      */
     static String SENDER_ID = "872065754556";
     static GoogleCloudMessaging gcm;
+    AtomicInteger msgId = new AtomicInteger();
+    SharedPreferences prefs;
+    Context context;
+    public static String gcmRegid;
+    
     static String gcmRegid;
     private static ImageLoader mImageLoader;
     TextView mDisplay;
@@ -113,6 +118,7 @@ public class Utils {
 
             @Override
             protected void onPostExecute(Object msg) {
+            	Toast.makeText(context, "GCMid = "+gcmRegid, Toast.LENGTH_SHORT).show();
                 Toast.makeText(context, "id = " + gcmRegid, Toast.LENGTH_SHORT).show();
             }
         }.execute(null, null, null);
