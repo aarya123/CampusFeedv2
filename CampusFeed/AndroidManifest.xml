@@ -35,14 +35,14 @@
         
         <!-- GCM receiver -->
         <receiver
-            android:name=".GcmBroadcastReceiver"
+            android:name=".GCMReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.example.gcm" />
             </intent-filter>
         </receiver>
-        <service android:name=".GcmIntentService" />
+        <service android:name=".GCMMessageHandler" />
         
         
 		<activity
