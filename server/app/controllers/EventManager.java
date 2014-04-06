@@ -545,11 +545,8 @@ public static Result updateEvent()
 		conn.commit();
 		conn.close();
 		// send messages to all users
-		ArrayList<String> user_ids = EventManager.get_user_ids();
-		for(int a=0;a<user_ids.size();a++)
-		{
-			GCMHandler.sendMessage(user_ids.get(a), "Update for: "+title+"\n"+"Description:"+desc+"\nLocation:"+location+"\n");
-		}
+		
+			GCMHandler.sendMessage(get_user_ids(), "Update for: "+title+"\n"+"Description:"+desc+"\nLocation:"+location+"\n");
 		// end messaging.
 		return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
 	}
@@ -562,12 +559,14 @@ public static Result updateEvent()
 public static ArrayList<String> get_user_ids()
 {
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `User` WHERE gcm_id IS NOT NULL");
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `User`");
 		ResultSet s =stmt.executeQuery();
 		ArrayList<String> user_ids = new ArrayList<String>();
 		while(s.next())
 		{
-			user_ids.add(s.getString("fb_user_id"));
+			String gcm_id = s.getString("gcm_id");
+			user_ids.add(gcm_id);
+			System.out.println(gcm_id+"\n");
 		}
 		s.close();
 		return user_ids;
