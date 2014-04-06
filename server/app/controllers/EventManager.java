@@ -374,6 +374,9 @@ public static Result advSearch() {
 		params.add(user_id);
 		String sql = EVENT_GET_SQL;
 		if(request.has("name")) {
+			if(params.size() != 0) {
+				sql += " AND ";
+			}
 			sql += "name like ?";
 			params.add("%" + request.get("name").textValue() + "%");
 		}
