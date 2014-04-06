@@ -68,7 +68,7 @@ public class GCMHandler extends Controller {
 		 * Messenger 
 		 * 
 		 */
-		public static int sendMessage(ArrayList<String> gcm_ids, String message)
+		public static int sendMessage(ArrayList<String> gcm_ids, long event_id)
 		{
 		
 			// api key
@@ -88,7 +88,8 @@ public class GCMHandler extends Controller {
 			JSONObject msg = new JSONObject();
 			
 			try {
-				msg.put("response", message);
+				msg.put("response", event_id);
+				msg.put("mode", "update_event");
 				obj.put("data",msg);
 				obj.put("registration_ids", gcm_ids_json_array);
 			

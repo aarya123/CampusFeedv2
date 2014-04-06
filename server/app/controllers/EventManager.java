@@ -547,7 +547,7 @@ public static Result updateEvent()
 		conn.close();
 		// send messages to all users
 		
-			GCMHandler.sendMessage(get_user_ids(), "Update for: "+title+"\n"+"Description:"+desc+"\nLocation:"+location+"\n");
+			GCMHandler.sendMessage(get_user_ids(),id);
 		// end messaging.
 		return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
 	}
