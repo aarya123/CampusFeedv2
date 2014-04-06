@@ -76,6 +76,7 @@ public class Api implements Closeable {
             conn.setRequestProperty("Content-Length", Integer.toString(json.length()));
             conn.setRequestMethod(method);
             //conn.setDoInput(true);
+            Log.d(Utils.TAG, json);
             HttpURLConnection.setFollowRedirects(false);
             if (method.equals("POST")) {
                 conn.setDoOutput(true);
