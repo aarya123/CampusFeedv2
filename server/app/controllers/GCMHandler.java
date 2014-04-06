@@ -97,7 +97,7 @@ public class GCMHandler extends Controller {
 				
 				WS.url("https://android.googleapis.com/gcm/send")
 				.setContentType("application/json")
-				.setHeader("Authorization:key=",api_key)
+				.setHeader("Authorization","key="+api_key)
     			.post(requestNode);
 				
 				return 0;
