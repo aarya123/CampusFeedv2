@@ -1,32 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="20dp">
+	<EditText
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/searchNameText"
+			android:hint="Event Name"
+			android:paddingBottom="10dp"/>
 
 	<EditText
-			android:id="@+id/searchName"
-			android:inputType="text"
-			android:hint="Event Name"
-			android:layout_width="match_parent"
+			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:ems="10">
-		<requestFocus/>
-	</EditText>
+			android:inputType="textMultiLine"
+			android:ems="10"
+			android:id="@+id/searchDescriptionText"
+			android:hint="Event Description"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+
+	<EditText
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/searchTagText"
+			android:singleLine="true"
+			android:completionThreshold="1"
+			android:hint="Tag(s)"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp">
+
+		<EditText
+				android:layout_width="0px"
+				android:layout_height="wrap_content"
+				android:layout_weight=".6"
+				android:id="@+id/searchStartDateSpinner"
+				android:hint="Start Date"
+				style="@android:style/Widget.DeviceDefault.Light.Spinner"
+				android:paddingLeft="13dp"/>
+
+		<EditText
+				android:layout_width="0px"
+				android:layout_height="wrap_content"
+				android:layout_weight=".6"
+				android:id="@+id/searchEndDateSpinner"
+				android:hint="End Date"
+				style="@android:style/Widget.DeviceDefault.Light.Spinner"/>
+		
+	</LinearLayout>
 
 	<Button
-			android:id="@+id/searchButton"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/search"
-			android:layout_centerHorizontal="true"
-			android:layout_below="@id/searchName"/>
-
-	<ListView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/search_list"
-			android:layout_centerHorizontal="true"
-			android:layout_below="@+id/searchButton"/>
-
-</RelativeLayout>
+			android:layout_gravity="center"
+			android:text="Search"
+			android:id="@+id/advSearchButton"/>
+</LinearLayout>

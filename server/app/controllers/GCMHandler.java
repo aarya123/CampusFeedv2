@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -67,46 +68,33 @@ public class GCMHandler extends Controller {
 		 * Messenger 
 		 * 
 		 */
-		public static int sendMessage(String id, String message)
+		public static int sendMessage(ArrayList<String> gcm_ids, String message)
 		{
-			// get the user_id of person
-			String user_id = id;
-			// get the gcm_id of the user
-			String gcm_id = null;
+		
 			// api key
-			String api_key ="AIzaSyByHZpsk-XepjWKY3bshI75WpNFal0NrCE";
-			try(Connection conn = DB.getConnection()) {
-				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `User`  WHERE fb_user_id=?");
-				stmt.setString(1, user_id);
-				ResultSet s =stmt.executeQuery();
-				if(s.next())
-				{
-					gcm_id = s.getString("gcm_id");
-					if(gcm_id==null || gcm_id=="")
-					{
-						return -1;
-					}
-				}
-				else{
-						// user does not exist
-					return -1;
-				}
-				s.close();
-				// now that we have the user gcm id, we will send the message
-				JsonNode requestNode =JsonNodeFactory.instance.objectNode().put("registration_ids", gcm_id).put("data", message);
-				
-				WS.url("https://android.googleapis.com/gcm/send")
-				.setContentType("application/json")
-				.setHeader("Authorization","key="+api_key)
-    			.post(requestNode);
-				
-				return 0;
-			}catch(Exception e)
-			{
+			String api_key ="AIzaSyDBVU6IDgiH0Asp8FT98y4_TTJTz5sLNWs";
+			
+			// now that we have the user gcm id, we will send the message
+			JSONObject obj = new JSONObject();
+			String registration_ids = gcm_ids.toString();
+		
+			try {
+				obj.put("registration_ids", registration_ids);
+				obj.put("data", message);
+			} catch (JSONException e) {
+
 				e.printStackTrace();
 				return -1;
-				
 			}
+			
+			
+			System.out.println(obj.toString());
+			WS.url("https://android.googleapis.com/gcm/send")
+				.setContentType("application/json")
+				.setHeader("Authorization","key="+api_key)
+    			.post(obj.toString());
+				return 0;
+		
 		}
 		
 		

@@ -1,103 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:scrollbars="none">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="20dp">
+	<EditText
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/nameText"
+			android:hint="Event Name"
+			android:paddingBottom="10dp"/>
+
+	<EditText
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textMultiLine"
+			android:ems="10"
+			android:id="@+id/descriptionText"
+			android:hint="Event Description"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+
+	<EditText
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/locationText"
+			android:hint="Location"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+
+	<MultiAutoCompleteTextView
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/tagText"
+			android:singleLine="true"
+			android:completionThreshold="1"
+			android:hint="Tag(s)"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"/>
+
 	<LinearLayout
-			android:orientation="vertical"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:padding="20dp">
-		<EditText
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:id="@+id/nameText"
-				android:hint="Event Name"
-				android:paddingBottom="10dp"/>
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp">
 
 		<EditText
-				android:layout_width="fill_parent"
+				android:layout_width="0px"
 				android:layout_height="wrap_content"
-				android:inputType="textMultiLine"
-				android:ems="10"
-				android:id="@+id/descriptionText"
-				android:hint="Event Description"
-				android:paddingTop="10dp"
-				android:paddingBottom="10dp"/>
+				android:layout_weight=".6"
+				android:id="@+id/dateSpinner"
+				android:hint="Date"
+				style="@android:style/Widget.DeviceDefault.Light.Spinner"
+				android:paddingLeft="13dp"/>
 
 		<EditText
-				android:layout_width="fill_parent"
+				android:layout_width="0px"
 				android:layout_height="wrap_content"
-				android:id="@+id/locationText"
-				android:hint="Location"
-				android:paddingTop="10dp"
-				android:paddingBottom="10dp"/>
+				android:layout_weight=".4"
+				android:id="@+id/timeSpinner"
+				android:hint="Time"
+				style="@android:style/Widget.DeviceDefault.Light.Spinner"/>
+		
+	</LinearLayout>
+	<TextView android:layout_width="fill_parent"
+	          android:layout_height="wrap_content"
+	          android:text="Event Visibility"
+	          android:gravity="center"
+	          style="@android:style/TextAppearance.Medium"/>
 
-		<MultiAutoCompleteTextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:id="@+id/tagText"
-				android:singleLine="true"
-				android:completionThreshold="1"
-				android:hint="Tag(s)"
-				android:paddingTop="10dp"
-				android:paddingBottom="10dp"/>
-
-		<LinearLayout
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:paddingTop="10dp"
-				android:paddingBottom="10dp">
-
-			<EditText
-					android:layout_width="0px"
-					android:layout_height="wrap_content"
-					android:layout_weight=".6"
-					android:id="@+id/dateSpinner"
-					android:hint="Date"
-					style="@android:style/Widget.DeviceDefault.Light.Spinner"
-					android:paddingLeft="13dp"/>
-
-			<EditText
-					android:layout_width="0px"
-					android:layout_height="wrap_content"
-					android:layout_weight=".4"
-					android:id="@+id/timeSpinner"
-					android:hint="Time"
-					style="@android:style/Widget.DeviceDefault.Light.Spinner"/>
-		</LinearLayout>
-		<TextView android:layout_width="fill_parent"
-		          android:layout_height="wrap_content"
-		          android:text="Event Visibility"
-		          android:gravity="center"
-		          style="@android:style/TextAppearance.Medium"/>
-
-		<RadioGroup
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:paddingTop="10dp"
-				android:paddingBottom="10dp"
-				android:orientation="horizontal"
-				android:gravity="center">
-			<RadioButton
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Public"
-					android:checked="true"
-					android:id="@+id/publicEvent"/>
-			<RadioButton
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:text="Private"
-					android:id="@+id/privateEvent"/>
-		</RadioGroup>
-		<Button
+	<RadioGroup
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:paddingTop="10dp"
+			android:paddingBottom="10dp"
+			android:orientation="horizontal"
+			android:gravity="center">
+		<RadioButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:text="Done"
-				android:id="@+id/done"/>
-	</LinearLayout>
-</ScrollView>
+				android:text="Public"
+				android:checked="true"
+				android:id="@+id/publicEvent"/>
+		<RadioButton
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="Private"
+				android:id="@+id/privateEvent"/>
+	</RadioGroup>
+	<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:text="Done"
+			android:id="@+id/done"/>
+</LinearLayout>
