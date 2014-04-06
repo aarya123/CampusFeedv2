@@ -12,7 +12,6 @@ import android.widget.ListView;
 
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
-import com.purdue.CampusFeed.AsyncTasks.Top5Events;
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
 
@@ -31,8 +30,7 @@ public class HomepageFragment extends Fragment {
         adapter = new EventArrayAdapter(getActivity(), new ArrayList<Event>());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> adapterView,
-                                    View view, int pos, long id) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
                 try {
                     Event e = adapter.getItem(pos);
                     Intent intent = new Intent(getActivity(), SingleFragmentActivity.class);
@@ -42,10 +40,9 @@ public class HomepageFragment extends Fragment {
                 } catch (Exception e) {
                     Log.d(Utils.TAG, e.getMessage());
                 }
-
             }
         });
-        new Top5Events(getActivity(), adapter).execute(Utils.categories);
+        // new Top5Events(getActivity(), adapter).execute(Utils.categories);
         return listView;
     }
 
