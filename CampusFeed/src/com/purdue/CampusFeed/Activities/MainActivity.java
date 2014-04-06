@@ -29,7 +29,7 @@ import com.purdue.CampusFeed.Utils.Utils;
 public class MainActivity extends FragmentActivity {
 
     private static final String TAG = "Facebook OAUTH";
-    String facebook_userID, facebook_accessToken;
+    String facebook_userID, facebook_accessToken, facebook_profileName;
 
     //Data members required for the Facebook login
     public static MenuItem searchWidget_menuItem;
@@ -214,8 +214,12 @@ public class MainActivity extends FragmentActivity {
                     if (session == Session.getActiveSession()) {
                         if (user != null) {
                             facebook_userID = user.getId();//user id
-                            new Login(MainActivity.this).execute(facebook_userID, facebook_accessToken);
+                            facebook_profileName = user.getName();//user's profile name
+                            Toast.makeText(getApplicationContext() , "User ID: "+facebook_userID+"\n\nName: "+facebook_profileName+"\n\nAccess token: "+facebook_accessToken, Toast.LENGTH_SHORT).show();
+                            Log.d("PRANAV", "facebookId: "+facebook_userID+", gcmId: \n"+Utils.gcmRegid);
                             
+                            new Login(MainActivity.this).execute(facebook_userID, facebook_accessToken);
+
                             //register for gcm
                             Api api = Api.getInstance(getApplicationContext());
                             api.registerGCM(facebook_userID, Utils.gcmRegid);
