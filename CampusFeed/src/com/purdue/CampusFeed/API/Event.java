@@ -80,11 +80,7 @@ public class Event implements Serializable {
 
     public String getDatetime() {
         String dTime = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss").format(new Date(time * 1000));
-        return dTime.substring(0, dTime.length() - 2);
-    }
-
-    public void setDatetime(long datetime) {
-        this.time = datetime;
+        return dTime.substring(0, dTime.length() - 3);
     }
 
     public void setDatetime(String datetime) {
@@ -94,6 +90,10 @@ public class Event implements Serializable {
             e.printStackTrace();
             this.time = 0;
         }
+    }
+
+    public void setDatetime(long datetime) {
+        this.time = datetime;
     }
 
     public long getDatetimeLong() {
