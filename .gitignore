@@ -30,3 +30,5 @@ proguard/
 
 # Mac files
 .DS_Store
+
+CampusFeed/project.properties

@@ -12,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
@@ -74,45 +75,57 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         });
     }
 
-    public void onClick(View v) {
-        Button goingButton = (Button) this.getView().findViewById(R.id.goingButton);
-        Button maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
-        Button declineButton = (Button) this.getView().findViewById(R.id.declineButton);
+    @Override
+	public void onClick(View v) {
+    	Button goingButton = (Button) this.getView().findViewById(R.id.goingButton);
+    	Button maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
+    	Button declineButton = (Button) this.getView().findViewById(R.id.declineButton);
+    
+    	switch(v.getId()) {
+    		case R.id.inviteButton:
+    			Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
+    	        intent.putExtra(getString(R.string.EVENT), myEvent);
+    	        startActivity(intent);
+    	        break;
+    		case R.id.goingButton:
+    			//goingButton.setSelected(true);
+    			goingButton.setTypeface(null, Typeface.BOLD);
+    			maybeButton.setTypeface(null, Typeface.NORMAL);
+    			declineButton.setTypeface(null, Typeface.NORMAL);
+    			final Api api = Api.getInstance(getActivity());
+    			
+    			new AsyncTask<Void, Void, String>() {
 
-        switch (v.getId()) {
-            case R.id.inviteButton:
-                Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
-                intent.putExtra(getString(R.string.EVENT), myEvent);
-                startActivity(intent);
-                break;
-            case R.id.goingButton:
-                //goingButton.setSelected(true);
-                goingButton.setTypeface(null, Typeface.BOLD);
-                maybeButton.setTypeface(null, Typeface.NORMAL);
-                declineButton.setTypeface(null, Typeface.NORMAL);
-                final Api api = Api.getInstance(getActivity());
+    				@Override
+    				protected String doInBackground(Void... params) {
+						return api.rsvpEvent(myEvent.getId());
+    				}
+    				
+    				@Override
+    				public void onPostExecute(String result) {
+    					Toast.makeText(getActivity(), "RSVP received, enjoy!", Toast.LENGTH_SHORT);
+    				}
+        			
+        		}.execute();
+    			
+    			break;
+    		case R.id.maybeButton:
+    			maybeButton.setTypeface(null, Typeface.BOLD);
+    			goingButton.setTypeface(null, Typeface.NORMAL);
+    			declineButton.setTypeface(null, Typeface.NORMAL);
+    			
+    			Toast.makeText(getActivity(), "RSVP(maybe) received!", Toast.LENGTH_SHORT);
 
-                new AsyncTask<Void, Void, String>() {
-
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        return api.rsvpEvent(myEvent.getId());
-                    }
-
-                    @Override
-                    public void onPostExecute(String result) {
-                        Log.e("tag", result);
-                    }
-
-                }.execute();
-
-                break;
-            case R.id.maybeButton:
-                maybeButton.setTypeface(null, Typeface.BOLD);
-                goingButton.setTypeface(null, Typeface.NORMAL);
-                declineButton.setTypeface(null, Typeface.NORMAL);
-                break;
-        }
+    			break;
+    		case R.id.declineButton:
+    			declineButton.setTypeface(null, Typeface.BOLD);
+    			goingButton.setTypeface(null, Typeface.NORMAL);
+    			maybeButton.setTypeface(null, Typeface.NORMAL);
+    			
+    			Toast.makeText(getActivity(), "RSVP(decline) received!", Toast.LENGTH_SHORT);
+    			
+    			break;
+    	}
     }
 
 }
