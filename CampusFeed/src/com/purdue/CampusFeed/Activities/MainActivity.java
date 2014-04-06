@@ -203,6 +203,7 @@ public class MainActivity extends FragmentActivity {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
             facebook_accessToken = session.getAccessToken();
+          
 
             // If the session is open, make an API call to get user data
             // and define a new callback to handle the response
@@ -214,6 +215,10 @@ public class MainActivity extends FragmentActivity {
                         if (user != null) {
                             facebook_userID = user.getId();//user id
                             new Login(MainActivity.this).execute(facebook_userID, facebook_accessToken);
+                            
+                            //register for gcm
+                            Api api = Api.getInstance(getApplicationContext());
+                            api.registerGCM(facebook_userID, Utils.gcmRegid);
                         }
                     }
                 }

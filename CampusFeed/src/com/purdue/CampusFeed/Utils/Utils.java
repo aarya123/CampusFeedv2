@@ -66,7 +66,7 @@ public class Utils {
     AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
     Context context;
-    static String gcmRegid;
+    public static String gcmRegid;
     
     //--------------------------------------//
     
