@@ -374,6 +374,9 @@ public static Result advSearch() {
 		params.add(user_id);
 		String sql = EVENT_GET_SQL;
 		if(request.has("name")) {
+			if(params.size() != 0) {
+				sql += " AND ";
+			}
 			sql += "name like ?";
 			params.add("%" + request.get("name").textValue() + "%");
 		}
@@ -410,6 +413,7 @@ public static Result advSearch() {
 		for(int i = 0; i < params.size(); ++i) {
 			stmt.setObject(i + 1, params.get(i));
 		}
+		System.out.println(sql);
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
 		return ok(buildEventResults(conn, rs));
