@@ -59,8 +59,6 @@ public class EventPageFragment extends Fragment implements OnClickListener {
             tags += myEvent.getCategories()[i] + ", ";
         tags = tags.substring(0, tags.length() - 2);
         eventTags.setText(tags);
-        //desc.setText(myEvent.getEventName()+" @ "+myEvent.getDatetime()+"\n\n\n\n"+myEvent.getEventDescription()+"\n\n\n\n"+myEvent.getEventLocation());
-
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,37 +72,37 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     }
 
     @Override
-	public void onClick(View v) {
-    	Button goingButton = (Button) this.getView().findViewById(R.id.goingButton);
-    	Button maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
-    	Button declineButton = (Button) this.getView().findViewById(R.id.declineButton);
-    
-    	switch(v.getId()) {
-    		case R.id.inviteButton:
-    			Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
-    	        intent.putExtra(getString(R.string.EVENT), myEvent);
-    	        startActivity(intent);
-    	        break;
-    		case R.id.goingButton:
-    			//goingButton.setSelected(true);
-    			goingButton.setTypeface(null, Typeface.BOLD);
-    			maybeButton.setTypeface(null, Typeface.NORMAL);
-    			declineButton.setTypeface(null, Typeface.NORMAL);
-    			
-    			break;
-    		case R.id.maybeButton:
-    			maybeButton.setTypeface(null, Typeface.BOLD);
-    			goingButton.setTypeface(null, Typeface.NORMAL);
-    			declineButton.setTypeface(null, Typeface.NORMAL);
+    public void onClick(View v) {
+        Button goingButton = (Button) this.getView().findViewById(R.id.goingButton);
+        Button maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
+        Button declineButton = (Button) this.getView().findViewById(R.id.declineButton);
 
-    			break;
-    		case R.id.declineButton:
-    			declineButton.setTypeface(null, Typeface.BOLD);
-    			goingButton.setTypeface(null, Typeface.NORMAL);
-    			maybeButton.setTypeface(null, Typeface.NORMAL);
-    			
-    			break;
-    	}
+        switch (v.getId()) {
+            case R.id.inviteButton:
+                Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
+                intent.putExtra(getString(R.string.EVENT), myEvent);
+                startActivity(intent);
+                break;
+            case R.id.goingButton:
+                //goingButton.setSelected(true);
+                goingButton.setTypeface(null, Typeface.BOLD);
+                maybeButton.setTypeface(null, Typeface.NORMAL);
+                declineButton.setTypeface(null, Typeface.NORMAL);
+
+                break;
+            case R.id.maybeButton:
+                maybeButton.setTypeface(null, Typeface.BOLD);
+                goingButton.setTypeface(null, Typeface.NORMAL);
+                declineButton.setTypeface(null, Typeface.NORMAL);
+
+                break;
+            case R.id.declineButton:
+                declineButton.setTypeface(null, Typeface.BOLD);
+                goingButton.setTypeface(null, Typeface.NORMAL);
+                maybeButton.setTypeface(null, Typeface.NORMAL);
+
+                break;
+        }
     }
 
 }

@@ -7,8 +7,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.purdue.CampusFeed.API.Event;
-import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
 import com.purdue.CampusFeed.R;
 
 /**
@@ -17,8 +15,6 @@ import com.purdue.CampusFeed.R;
 
 public class BrowseFragment extends Fragment {
 
-    EventArrayAdapter adapter;
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.browse_fragment, container, false);
     }
@@ -26,8 +22,7 @@ public class BrowseFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.viewPager);
-        viewPager.setAdapter(new BrowsePagerAdapter(((FragmentActivity) getActivity()).getSupportFragmentManager(),
-                new String[]{"Social", "Sports", "Parties", "Misc"}));
+        viewPager.setAdapter(new BrowsePagerAdapter(((FragmentActivity) getActivity()).getSupportFragmentManager()));
     }
 
 }

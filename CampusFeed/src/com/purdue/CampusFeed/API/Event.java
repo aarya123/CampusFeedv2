@@ -79,7 +79,8 @@ public class Event implements Serializable {
     }
 
     public String getDatetime() {
-        return new SimpleDateFormat("dd/MM/yyyy kk:mm:ss").format(new Date(time * 1000));
+        String dTime = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss").format(new Date(time * 1000));
+        return dTime.substring(0, dTime.length() - 2);
     }
 
     public void setDatetime(long datetime) {

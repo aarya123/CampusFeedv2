@@ -39,6 +39,9 @@ import java.io.IOException;
  */
 public class Utils {
 
+
+    public final static String[] categories = new String[]{"Recreation", "Social", "Education",
+            "University Event", "Charity"};
     //---------GCM variables------------------
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -58,6 +61,7 @@ public class Utils {
 
     private Utils() {
     }
+
     /**
      * Registers the application with GCM servers asynchronously.
      * <p/>
