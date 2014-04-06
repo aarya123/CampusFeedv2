@@ -2,6 +2,7 @@ package com.purdue.CampusFeed.Activities;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,8 +28,14 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View fragmentView = inflater.inflate(R.layout.eventpage, container, false);
-        Button button = (Button) fragmentView.findViewById(R.id.inviteButton);
-        button.setOnClickListener(this);
+        Button inviteButton = (Button) fragmentView.findViewById(R.id.inviteButton);
+        Button goingButton = (Button) fragmentView.findViewById(R.id.goingButton);
+        Button maybeButton = (Button) fragmentView.findViewById(R.id.maybeButton);
+        Button declineButton = (Button) fragmentView.findViewById(R.id.declineButton);
+        inviteButton.setOnClickListener(this);
+        goingButton.setOnClickListener(this);
+        maybeButton.setOnClickListener(this);
+        declineButton.setOnClickListener(this);
         return fragmentView;
 
     }
@@ -63,9 +70,37 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
-        Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
-        startActivity(intent);
+	public void onClick(View v) {
+    	Button goingButton = (Button) this.getView().findViewById(R.id.goingButton);
+    	Button maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
+    	Button declineButton = (Button) this.getView().findViewById(R.id.declineButton);
+    
+    	switch(v.getId()) {
+    		case R.id.inviteButton:
+    			Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
+    	        intent.putExtra(getString(R.string.EVENT), myEvent);
+    	        startActivity(intent);
+    	        break;
+    		case R.id.goingButton:
+    			//goingButton.setSelected(true);
+    			goingButton.setTypeface(null, Typeface.BOLD);
+    			maybeButton.setTypeface(null, Typeface.NORMAL);
+    			declineButton.setTypeface(null, Typeface.NORMAL);
+    			
+    			break;
+    		case R.id.maybeButton:
+    			maybeButton.setTypeface(null, Typeface.BOLD);
+    			goingButton.setTypeface(null, Typeface.NORMAL);
+    			declineButton.setTypeface(null, Typeface.NORMAL);
+
+    			break;
+    		case R.id.declineButton:
+    			declineButton.setTypeface(null, Typeface.BOLD);
+    			goingButton.setTypeface(null, Typeface.NORMAL);
+    			maybeButton.setTypeface(null, Typeface.NORMAL);
+    			
+    			break;
+    	}
     }
 
 }
