@@ -1,5 +1,7 @@
 package com.purdue.CampusFeed.API;
 
+import java.util.ArrayList;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -12,10 +14,9 @@ import android.os.Parcelable;
 public class AdvSearchQuery implements Parcelable {
     private long start_date = 0;
     private long end_date = Long.MAX_VALUE;
-    private String title = null;
+    private String name = null;
     private String desc = null;
-    private final int CATEGORY_SIZE = 10;
-    private String[] tags = new String[CATEGORY_SIZE];
+    private	ArrayList<String> tags = null;
     private Auth auth;
 
     public AdvSearchQuery() {
@@ -24,20 +25,13 @@ public class AdvSearchQuery implements Parcelable {
     public AdvSearchQuery(Parcel in) {
         start_date = in.readLong();
         end_date = in.readLong();
-        title = in.readString();
+        name = in.readString();
         desc = in.readString();
-        in.readStringArray(tags);
+        tags = new ArrayList<String>();
+        in.readStringList(tags);
     }
 
-    public void addCategory(String category) {
-        for (int i = 0; i < CATEGORY_SIZE; i++)
-            if (tags[i] == null) {
-                tags[i] = category;
-                return;
-            }
-    }
-
-    public void settags(String[] tags) {
+    public void settags(ArrayList<String> tags) {
         this.tags = tags;
     }
 
@@ -50,14 +44,14 @@ public class AdvSearchQuery implements Parcelable {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.name = title;
     }
 
     public void setDesc(String desc) {
         this.desc = desc;
     }
 
-    public String[] gettags() {
+    public ArrayList<String> gettags() {
         return tags;
     }
 
@@ -70,7 +64,7 @@ public class AdvSearchQuery implements Parcelable {
     }
 
     public String getTitle() {
-        return title;
+        return name;
     }
 
     public String getDesc() {
@@ -88,9 +82,9 @@ public class AdvSearchQuery implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(start_date);
         dest.writeLong(end_date);
-        dest.writeString(title);
+        dest.writeString(name);
         dest.writeString(desc);
-        dest.writeStringArray(tags);
+        dest.writeStringList(tags);
     }
 
     public static final Parcelable.Creator<AdvSearchQuery> CREATOR = new Parcelable.Creator<AdvSearchQuery>() {
@@ -102,4 +96,8 @@ public class AdvSearchQuery implements Parcelable {
             return new AdvSearchQuery[size];
         }
     };
+
+	public void addCategory(String category) {
+		tags.add(category);
+	}
 }

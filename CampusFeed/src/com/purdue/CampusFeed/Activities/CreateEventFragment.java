@@ -1,16 +1,18 @@
 package com.purdue.CampusFeed.Activities;
 
 import android.app.DatePickerDialog;
-import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.AsyncTasks.CreateEvent;
 import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.Utils.Utils;
 
 import java.util.Calendar;
 
@@ -18,7 +20,6 @@ import java.util.Calendar;
  * Created by Sean on 2/27/14.
  */
 public class CreateEventFragment extends Fragment {
-    private static final String[] categories = new String[]{"Social", "Cultural", "Education"};
     EditText dateSpinner, timeSpinner, nameText, descriptionText, locationText;
     int year, month, day, hour, minute;
     /* Called when the user finishes selecting a date from the dialog */
@@ -67,7 +68,7 @@ public class CreateEventFragment extends Fragment {
         descriptionText = (EditText) getActivity().findViewById(R.id.descriptionText);
         locationText = (EditText) getActivity().findViewById(R.id.locationText);
         multiAutoCompleteTextView = (MultiAutoCompleteTextView) getActivity().findViewById(R.id.tagText);
-        multiAutoCompleteTextView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, categories));
+        multiAutoCompleteTextView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_dropdown_item_1line, Utils.categories));
         multiAutoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         if (getArguments() != null)
             event = (Event) getArguments().getSerializable("event");
