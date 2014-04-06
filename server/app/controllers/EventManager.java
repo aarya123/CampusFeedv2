@@ -622,24 +622,12 @@ public static Result top5() {
 
 public static Result getEvent() {
 	JsonNode request = request().body().asJson();
-	try {
-		Application.checkReqValid(request);
-	}
-	catch(AuthorizationException e) {
-		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-		return ok();
-	}
-	// get the user id
-	long user_id =Application.getUserId(request);
 	long event_id;
 	try {
 		event_id = request.get("event_id").longValue();
 	}
 	catch(Exception e) {
-		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: auth, event_id (long)"));
+		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: event_id (long)"));
 	}
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
