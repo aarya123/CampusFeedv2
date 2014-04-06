@@ -1,4 +1,4 @@
-package com.purdue.CampusFeed.Services;
+package com.purdue.CampusFeed.Activities;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
