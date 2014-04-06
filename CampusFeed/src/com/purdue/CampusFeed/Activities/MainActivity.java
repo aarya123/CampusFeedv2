@@ -162,7 +162,7 @@ public class MainActivity extends FragmentActivity {
                 break;
             case 4:
 
-                fragToDisplay = new AdvancedSearch_Fragment();
+                fragToDisplay = new AdvancedSearchFragment();
                 getFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
                 break;
             default:

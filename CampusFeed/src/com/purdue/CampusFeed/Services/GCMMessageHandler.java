@@ -79,7 +79,7 @@ public class GCMMessageHandler extends IntentService {
         .bigText(msg))
         .setContentText(msg);
 
-        //mBuilder.setContentIntent(contentIntent);
+        mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }
