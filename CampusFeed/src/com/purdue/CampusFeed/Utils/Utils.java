@@ -18,12 +18,10 @@ package com.purdue.CampusFeed.Utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -35,7 +33,6 @@ import com.purdue.CampusFeed.Activities.ContactDetailActivity;
 import com.purdue.CampusFeed.Activities.ContactsListActivity;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * This class contains static utility methods.
@@ -50,36 +47,17 @@ public class Utils {
      * Tag used on log messages.
      */
     static final String GCM_DEBUG_TAG = "GCMDemo";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    public static String gcmRegid;
     /**
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
      */
     static String SENDER_ID = "872065754556";
     static GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    SharedPreferences prefs;
-    Context context;
-    public static String gcmRegid;
-    
-    static String gcmRegid;
     private static ImageLoader mImageLoader;
-    TextView mDisplay;
-    AtomicInteger msgId = new AtomicInteger();
 
-    //--------------------------------------//
-
-    //---------------GCM Functions----------//
-    SharedPreferences prefs;
-    Context context;
-
-    // Prevents instantiation.
     private Utils() {
     }
-
-    //-----------------------------------------//
-
     /**
      * Registers the application with GCM servers asynchronously.
      * <p/>
@@ -118,7 +96,7 @@ public class Utils {
 
             @Override
             protected void onPostExecute(Object msg) {
-            	Toast.makeText(context, "GCMid = "+gcmRegid, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "GCMid = " + gcmRegid, Toast.LENGTH_SHORT).show();
                 Toast.makeText(context, "id = " + gcmRegid, Toast.LENGTH_SHORT).show();
             }
         }.execute(null, null, null);

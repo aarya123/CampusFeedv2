@@ -94,19 +94,7 @@ public class Api implements Closeable {
             return null;
         }
     }
-    static class LoginRequest {
-        public String fb_user_id;
-        public String access_token;
 
-        public LoginRequest(String fb_user_id, String access_token) {
-            this.fb_user_id = fb_user_id;
-            this.access_token = access_token;
-        }
-    }
-
-    static class LoginResponse {
-        public String access_token;
-    }
     public boolean login(String fb_user_id, String access_token) {
         LoginResponse resp = (LoginResponse) getResponse("POST", "login", gson.toJson(new LoginRequest(fb_user_id, access_token)), LoginResponse.class);
         if (resp != null) {
@@ -123,6 +111,76 @@ public class Api implements Closeable {
         return (List<Event>) getResponse("POST", "adv_search_event", gson.toJson(query), new TypeToken<List<Event>>() {
         }.getType());
     }
+
+    public long createEvent(Event event) {
+        if (login == null) {
+            return -1;
+        }
+        EventResponse resp = (EventResponse) getResponse("POST", "create_event", gson.toJson(new CreateEventRequest(event)), EventResponse.class);
+        if (resp != null) {
+            return resp.event_id;
+        } else {
+            return -1;
+        }
+    }
+
+    public boolean updateEvent(Event event) {
+        if (login == null) {
+            return false;
+        }
+
+        UpdateResponse resp = (UpdateResponse) getResponse("POST", "update_event", gson.toJson(new UpdateEventRequest(event)), UpdateResponse.class);
+        return resp != null;
+    }
+
+    public List<Event> top5(String category) {
+        return (List<Event>) getResponse("POST", "top5", gson.toJson(new Top5Request(category)), new TypeToken<List<Event>>() {
+        }.getType());
+    }
+
+    public String[] allTags() {
+        TagResponse response = (TagResponse) getResponse("GET", "all_tags", null, TagResponse.class);
+        return response.tags;
+    }
+
+    public String registerGCM(String fb_user_id, String gcm_id) {
+        GCMRegisterResponse response = (GCMRegisterResponse) getResponse("POST", "gcm_register", gson.toJson(new GCMRegisterRequest(fb_user_id, gcm_id)), GCMRegisterResponse.class);
+        if (response == null) {
+            return "FAILED";
+        }
+        return response.success;
+    }
+
+    public Event getEvent(long eventId) {
+        return (Event) getResponse("POST", "get_event", gson.toJson(new GetEventRequest(eventId)), Event.class);
+    }
+
+    @Override
+    public void close() throws IOException {
+        HttpResponseCache cache = HttpResponseCache.getInstalled();
+        if (cache != null) {
+            cache.flush();
+        }
+    }
+
+    static class LoginRequest {
+        public String fb_user_id;
+        public String access_token;
+
+        public LoginRequest(String fb_user_id, String access_token) {
+            this.fb_user_id = fb_user_id;
+            this.access_token = access_token;
+        }
+    }
+
+    static class LoginResponse {
+        public String access_token;
+    }
+
+    static class EventResponse {
+        public long event_id;
+    }
+
     class CreateEventRequest {
         public String desc;
         public String location;
@@ -142,21 +200,7 @@ public class Api implements Closeable {
             date_time = event.getDatetimeLong();
         }
     }
-    static class EventResponse {
-        public long event_id;
-    }
-    public long createEvent(Event event) {
-        if (login == null) {
-            return -1;
-        }
-        EventResponse resp = (EventResponse) getResponse("POST", "create_event", gson.toJson(new CreateEventRequest(event)), EventResponse.class);
-        if (resp != null) {
-            return resp.event_id;
-        } else {
-            return -1;
-        }
-    }
-    
+
     class UpdateEventRequest {
         public Auth auth;
         public String title;
@@ -178,76 +222,48 @@ public class Api implements Closeable {
             this.categories = event.categories;
         }
     }
+
     class UpdateResponse {
         String ok;
     }
 
-    public boolean updateEvent(Event event) {
-        if (login == null) {
-            return false;
-        }
-        
-        UpdateResponse resp = (UpdateResponse) getResponse("POST", "update_event", gson.toJson(new UpdateEventRequest(event)), UpdateResponse.class);
-        return resp != null;
-    }
-    
     class Top5Request {
-    	public String category;
-    	public Auth auth;
-    	public Top5Request(String category) {
-    		this.category = category;
-    		this.auth = Api.this.login;
-    	}
+        public String category;
+        public Auth auth;
+
+        public Top5Request(String category) {
+            this.category = category;
+            this.auth = Api.this.login;
+        }
     }
-    public List<Event> top5(String category) {
-    	return (List<Event>) getResponse("POST", "top5", gson.toJson(new Top5Request(category)), new TypeToken<List<Event>>(){}.getType());
-    }
-    
-    
+
     class TagResponse {
-    	public String[] tags;
+        public String[] tags;
     }
-    
-    public String[] allTags() {
-    	TagResponse response = (TagResponse) getResponse("GET", "all_tags", null, TagResponse.class);
-    	return response.tags;
-    }
-    class GCMRegisterRequest{
+
+    class GCMRegisterRequest {
         public String fb_user_id;
         public String gcm_id;
-        public GCMRegisterRequest(String fb_user_id,String gcm_id)
-        {
+
+        public GCMRegisterRequest(String fb_user_id, String gcm_id) {
             this.fb_user_id = fb_user_id;
             this.gcm_id = gcm_id;
         }
     }
-    class GCMRegisterResponse{
+
+    class GCMRegisterResponse {
         public String success;
     }
-    public String registerGCM(String fb_user_id,String gcm_id)
-    {
-        GCMRegisterResponse response = (GCMRegisterResponse)getResponse("POST", "gcm_register", gson.toJson(new GCMRegisterRequest(fb_user_id,gcm_id)), GCMRegisterResponse.class);
-        if(response==null)
-        {
-            return "FAILED";
-        }
-        return response.success;
-    }
+
     class GetEventRequest {
-    	Auth auth = login;
-    	long event_id;
-    	public GetEventRequest(long eventId) {
-    		event_id = eventId;
-    	}
-    }
-    public Event getEvent(long eventId) {
-    	return (Event) getResponse("POST", "get_event", gson.toJson(new GetEventRequest(eventId)), Event.class);
-    }
-    @Override
-    public void close() throws IOException {
-        HttpResponseCache cache = HttpResponseCache.getInstalled();
-        if (cache != null) {
-            cache.flush();
+        long event_id;
+
+        public GetEventRequest(long eventId) {
+            event_id = eventId;
         }
+
+        Auth auth = login;
+
+
     }
 }
