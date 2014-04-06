@@ -66,7 +66,7 @@ public class Utils {
     AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
     Context context;
-    static String gcmRegid;
+    public static String gcmRegid;
     
     //--------------------------------------//
     
@@ -110,7 +110,7 @@ public class Utils {
             
             @Override
             protected void onPostExecute(Object msg) {
-            	Toast.makeText(context, "id = "+gcmRegid, Toast.LENGTH_SHORT).show();
+            	Toast.makeText(context, "GCMid = "+gcmRegid, Toast.LENGTH_SHORT).show();
             }
         }.execute(null, null, null);
     }

@@ -138,7 +138,7 @@ public class Api implements Closeable {
             categories = event.categories;
             title = event.name;
             this.auth = Api.this.login;
-            visibility = 1;
+            visibility = event.visibility;
             date_time = event.getDatetimeLong();
         }
     }
@@ -174,7 +174,7 @@ public class Api implements Closeable {
             this.location = event.location;
             this.date_time = event.time;
             this.id = event.id;
-            this.visibility = 1;
+            this.visibility = event.visibility;
             this.categories = event.categories;
         }
     }
@@ -229,6 +229,7 @@ public class Api implements Closeable {
         GCMRegisterResponse response = (GCMRegisterResponse)getResponse("POST", "gcm_register", gson.toJson(new GCMRegisterRequest(fb_user_id,gcm_id)), GCMRegisterResponse.class);
         if(response==null)
         {
+        	Log.d("PRANAV","gcm response was NULL :(");
             return "FAILED";
         }
         return response.success;

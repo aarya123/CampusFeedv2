@@ -1,5 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
+import java.io.IOException;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.facebook.*;
 import com.facebook.model.GraphUser;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
@@ -29,7 +32,7 @@ import com.purdue.CampusFeed.Utils.Utils;
 public class MainActivity extends FragmentActivity {
 
     private static final String TAG = "Facebook OAUTH";
-    String facebook_userID, facebook_accessToken;
+    String facebook_userID, facebook_accessToken, facebook_profileName;
 
     //Data members required for the Facebook login
     public static MenuItem searchWidget_menuItem;
@@ -203,6 +206,7 @@ public class MainActivity extends FragmentActivity {
         if (state.isOpened()) {
             Log.i(TAG, "Logged in...");
             facebook_accessToken = session.getAccessToken();
+          
 
             // If the session is open, make an API call to get user data
             // and define a new callback to handle the response
@@ -213,7 +217,34 @@ public class MainActivity extends FragmentActivity {
                     if (session == Session.getActiveSession()) {
                         if (user != null) {
                             facebook_userID = user.getId();//user id
+                            facebook_profileName = user.getName();//user's profile name
+                            Toast.makeText(getApplicationContext() , "User ID: "+facebook_userID+"\n\nName: "+facebook_profileName+"\n\nAccess token: "+facebook_accessToken, Toast.LENGTH_SHORT).show();
+                            Log.d("PRANAV", "facebookId: "+facebook_userID+", gcmId: \n"+Utils.gcmRegid);
+                            
                             new Login(MainActivity.this).execute(facebook_userID, facebook_accessToken);
+
+                            
+                            new AsyncTask() {
+                                protected Object doInBackground(Object[] params) {
+                                    String msg = "";
+                                   // try {
+                                    
+                                   //register for gcm
+                                   Api api = Api.getInstance(getApplicationContext());
+                                   api.registerGCM(facebook_userID, Utils.gcmRegid);
+                                    
+                                    /*} catch (IOException ex) {
+                                        msg = "Error :" + ex.getMessage();
+                                        Log.d("PRANAV", ex.toString());
+                                    }*/
+                                    return msg;
+                                }
+                                
+                                @Override
+                                protected void onPostExecute(Object msg) {
+                                	Log.d("PRANAV","called registerGCM!!!");
+                                }
+                            }.execute(null, null, null);
                         }
                     }
                 }
