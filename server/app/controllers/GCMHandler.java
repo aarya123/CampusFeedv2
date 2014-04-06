@@ -76,11 +76,22 @@ public class GCMHandler extends Controller {
 			
 			// now that we have the user gcm id, we will send the message
 			JSONObject obj = new JSONObject();
-			String registration_ids = gcm_ids.toString();
 		
+			JSONArray gcm_ids_json_array = new JSONArray();
+			for(int x=0;x<gcm_ids.size();x++)
+			{
+				gcm_ids_json_array.put((gcm_ids).get(x));
+			}
+			
+			String registration_ids = gcm_ids_json_array.toString();
+			System.out.println(registration_ids+"\n\n");
+			JSONObject msg = new JSONObject();
+	
 			try {
+				msg.put("response", message);
+				obj.put("data",msg);
 				obj.put("registration_ids", registration_ids);
-				obj.put("data", message);
+			
 			} catch (JSONException e) {
 
 				e.printStackTrace();
