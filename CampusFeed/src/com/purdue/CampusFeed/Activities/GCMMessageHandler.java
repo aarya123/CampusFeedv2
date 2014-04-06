@@ -1,27 +1,21 @@
 package com.purdue.CampusFeed.Activities;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.purdue.CampusFeed.R;
-
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.purdue.CampusFeed.Activities.MainActivity;
+import com.purdue.CampusFeed.API.Event;
+import com.purdue.CampusFeed.R;
 
 public class GCMMessageHandler extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private static final String TAG = "PRANAV";
+    public static Event event_updated = null;
     NotificationCompat.Builder builder;
     private NotificationManager mNotificationManager;
 
@@ -87,15 +81,15 @@ public class GCMMessageHandler extends IntentService {
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());*/
     	if(extras.getString("mode").equals("update_event")){
-    		int event_id = extras.getInt("response");
-    		 
-    		
-    		Log.d("MAYANK", event_id+"");
-        	Intent intent = new Intent(this, MainActivity.class);
-        	PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        	Notification notification = new Notification.Builder(this).setContentTitle(this.getResources().getString(R.string.app_name))
-        	            .setContentText(msg).setSmallIcon(R.drawable.ic_launcher)
-        	            .setContentIntent(pIntent).getNotification();
+            String event_id = extras.getString("response");
+            Intent intent = new Intent(this, SingleFragmentActivity.class);
+            Log.d("campusfeed", "creating pending intent with event id " + event_id);
+            SingleFragmentActivity.event_id = Long.parseLong(event_id);
+            intent.putExtra("update", event_id);
+            PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+            Notification notification = new Notification.Builder(this).setContentTitle(this.getResources().getString(R.string.app_name))
+                    .setContentText(msg).setSmallIcon(R.drawable.ic_launcher)
+                    .setContentIntent(pIntent).getNotification();
         	NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
         	notification.flags |= Notification.FLAG_AUTO_CANCEL;
         	notificationManager.notify(0, notification);

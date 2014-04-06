@@ -1,16 +1,12 @@
 package com.purdue.CampusFeed.Activities;
 
-import java.util.List;
-
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
@@ -19,13 +15,24 @@ import com.purdue.CampusFeed.R;
 /**
  * Created by Sean on 3/30/14.
  */
+
 public class SingleFragmentActivity extends FragmentActivity {
+    public static long event_id = 0;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.basic_framelayout);
         
         //Log.e("tag", getIntent().getData().toString());
-        
+        if (getIntent().hasExtra("update")) {
+            // get the event with api
+            getEvent getter = new getEvent(getApplicationContext(), SingleFragmentActivity.event_id);
+
+            getter.execute(null, null);
+            return;
+
+        }
+
+
         if(getIntent().getData() != null) {
         	String data = getIntent().getData().toString();
         	if(data.startsWith(getString(R.string.redirection_url))) {
@@ -91,10 +98,40 @@ public class SingleFragmentActivity extends FragmentActivity {
 	        startActivity(intent);
     	}
     }
-    
+
     @Override
     public void onNewIntent(Intent i) {
     	Log.i("TEST", i.getAction());
+    }
+
+    public class getEvent extends AsyncTask<String[], Void, Event> {
+        Context c;
+        long event_id = 0;
+        Event event;
+
+        public getEvent(Context c, long event_id) {
+            this.c = c;
+            this.event_id = event_id;
+
+        }
+
+        protected Event doInBackground(String[]... params) {
+            Api api = Api.getInstance(c);
+            return api.getEvent(event_id);
+        }
+
+        protected void onPostExecute(Event event) {
+            Log.d("CampusFeed", "gotten event");
+            this.event = event;
+
+
+            EventPageFragment fragment = new EventPageFragment();
+            fragment.setEvent(this.event);
+            getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
+
+        }
+
+
     }
     
     
