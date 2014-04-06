@@ -196,5 +196,7 @@ public class Application extends Controller {
 		}
 	}
 	
-
+	public static Result invite() {
+		return redirect("https://www.dropbox.com/s/bq9c9jkhdh8g29z/MainActivity.apk");
+	}
 }

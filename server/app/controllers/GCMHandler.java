@@ -94,14 +94,16 @@ public class GCMHandler extends Controller {
 				s.close();
 				// now that we have the user gcm id, we will send the message
 				JsonNode requestNode =JsonNodeFactory.instance.objectNode().put("registration_ids", gcm_id).put("data", message);
+				
 				WS.url("https://android.googleapis.com/gcm/send")
 				.setContentType("application/json")
-				.setHeader("Authorization: key=",api_key)
+				.setHeader("Authorization","key="+api_key)
     			.post(requestNode);
 				
 				return 0;
 			}catch(Exception e)
 			{
+				e.printStackTrace();
 				return -1;
 				
 			}
