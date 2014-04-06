@@ -281,7 +281,7 @@ public static Result rsvp_to_event()
 			catch(SQLException e) {
 				e.printStackTrace();
 
-				return ok();
+				return ok("success");
 			}
 			
 		}
@@ -307,7 +307,7 @@ public static Result rsvp_to_event()
 	catch(SQLException e) {
 		e.printStackTrace();
 
-		return ok();
+		return ok("success");
 	}
 	
 	}
