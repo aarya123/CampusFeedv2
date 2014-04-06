@@ -559,7 +559,7 @@ public static Result updateEvent()
 public static ArrayList<String> get_user_ids()
 {
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `User`");
+		PreparedStatement stmt = conn.prepareStatement("SELECT * FROM `User` WHERE gcm_id IS NOT NULL");
 		ResultSet s =stmt.executeQuery();
 		ArrayList<String> user_ids = new ArrayList<String>();
 		while(s.next())
