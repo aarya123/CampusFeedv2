@@ -1,10 +1,10 @@
-package com.purdue.CampusFeed.Services;
+package com.purdue.CampusFeed.Activities;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.purdue.CampusFeed.R;
-import com.purdue.CampusFeed.Activities.MainActivity;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -66,7 +66,7 @@ public class GCMMessageHandler extends IntentService {
     private void sendNotification(String msg) {
     	
     	Log.d(TAG, "sending notification!");
-        mNotificationManager = (NotificationManager)
+       /* mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
@@ -80,6 +80,15 @@ public class GCMMessageHandler extends IntentService {
         .setContentText(msg);
 
         mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());*/
+    	
+    	Intent intent = new Intent(this, MainActivity.class);
+    	PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+    	Notification notification = new Notification.Builder(this).setContentTitle(this.getResources().getString(R.string.app_name))
+    	            .setContentText(msg).setSmallIcon(R.drawable.ic_launcher)
+    	            .setContentIntent(pIntent).getNotification();
+    	NotificationManager notificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+    	notificationManager.notify(0, notification);
     }
 }
