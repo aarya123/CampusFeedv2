@@ -22,7 +22,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -96,12 +95,6 @@ public class Utils {
                     // exponential back-off.
                 }
                 return msg;
-            }
-
-            @Override
-            protected void onPostExecute(Object msg) {
-                Toast.makeText(context, "GCMid = " + gcmRegid, Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, "id = " + gcmRegid, Toast.LENGTH_SHORT).show();
             }
         }.execute(null, null, null);
     }

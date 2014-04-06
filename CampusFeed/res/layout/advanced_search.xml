@@ -22,7 +22,7 @@
 			android:paddingTop="10dp"
 			android:paddingBottom="10dp"/>
 
-	<EditText
+	<MultiAutoCompleteTextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:id="@+id/searchTagText"
@@ -55,7 +55,7 @@
 				android:id="@+id/searchEndDateSpinner"
 				android:hint="End Date"
 				style="@android:style/Widget.DeviceDefault.Light.Spinner"/>
-		
+
 	</LinearLayout>
 
 	<Button
