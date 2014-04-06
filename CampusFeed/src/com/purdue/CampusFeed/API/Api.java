@@ -138,7 +138,7 @@ public class Api implements Closeable {
             categories = event.categories;
             title = event.name;
             this.auth = Api.this.login;
-            visibility = 1;
+            visibility = event.visibility;
             date_time = event.getDatetimeLong();
         }
     }
