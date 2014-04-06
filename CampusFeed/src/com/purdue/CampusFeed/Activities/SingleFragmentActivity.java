@@ -122,11 +122,10 @@ public class SingleFragmentActivity extends FragmentActivity {
 
         protected void onPostExecute(Event event) {
             Log.d("CampusFeed", "gotten event");
-            this.event = event;
 
 
             EventPageFragment fragment = new EventPageFragment();
-            fragment.setEvent(this.event);
+            fragment.setEvent(event);
             getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
 
         }

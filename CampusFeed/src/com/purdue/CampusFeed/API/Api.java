@@ -229,7 +229,7 @@ public class Api implements Closeable {
 
         public UpdateEventRequest(Event event) {
             this.auth = login;
-            this.title = event.description;
+            this.title = event.name;
             this.desc = event.description;
             this.location = event.location;
             this.date_time = event.time;
