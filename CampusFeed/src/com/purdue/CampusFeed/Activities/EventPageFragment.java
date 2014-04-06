@@ -3,13 +3,16 @@ package com.purdue.CampusFeed.Activities;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
 
@@ -71,7 +74,6 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         });
     }
 
-    @Override
     public void onClick(View v) {
         Button goingButton = (Button) this.getView().findViewById(R.id.goingButton);
         Button maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
@@ -88,19 +90,27 @@ public class EventPageFragment extends Fragment implements OnClickListener {
                 goingButton.setTypeface(null, Typeface.BOLD);
                 maybeButton.setTypeface(null, Typeface.NORMAL);
                 declineButton.setTypeface(null, Typeface.NORMAL);
+                final Api api = Api.getInstance(getActivity());
+
+                new AsyncTask<Void, Void, String>() {
+
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        return api.rsvpEvent(myEvent.getId());
+                    }
+
+                    @Override
+                    public void onPostExecute(String result) {
+                        Log.e("tag", result);
+                    }
+
+                }.execute();
 
                 break;
             case R.id.maybeButton:
                 maybeButton.setTypeface(null, Typeface.BOLD);
                 goingButton.setTypeface(null, Typeface.NORMAL);
                 declineButton.setTypeface(null, Typeface.NORMAL);
-
-                break;
-            case R.id.declineButton:
-                declineButton.setTypeface(null, Typeface.BOLD);
-                goingButton.setTypeface(null, Typeface.NORMAL);
-                maybeButton.setTypeface(null, Typeface.NORMAL);
-
                 break;
         }
     }

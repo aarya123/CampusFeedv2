@@ -107,6 +107,8 @@ public class Api implements Closeable {
     static class LoginResponse {
         public String access_token;
     }
+    
+    
     public boolean login(String fb_user_id, String access_token) {
         LoginResponse resp = (LoginResponse) getResponse("POST", "login", gson.toJson(new LoginRequest(fb_user_id, access_token)), LoginResponse.class);
         if (resp != null) {
@@ -244,6 +246,28 @@ public class Api implements Closeable {
     public Event getEvent(long eventId) {
     	return (Event) getResponse("POST", "get_event", gson.toJson(new GetEventRequest(eventId)), Event.class);
     }
+    
+    //rsvp
+    class RsvpResponse {
+    	String ok;
+    }
+    class RsvpRequest {
+    	Auth auth = login;
+    	long event_id;
+    	public RsvpRequest(long eventId) {
+    		event_id = eventId;
+    	}
+    }
+    public String rsvpEvent(long eventId) {
+    	RsvpResponse rsvpResponse = (RsvpResponse) getResponse(
+    			"POST", "rsvp", gson.toJson(new RsvpRequest(eventId)), RsvpResponse.class);
+    	if (rsvpResponse != null) {
+    		return rsvpResponse.ok;
+    	} else {
+    		return "null";
+    	}
+    }
+    
     @Override
     public void close() throws IOException {
         HttpResponseCache cache = HttpResponseCache.getInstalled();
