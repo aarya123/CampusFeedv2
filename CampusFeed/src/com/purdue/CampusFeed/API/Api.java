@@ -174,7 +174,7 @@ public class Api implements Closeable {
             this.location = event.location;
             this.date_time = event.time;
             this.id = event.id;
-            this.visibility = 1;
+            this.visibility = event.visibility;
             this.categories = event.categories;
         }
     }
