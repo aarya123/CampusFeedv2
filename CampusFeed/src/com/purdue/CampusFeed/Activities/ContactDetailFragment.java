@@ -749,7 +749,7 @@ public class ContactDetailFragment extends Fragment implements
 	@Override
 	public void onClick(View v) {
 		SmsManager sms = SmsManager.getDefault();
-		String URL = "http://campusfeed.com/invite/" + myEvent.getId();
+		String URL = getString(R.string.redirection_url) + myEvent.getId();
 		String message = "I would like to invite you, my friend, to " + myEvent.getEventName() +
 				". This is the link: " + URL;
 	    sms.sendTextMessage(this.contactPhoneNumber, null, message, null, null);
