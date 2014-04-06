@@ -598,18 +598,6 @@ public static Result allTags()
 }
 public static Result top5() {
 	JsonNode request = request().body().asJson();
-	try {
-		Application.checkReqValid(request);
-	}
-	catch(AuthorizationException e) {
-		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-		return ok();
-	}
-	// get the user id
-	long user_id =Application.getUserId(request);
 	String category;
 	try {
 		category = request.get("category").textValue();
@@ -621,9 +609,8 @@ public static Result top5() {
 				.put("error", "Parameters: category (text)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " AND Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
-		stmt.setLong(1, user_id);
-		stmt.setString(2, category);
+		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
+		stmt.setString(1, category);
 		ResultSet rs = stmt.executeQuery();
 		return ok(buildEventResults(conn, rs));
 		

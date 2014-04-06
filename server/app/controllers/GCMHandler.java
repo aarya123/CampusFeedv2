@@ -86,11 +86,11 @@ public class GCMHandler extends Controller {
 			String registration_ids = gcm_ids_json_array.toString();
 			System.out.println(registration_ids+"\n\n");
 			JSONObject msg = new JSONObject();
-	
+			
 			try {
 				msg.put("response", message);
 				obj.put("data",msg);
-				obj.put("registration_ids", registration_ids);
+				obj.put("registration_ids", gcm_ids_json_array);
 			
 			} catch (JSONException e) {
 
