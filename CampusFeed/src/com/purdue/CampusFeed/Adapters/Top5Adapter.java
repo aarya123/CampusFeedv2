@@ -38,13 +38,13 @@ public class Top5Adapter extends ArrayAdapter<Event> implements StickyListHeader
             holder = (HeaderViewHolder) convertView.getTag();
         }
         //set header text as first char in name
-        String headerText = "" + Utils.categories[position];
+        String headerText = "" + Utils.categories[((int) getHeaderId(position))];
         holder.text.setText(headerText);
         return convertView;
     }
 
     public long getHeaderId(int position) {
-        return (int) (((double) position) / 5.0);
+        return (long) Math.floor((int) (((double) position) / 5.0));
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
