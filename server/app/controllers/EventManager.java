@@ -670,7 +670,10 @@ public static Result getEventAttendees()
 		JSONArray json_array = new JSONArray();
 		while(rs.next())
 		{
-			json_array.put(rs.getString(1) +" "+ rs.getString(2));
+			String first = rs.getString(1);
+			if(!first.equals("Scraper")){
+			json_array.put(first +" "+ rs.getString(2));
+			}
 		}
 		return ok(json_array.toString());
 	}
