@@ -699,6 +699,7 @@ public static Result isAdmin()
 
 	Connection conn = DB.getConnection();
 	PreparedStatement stmt = conn.prepareStatement("SELECT user_id FROM Event_has_User WHERE event_id = ? AND is_admin=1 ");
+	stmt.setLong(1, event_id);
 	ResultSet rs = stmt.executeQuery();
 	if(rs.next())
 	{
