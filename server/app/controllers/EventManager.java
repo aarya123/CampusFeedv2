@@ -694,6 +694,8 @@ public static Result isAdmin()
 	long event_id = request.get("event_id").asLong();
 	long user_id = Application.getUserId(request);
 	
+	JSONObject output = new JSONObject();
+	
 	// get the user_id
 	try{
 
@@ -706,15 +708,17 @@ public static Result isAdmin()
 		long user = rs.getLong(1);
 		if(user==user_id)
 		{
-			
-			return ok("is_admin");
+			output.put("response", "is_admin");
+			return ok(output.toString());
 		}
 		else{
-			
-			return ok("not_admin"+"user_idjson= "+user_id + "user_db_id= "+user);
+			output.put("response", "not_admin");
+			return ok(output.toString());
 		}
 	}
-	return ok("error");
+	output.put("response", "error");
+
+	return ok(output.toString());
 	
 	}catch(Exception e)
 	{
