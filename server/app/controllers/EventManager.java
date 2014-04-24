@@ -50,6 +50,7 @@ public class EventManager extends Controller{
 					stmtTag.execute();
 					ResultSet rsTag = stmtTag.getResultSet();
 					addCategoriesToEventJson(eventRes, rsTag);
+					rsTag.close();
 				}
 				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
 					stmtAdmin.setLong(1, rs.getLong("id"));
@@ -62,6 +63,28 @@ public class EventManager extends Controller{
 					else {
 						eventRes.put("is_admin", 0);
 					}
+					rsAdmin.close();
+				}
+				try(PreparedStatement stmtCreator = conn.prepareStatement("select user_id from Event_has_User where event_id = ? and is_admin != 0")) {
+					stmtCreator.setLong(1, rs.getLong("id"));
+					stmtCreator.execute();
+					ResultSet rsCreator = stmtCreator.getResultSet();
+					if(rsCreator.next()) {
+						try(PreparedStatement stmtCreatorInfo = conn.prepareStatement("select first_name, last_name from User where id = ?")) {
+							stmtCreatorInfo.setLong(1, rsCreator.getLong("user_id"));
+							stmtCreatorInfo.execute();
+							ResultSet rsCreatorInfo = stmtCreatorInfo.getResultSet();
+							if(rsCreatorInfo.next()) {
+								eventRes.put("creator", 
+										JsonNodeFactory.instance.objectNode()
+										.put("first_name", rs.getString("first_name"))
+										.put("last_name", rs.getString("last_name"))
+								);
+							}
+							rsCreatorInfo.close();
+						}
+					}
+					rsCreator.close();
 				}
 				arr.add(eventRes);
 		}
