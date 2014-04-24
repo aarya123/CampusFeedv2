@@ -60,7 +60,7 @@ public class EventManager extends Controller{
 						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
 					}
 					else {
-						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
+						eventRes.put("is_admin", 0);
 					}
 				}
 				arr.add(eventRes);
