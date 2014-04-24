@@ -534,7 +534,7 @@ public static Result updateEvent()
 		isAdminQuery.execute();
 		boolean isAdmin = false;
 		if(isAdminQuery.getResultSet().next()) {
-			isAdmin = isAdminQuery.getResultSet().getInt(0) != 0;
+			isAdmin = isAdminQuery.getResultSet().getInt("is_admin") != 0;
 		}
 		isAdminQuery.close();
 		if(!isAdmin) {
