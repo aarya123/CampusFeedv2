@@ -567,7 +567,7 @@ public static Result updateEvent()
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return ok();
+		return ok("err", e.getMessage());
 	}
 	
 }
@@ -660,11 +660,12 @@ public static Result getEventAttendees()
 	JsonNode request  = request().body().asJson();
 	// get all members for event.
 	long event_id=request.get("event_id").longValue();
-	
+
 	try{
 		Connection conn = DB.getConnection();
+
 		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN  Event_has_User ON User.id=Event_has_User.user_id WHERE Event_has_User.event_id = ? ");
-		stmt.setLong(1, event_id);
+
 		ResultSet rs = stmt.executeQuery();
 		JSONArray json_array = new JSONArray();
 		while(rs.next())
@@ -679,8 +680,8 @@ public static Result getEventAttendees()
 		return ok(e.toString());
 	}
 	
-	
-	
+
+
 }
 
 
