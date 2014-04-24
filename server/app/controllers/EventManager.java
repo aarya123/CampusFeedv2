@@ -692,7 +692,6 @@ public static Result isAdmin()
 {
 	JsonNode request  = request().body().asJson();
 	long event_id = request.get("event_id").asLong();
-	long fb_id = request.get("fb_id").asLong();
 	long user_id = Application.getUserId(request);
 	
 	// get the user_id
