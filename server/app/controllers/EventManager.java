@@ -70,7 +70,7 @@ public class EventManager extends Controller{
 					stmtCreator.execute();
 					ResultSet rsCreator = stmtCreator.getResultSet();
 					if(rsCreator.next()) {
-						try(PreparedStatement stmtCreatorInfo = conn.prepareStatement("select first_name, last_name from User where id = ?")) {
+						try(PreparedStatement stmtCreatorInfo = conn.prepareStatement("select first_name, last_name from CampusFeed.User where id = ?")) {
 							stmtCreatorInfo.setLong(1, rsCreator.getLong("user_id"));
 							stmtCreatorInfo.execute();
 							ResultSet rsCreatorInfo = stmtCreatorInfo.getResultSet();
