@@ -524,9 +524,23 @@ public static Result updateEvent()
 		return ok(JsonNodeFactory.instance.objectNode()
 				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
 	}
+	long userId = Application.getUserId(request);
 	Connection conn = DB.getConnection();
 	try {
 		conn.setAutoCommit(false);
+		PreparedStatement isAdminQuery = conn.prepareStatement("select is_admin from CampusFeed.Event_has_User where event_id = ? and user_id = ?");
+		isAdminQuery.setLong(1, id);
+		isAdminQuery.setLong(2, userId);
+		isAdminQuery.execute();
+		boolean isAdmin = false;
+		if(isAdminQuery.getResultSet().next()) {
+			isAdmin = isAdminQuery.getResultSet().getInt(0) != 0;
+		}
+		isAdminQuery.close();
+		if(!isAdmin) {
+			conn.close();
+			return ok(JsonNodeFactory.instance.objectNode().put("no", "not admin"));
+		}
 		PreparedStatement stmt2 = conn.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=?, location=?,description=?,time=?,visibility=?   WHERE `Event`.`id` = ?");
 		stmt2.setString(1, title);
 		stmt2.setString(2, location);
@@ -646,7 +660,7 @@ public static Result getEventAttendees()
 	JsonNode request  = request().body().asJson();
 	// get all members for event.
 	long event_id=request.get("event_id").longValue();
-	
+/*	
 	try{
 		Connection conn = DB.getConnection();
 		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN Event_has_User on User.id=Event_has_User.user_id WHERE Event_has_Users.event_id=? ");
@@ -664,6 +678,8 @@ public static Result getEventAttendees()
 		e.printStackTrace();
 		return ok("error");
 	}
+	*/
+	return ok("hello world");
 
 }
 
