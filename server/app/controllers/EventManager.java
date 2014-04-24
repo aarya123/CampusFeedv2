@@ -70,15 +70,15 @@ public class EventManager extends Controller{
 					stmtCreator.execute();
 					ResultSet rsCreator = stmtCreator.getResultSet();
 					if(rsCreator.next()) {
-						try(PreparedStatement stmtCreatorInfo = conn.prepareStatement("select first_name, last_name from CampusFeed.User where id = ?")) {
+						try(PreparedStatement stmtCreatorInfo = conn.prepareStatement("select first_name, last_name from User where id = ?")) {
 							stmtCreatorInfo.setLong(1, rsCreator.getLong("user_id"));
 							stmtCreatorInfo.execute();
 							ResultSet rsCreatorInfo = stmtCreatorInfo.getResultSet();
 							if(rsCreatorInfo.next()) {
 								eventRes.put("creator", 
 										JsonNodeFactory.instance.objectNode()
-										.put("first_name", rs.getString("first_name"))
-										.put("last_name", rs.getString("last_name"))
+										.put("first_name", rsCreatorInfo.getString("first_name"))
+										.put("last_name", rsCreatorInfo.getString("last_name"))
 								);
 							}
 							rsCreatorInfo.close();
