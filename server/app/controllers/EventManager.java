@@ -54,6 +54,7 @@ public class EventManager extends Controller{
 				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
 					stmtAdmin.setLong(1, rs.getLong("id"));
 					stmtAdmin.setLong(2, userId);
+					stmtAdmin.execute();
 					ResultSet rsAdmin = stmtAdmin.getResultSet();
 					if(rsAdmin.next()) {
 						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
