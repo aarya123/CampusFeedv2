@@ -47,8 +47,6 @@ GET /all_tags			controllers.EventManager.allTags()
 #getEventAttendees
 POST /getEventAttendees controllers.EventManager.getEventAttendees()
 
-#isAdmin
-POST /isAdmin controllers.EventManager.isAdmin()
 
 #incrementViewCount
 POST /incrementViewCount controllers.EventManager.incrementViewCount()
