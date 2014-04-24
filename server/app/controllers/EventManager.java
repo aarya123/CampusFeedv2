@@ -688,6 +688,41 @@ public static Result getEventAttendees()
 
 }
 
+public static Result isAdmin()
+{
+	JsonNode request  = request().body().asJson();
+	long event_id = request.get("event_id").asLong();
+	long fb_id = request.get("fb_id").asLong();
+	long user_id = Application.getUserId(request);
+	
+	// get the user_id
+	try{
+
+	Connection conn = DB.getConnection();
+	PreparedStatement stmt = conn.prepareStatement("SELECT user_id FROM Event_has_User WHERE event_id = ? AND is_admin=1 ");
+	ResultSet rs = stmt.executeQuery();
+	if(rs.next())
+	{
+	
+		if(rs.getInt(1)==user_id)
+		{
+			return ok("is_admin");
+		}
+		else{
+			return ok("not_admin");
+		}
+	}
+	return ok("error");
+	
+	}catch(Exception e)
+	{
+		return ok(e.toString());
+	}
+
+
+	
+}
+
 
 
 }
