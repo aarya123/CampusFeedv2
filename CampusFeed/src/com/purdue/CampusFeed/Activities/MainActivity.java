@@ -18,33 +18,28 @@ import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
 
+import java.util.HashMap;
+
 public class MainActivity extends AnimationActivity {
 
     public static MenuItem searchWidget_menuItem;
-
+    private static HashMap<Frag, Fragment> fragments = new HashMap<Frag, Fragment>();
     //Data members required for the drawer layout
     private String[] drawerItems;
     private DrawerLayout drawerLayout;
     private ListView drawerList;
-
     //Data members for search widget
     private ActionBarDrawerToggle drawerToggle;
     private CharSequence drawerTitle;
-    /*
-     *
-	 * 
-	 * Functions for navigation drawer
-	 * 
-	 *
-	 */
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.init(getApplicationContext());
-
-        HomepageFragment homepageFragment = new HomepageFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.content_frame, homepageFragment).commit();
-
+        fragments.put(Frag.HOME, new HomepageFragment());
+        fragments.put(Frag.BROWSE, new BrowseFragment());
+        fragments.put(Frag.CREATE, new CreateEventFragment());
+        fragments.put(Frag.SEARCH, new AdvancedSearchFragment());
+        getSupportFragmentManager().beginTransaction().add(R.id.content_frame, fragments.get(Frag.HOME)).addToBackStack(null).commit();
         setContentView(R.layout.activity_main);
         drawerItems = getResources().getStringArray(R.array.navigationdrawer_items);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -95,37 +90,35 @@ public class MainActivity extends AnimationActivity {
         //Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(drawerToggle);
     }
+    /*
+     *
+	 * 
+	 * Functions for navigation drawer
+	 * 
+	 *
+	 */
 
     //Fragment swapping
     private void selectItem(int position) {
-        Fragment fragToDisplay;
+        Fragment fragToDisplay = null;
         switch (position) {
             case 1:
-
-                fragToDisplay = new HomepageFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
+                fragToDisplay = fragments.get(Frag.HOME);
                 break;
             case 2:
-
-                fragToDisplay = new BrowseFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
+                fragToDisplay = fragments.get(Frag.BROWSE);
                 break;
             case 3:
-
-                fragToDisplay = new CreateEventFragment();
-                Intent intent = new Intent(this, SingleFragmentActivity.class);
-                intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
-                startActivity(intent);
+                fragToDisplay = fragments.get(Frag.CREATE);
                 break;
             case 4:
-
-                fragToDisplay = new AdvancedSearchFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).commit();
+                fragToDisplay = fragments.get(Frag.SEARCH);
                 break;
             default:
+                fragToDisplay = fragments.get(Frag.HOME);
                 break;
         }
-
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).addToBackStack(null).commit();
         drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
@@ -182,5 +175,9 @@ public class MainActivity extends AnimationActivity {
         });
         searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
         return true;
+    }
+
+    private enum Frag {
+        HOME, BROWSE, CREATE, SEARCH
     }
 }

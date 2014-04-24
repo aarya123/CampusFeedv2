@@ -50,7 +50,7 @@ public class AnimationActivity extends FragmentActivity {
                     return null;
                 }
 
-            }.execute();
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     //what to do when the session status changes (logged in or logged out)
@@ -71,7 +71,7 @@ public class AnimationActivity extends FragmentActivity {
                             Utils.facebook_userID = user.getId();//user id
                             Log.d("PRANAV", "facebookId: " + Utils.facebook_userID + ", gcmId: \n" + Utils.gcmRegid);
 
-                            new Login(AnimationActivity.this).execute(Utils.facebook_userID, Utils.facebook_accessToken);
+                            new Login(AnimationActivity.this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Utils.facebook_userID, Utils.facebook_accessToken);
 
 
                             new AsyncTask() {
@@ -94,7 +94,7 @@ public class AnimationActivity extends FragmentActivity {
                                 protected void onPostExecute(Object msg) {
                                     Log.d("PRANAV", "called registerGCM!!!");
                                 }
-                            }.execute(null, null, null);
+                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
                         }
                     }
                 }

@@ -97,7 +97,7 @@ public class Utils {
                 }
                 return msg;
             }
-        }.execute(null, null, null);
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
     }
 
     /**
