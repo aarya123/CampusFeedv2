@@ -653,5 +653,31 @@ public static Result getEvent() {
 	
 }
 
+public static Result getEventAttendees()
+{
+	JsonNode request  = request().body().asJson();
+	// get all members for event.
+	long event_id=request.get("event_id").longValue();
+	
+	try{
+		Connection conn = DB.getConnection();
+		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN Event_has_User on User.id=Event_has_User.user_id WHERE Event_has_Users.event_id=? ");
+		stmt.setLong(1, event_id);
+		ResultSet rs = stmt.executeQuery();
+		JSONArray json_array = new JSONArray();
+		while(rs.next())
+		{
+			json_array.put(rs.getString(1) +" "+ rs.getString(2));
+		}
+		return ok(json_array.toString());
+	}
+	catch(Exception e)
+	{
+		return ok("error");
+	}
+
+}
+
+
 
 }
