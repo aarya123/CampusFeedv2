@@ -524,9 +524,24 @@ public static Result updateEvent()
 		return ok(JsonNodeFactory.instance.objectNode()
 				.put("error", "Parameters: title (string), desc(string), location(string), date_time(long), visibility(int), categories(array)"));
 	}
+	long userId = Application.getUserId(request);
 	Connection conn = DB.getConnection();
 	try {
 		conn.setAutoCommit(false);
+		PreparedStatement isAdminQuery = conn.prepareStatement("select is_admin from CampusFeed.Event_has_User where event_id = ? and user_id = ?");
+		isAdminQuery.setLong(1, id);
+		isAdminQuery.setLong(2, userId);
+		isAdminQuery.execute();
+		boolean isAdmin = false;
+		ResultSet rs = isAdminQuery.getResultSet();
+		if(rs.next()) {
+			isAdmin = rs.getInt("is_admin") != 0;
+		}
+		isAdminQuery.close();
+		if(!isAdmin) {
+			conn.close();
+			return ok(JsonNodeFactory.instance.objectNode().put("no", "not admin"));
+		}
 		PreparedStatement stmt2 = conn.prepareStatement("UPDATE `CampusFeed`.`Event` SET name=?, location=?,description=?,time=?,visibility=?   WHERE `Event`.`id` = ?");
 		stmt2.setString(1, title);
 		stmt2.setString(2, location);
@@ -553,7 +568,7 @@ public static Result updateEvent()
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return ok();
+		return ok("err", e.getMessage());
 	}
 	
 }
@@ -640,6 +655,76 @@ public static Result getEvent() {
 	}
 	
 }
+
+public static Result getEventAttendees()
+{
+	JsonNode request  = request().body().asJson();
+	// get all members for event.
+	long event_id=request.get("event_id").longValue();
+
+	try{
+		Connection conn = DB.getConnection();
+
+		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN  Event_has_User ON User.id=Event_has_User.user_id WHERE Event_has_User.event_id = ? ");
+		stmt.setLong(1, event_id);
+		ResultSet rs = stmt.executeQuery();
+		JSONArray json_array = new JSONArray();
+		while(rs.next())
+		{
+			String first = rs.getString(1);
+			if(!first.equals("Scraper")){
+			json_array.put(first +" "+ rs.getString(2));
+			}
+		}
+		return ok(json_array.toString());
+	}
+	catch(Exception e)
+	{
+
+		return ok(e.toString());
+	}
+	
+
+
+}
+
+public static Result isAdmin()
+{
+	JsonNode request  = request().body().asJson();
+	long event_id = request.get("event_id").asLong();
+	long user_id = Application.getUserId(request);
+	
+	// get the user_id
+	try{
+
+	Connection conn = DB.getConnection();
+	PreparedStatement stmt = conn.prepareStatement("SELECT user_id FROM Event_has_User WHERE event_id = ? AND is_admin=1 ");
+	stmt.setLong(1, event_id);
+	ResultSet rs = stmt.executeQuery();
+	if(rs.next())
+	{
+		long user = rs.getLong(1);
+		if(user==user_id)
+		{
+			
+			return ok("is_admin");
+		}
+		else{
+			
+			return ok("not_admin"+"user_idjson= "+user_id + "user_db_id= "+user);
+		}
+	}
+	return ok("error");
+	
+	}catch(Exception e)
+	{
+		return ok(e.toString());
+	}
+
+
+	
+}
+
 
 
 }

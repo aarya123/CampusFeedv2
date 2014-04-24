@@ -89,6 +89,7 @@ public class GCMHandler extends Controller {
 			
 			try {
 				msg.put("response", event_id);
+				
 				msg.put("mode", "update_event");
 				obj.put("data",msg);
 				obj.put("registration_ids", gcm_ids_json_array);

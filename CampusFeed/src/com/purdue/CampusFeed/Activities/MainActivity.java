@@ -10,10 +10,16 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.*;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
+
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
@@ -89,6 +95,7 @@ public class MainActivity extends AnimationActivity {
 
         //Set the drawer toggle as the DrawerListener
         drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.setFocusableInTouchMode(false); //allow onBackPressed() override to work when nav drawer is open
     }
     /*
      *
@@ -97,6 +104,17 @@ public class MainActivity extends AnimationActivity {
 	 * 
 	 *
 	 */
+
+    public void onBackPressed() {
+        //open nav drawer before exiting application
+        if(drawerLayout.isDrawerOpen(Gravity.LEFT))
+        {
+            finish();
+        }
+        else{
+            drawerLayout.openDrawer(Gravity.LEFT);
+        }
+    }
 
     //Fragment swapping
     private void selectItem(int position) {
@@ -119,6 +137,7 @@ public class MainActivity extends AnimationActivity {
                 break;
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).addToBackStack(null).commit();
+        Toast.makeText(this, "Drawer close handled in my code", Toast.LENGTH_SHORT).show();
         drawerLayout.closeDrawer(Gravity.LEFT);
     }
 
