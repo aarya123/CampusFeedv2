@@ -688,46 +688,7 @@ public static Result getEventAttendees()
 
 }
 
-public static Result isAdmin()
-{
-	JsonNode request  = request().body().asJson();
-	long event_id = request.get("event_id").asLong();
-	long user_id = Application.getUserId(request);
-	
-	JSONObject output = new JSONObject();
-	
-	// get the user_id
-	try{
 
-	Connection conn = DB.getConnection();
-	PreparedStatement stmt = conn.prepareStatement("SELECT user_id FROM Event_has_User WHERE event_id = ? AND is_admin=1 ");
-	stmt.setLong(1, event_id);
-	ResultSet rs = stmt.executeQuery();
-	if(rs.next())
-	{
-		long user = rs.getLong(1);
-		if(user==user_id)
-		{
-			output.put("response", "is_admin");
-			return ok(output.toString());
-		}
-		else{
-			output.put("response", "not_admin");
-			return ok(output.toString());
-		}
-	}
-	output.put("response", "error");
-
-	return ok(output.toString());
-	
-	}catch(Exception e)
-	{
-		return ok(e.toString());
-	}
-
-
-	
-}
 public static Result incrementViewCount()
 {
 	JsonNode request = request().body().asJson();
