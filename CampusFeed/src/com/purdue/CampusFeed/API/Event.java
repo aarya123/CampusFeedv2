@@ -18,6 +18,7 @@ public class Event implements Serializable {
     String[] categories;
     int visibility;
     int view_count, is_admin;
+    Creator creator;
 
     public Event() {
         name = "";
@@ -28,6 +29,19 @@ public class Event implements Serializable {
         status = 0;
         categories = new String[]{};
         visibility = PUBLIC;
+    }
+    
+    public static class Creator {
+    	private String first_name;
+    	private String last_name;
+    	
+    	public String getFirstName() {
+    		return first_name;
+    	}
+    	
+    	public String getLastName() {
+    		return last_name;
+    	}
     }
 
     public Event(String eventName, String eventDescription,
@@ -73,10 +87,11 @@ public class Event implements Serializable {
     }
     
     public Event(String eventName, String eventDescription, String eventLocation,
-    			long datetime, String[] categories, int visibility, int view_count, int is_admin) {
+    			long datetime, String[] categories, int visibility, int view_count, int is_admin, Creator creator) {
     	this(eventName, eventDescription, eventLocation, datetime, categories, visibility);
     	this.view_count = view_count;
     	this.is_admin = is_admin;
+    	this.creator = creator;
     }
 
 
@@ -160,6 +175,10 @@ public class Event implements Serializable {
     
     public boolean isAdmin() {
     	return is_admin != 0;
+    }
+    
+    public Creator getCreator() {
+    	return creator;
     }
 
 }
