@@ -661,6 +661,7 @@ public static Result getEventAttendees()
 	}
 	catch(Exception e)
 	{
+		e.printStackTrace();
 		return ok("error");
 	}
 
