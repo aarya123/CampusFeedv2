@@ -41,7 +41,7 @@ public class EventManager extends Controller{
 	public static final String EVENT_GET_SQL_UNRESTRICTED = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event.view_count as view_count, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id";
 	public static final String EVENT_GET_SQL = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event.view_count as view_count, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
 	
-	public static ArrayNode buildEventResults(Connection conn, ResultSet rs) throws SQLException {
+	public static ArrayNode buildEventResults(Connection conn, ResultSet rs, long userId) throws SQLException {
 		ArrayNode arr = JsonNodeFactory.instance.arrayNode();
 		while(rs.next()) {
 				ObjectNode eventRes = createEventJson(rs);
@@ -50,6 +50,17 @@ public class EventManager extends Controller{
 					stmtTag.execute();
 					ResultSet rsTag = stmtTag.getResultSet();
 					addCategoriesToEventJson(eventRes, rsTag);
+				}
+				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
+					stmtAdmin.setLong(1, rs.getLong("id"));
+					stmtAdmin.setLong(2, userId);
+					ResultSet rsAdmin = stmtAdmin.getResultSet();
+					if(rsAdmin.next()) {
+						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
+					}
+					else {
+						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
+					}
 				}
 				arr.add(eventRes);
 		}
@@ -418,7 +429,7 @@ public static Result advSearch() {
 		System.out.println(sql);
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs));
+		return ok(buildEventResults(conn, rs, user_id));
 	}
 	catch(Exception e) {
 		e.printStackTrace();
@@ -453,7 +464,7 @@ public static Result listEvent() {
 			stmt.setLong(1, user_id);
     		stmt.setInt(2, page * 25);
     		ResultSet rs = stmt.executeQuery();
-    		return ok(buildEventResults(conn, rs));
+    		return ok(buildEventResults(conn, rs, user_id));
 		}
 	}
 	catch(SQLException e) {
@@ -629,7 +640,7 @@ public static Result top5() {
 		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
 		stmt.setString(1, category);
 		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs));
+		return ok(buildEventResults(conn, rs, Application.getUserId(request)));
 		
 	}
 	catch(SQLException e) {
@@ -650,7 +661,7 @@ public static Result getEvent() {
 		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
 		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs).get(0));
+		return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
 	}
 	catch(Exception e) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
