@@ -567,7 +567,7 @@ public static Result updateEvent()
 	}
 	catch(SQLException e) {
 		e.printStackTrace();
-		return ok();
+		return ok("err", e.getStackTrace().toString());
 	}
 	
 }
