@@ -427,7 +427,7 @@ public static Result advSearch() {
 		for(int i = 0; i < params.size(); ++i) {
 			stmt.setObject(i + 1, params.get(i));
 		}
-		System.out.println(sql);
+		System.out.println(sql +"ORDER BY Event.view_count DESC");
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
 		return ok(buildEventResults(conn, rs, user_id));
@@ -461,7 +461,7 @@ public static Result listEvent() {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + "ORDER BY view_count DESC LIMIT 25 OFFSET ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + "ORDER BY Event.view_count DESC LIMIT 25 OFFSET ?")) {
 			stmt.setLong(1, user_id);
     		stmt.setInt(2, page * 25);
     		ResultSet rs = stmt.executeQuery();
