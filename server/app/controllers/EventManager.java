@@ -664,6 +664,7 @@ public static Result getEvent() {
 		return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
 	}
 	catch(Exception e) {
+		e.printStackTrace();
 		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	
