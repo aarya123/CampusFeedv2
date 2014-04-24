@@ -1,15 +1,14 @@
 package com.purdue.CampusFeed.Activities;
 
-import java.util.List;
-
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
@@ -19,13 +18,32 @@ import com.purdue.CampusFeed.R;
 /**
  * Created by Sean on 3/30/14.
  */
-public class SingleFragmentActivity extends FragmentActivity {
+public class SingleFragmentActivity extends AnimationActivity implements
+        GestureDetector.OnGestureListener{
+
+    private GestureDetectorCompat detector;
+    private static final int SWIPE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+    public static long event_id = 0;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.basic_framelayout);
+        detector = new GestureDetectorCompat(this, this);
+        Log.d("sean", "onCreate() EventPage Activity");
+
         
         //Log.e("tag", getIntent().getData().toString());
-        
+        if (getIntent().hasExtra("update")) {
+            // get the event with api
+            getEvent getter = new getEvent(getApplicationContext(), SingleFragmentActivity.event_id);
+
+            getter.execute(null, null);
+            return;
+
+        }
+
+
         if(getIntent().getData() != null) {
         	String data = getIntent().getData().toString();
         	if(data.startsWith(getString(R.string.redirection_url))) {
@@ -58,8 +76,93 @@ public class SingleFragmentActivity extends FragmentActivity {
             Event fragEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
             EventPageFragment fragment = new EventPageFragment();
             fragment.setEvent(fragEvent);
-            getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
+           // getFragmentManager().beginTransaction().setCustomAnimations(R.anim.sliderightin, R.anim.sliderightout);
+            getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(R.anim.slideleftin, R.anim.slideleftout)
+                                .add(R.id.basic_contentframe, fragment).commit();
+            Log.d("sean", "transitioned to EventPage fragment");
         }
+    }
+
+    public boolean onTouchEvent(MotionEvent event){
+        this.detector.onTouchEvent(event);
+        Log.d("sean", "touch event detected");
+        return super.onTouchEvent(event);
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent e){
+        detector.onTouchEvent(e);
+        return super.dispatchTouchEvent(e);
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent2, float v, float v2) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        boolean result = false;
+        Log.d("sean", "flung");
+        try {
+            float diffY = e2.getY() - e1.getY();
+            float diffX = e2.getX() - e1.getX();
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffX > 0) {
+                        onSwipeRight();
+                    } else {
+                        onSwipeLeft();
+                    }
+                }
+            } else {
+                if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                    if (diffY > 0) {
+                        onSwipeBottom();
+                    } else {
+                        onSwipeTop();
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return result;
+    }
+
+    public void onSwipeRight(){
+        //Toast.makeText(this, "Swiped Right", Toast.LENGTH_SHORT).show();
+        //getFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
+        onBackPressed();
+    }
+    public void onSwipeLeft(){
+
+    }
+    public void onSwipeBottom(){
+
+    }
+    public void onSwipeTop(){
+
     }
     
     
@@ -91,10 +194,39 @@ public class SingleFragmentActivity extends FragmentActivity {
 	        startActivity(intent);
     	}
     }
-    
+
     @Override
     public void onNewIntent(Intent i) {
     	Log.i("TEST", i.getAction());
+    }
+
+    public class getEvent extends AsyncTask<String[], Void, Event> {
+        Context c;
+        long event_id = 0;
+        Event event;
+
+        public getEvent(Context c, long event_id) {
+            this.c = c;
+            this.event_id = event_id;
+
+        }
+
+        protected Event doInBackground(String[]... params) {
+            Api api = Api.getInstance(c);
+            return api.getEvent(event_id);
+        }
+
+        protected void onPostExecute(Event event) {
+            Log.d("CampusFeed", "gotten event");
+
+
+            EventPageFragment fragment = new EventPageFragment();
+            fragment.setEvent(event);
+            getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
+
+        }
+
+
     }
     
     

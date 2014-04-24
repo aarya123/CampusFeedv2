@@ -18,11 +18,11 @@ package com.purdue.CampusFeed.Utils;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -43,14 +43,14 @@ public class Utils {
     public final static String[] categories = new String[]{"Recreation", "Social", "Education",
             "University Event", "Charity"};
     //---------GCM variables------------------
-    public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
     public static final String TAG = "CampusFeed";
     /**
      * Tag used on log messages.
      */
     static final String GCM_DEBUG_TAG = "GCMDemo";
+    private final static String USER_ID = "USER_ID", ACCESS_TOKEN = "ACCESS_TOKEN";
     public static String gcmRegid;
+    public static String facebook_userID, facebook_accessToken;
     /**
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
@@ -96,12 +96,6 @@ public class Utils {
                     // exponential back-off.
                 }
                 return msg;
-            }
-
-            @Override
-            protected void onPostExecute(Object msg) {
-                Toast.makeText(context, "GCMid = " + gcmRegid, Toast.LENGTH_SHORT).show();
-                Toast.makeText(context, "id = " + gcmRegid, Toast.LENGTH_SHORT).show();
             }
         }.execute(null, null, null);
     }
@@ -212,5 +206,39 @@ public class Utils {
      */
     public static boolean hasICS() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    }
+
+    public static boolean getLoginCredentials(Context c) {
+        SharedPreferences prefs = getSharedPreferences(c);
+        facebook_userID = prefs.getString(USER_ID, "");
+        facebook_accessToken = prefs.getString(ACCESS_TOKEN, "");
+        if (facebook_userID.isEmpty() || facebook_accessToken.isEmpty()) {
+            facebook_userID = null;
+            facebook_accessToken = null;
+            return false;
+        }
+        return true;
+    }
+
+    public static void saveLoginCredential(Context c) {
+        SharedPreferences prefs = getSharedPreferences(c);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ACCESS_TOKEN, facebook_accessToken);
+        editor.putString(USER_ID, facebook_userID);
+        editor.commit();
+    }
+
+    public static void removeLoginCredentials(Context c) {
+        SharedPreferences prefs = getSharedPreferences(c);
+        SharedPreferences.Editor editor = prefs.edit();
+        Utils.facebook_userID = null;
+        Utils.facebook_accessToken = null;
+        editor.remove(ACCESS_TOKEN);
+        editor.remove(USER_ID);
+        editor.commit();
+    }
+
+    private static SharedPreferences getSharedPreferences(Context c) {
+        return c.getSharedPreferences(TAG, Context.MODE_PRIVATE);
     }
 }

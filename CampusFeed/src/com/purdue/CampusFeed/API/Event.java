@@ -50,6 +50,28 @@ public class Event implements Serializable {
         this.id = id;
     }
 
+    public Event(String eventName, String eventDescription, String eventLocation,
+                 long datetime, String[] categories, int visibility, long id) {
+        this.name = eventName;
+        this.description = eventDescription;
+        this.location = eventLocation;
+        setDatetime(datetime);
+        this.categories = categories;
+        this.visibility = visibility;
+        this.id = id;
+    }
+
+    public Event(String eventName, String eventDescription, String eventLocation,
+                 long datetime, String[] categories, int visibility) {
+        this.name = eventName;
+        this.description = eventDescription;
+        this.location = eventLocation;
+        setDatetime(datetime);
+        this.categories = categories;
+        this.visibility = visibility;
+    }
+
+
     public static Event JSONToEvent(JSONObject json) {
         return new Event();
     }
@@ -83,6 +105,10 @@ public class Event implements Serializable {
         return dTime.substring(0, dTime.length() - 3);
     }
 
+    public void setDatetime(long datetime) {
+        this.time = datetime;
+    }
+
     public void setDatetime(String datetime) {
         try {
             this.time = new SimpleDateFormat("M-d-yyyy k:m").parse(datetime).getTime() * 1000;
@@ -90,10 +116,6 @@ public class Event implements Serializable {
             e.printStackTrace();
             this.time = 0;
         }
-    }
-
-    public void setDatetime(long datetime) {
-        this.time = datetime;
     }
 
     public long getDatetimeLong() {
