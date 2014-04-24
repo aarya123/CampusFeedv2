@@ -592,6 +592,7 @@ public static ArrayList<String> get_user_ids()
 	}
 
 }
+
 public static Result allTags()
 {
 	
@@ -664,7 +665,6 @@ public static Result getEventAttendees()
 
 	try{
 		Connection conn = DB.getConnection();
-
 		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN  Event_has_User ON User.id=Event_has_User.user_id WHERE Event_has_User.event_id = ? ");
 		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
@@ -727,6 +727,43 @@ public static Result isAdmin()
 
 
 	
+}
+public static Result incrementViewCount()
+{
+	JsonNode request = request().body().asJson();
+	int event_id = request.get("event_id").asInt();
+	try{
+		Connection conn = DB.getConnection();
+		PreparedStatement stmt = conn.prepareStatement("UPDATE Event SET view_count = view_count +1 WHERE id = ?");
+		stmt.setInt(event_id, event_id);
+		stmt.executeUpdate();
+		JSONObject json = new JSONObject();
+		json.put("response", "done");
+		return ok(json.toString());
+	}
+	catch(Exception e)
+	{
+		return ok(e.toString());
+	}
+}
+
+// view count function
+public static Result getViewCount()
+{
+	JsonNode request  = request().body().asJson();
+	long event_id = request.get("event_id").asLong();
+	
+	try{
+	
+		
+		
+	}catch(Exception e)
+	{
+	
+	}
+	
+	
+	return null;
 }
 
 
