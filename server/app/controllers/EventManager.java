@@ -423,11 +423,10 @@ public static Result advSearch() {
 			}
 			sql += ")";
 		}
-		stmt = conn.prepareStatement(sql);
+		stmt = conn.prepareStatement(sql+" ORDER BY Event.view_count DESC");
 		for(int i = 0; i < params.size(); ++i) {
 			stmt.setObject(i + 1, params.get(i));
 		}
-		System.out.println(sql +" ORDER BY Event.view_count DESC");
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
 		return ok(buildEventResults(conn, rs, user_id));
