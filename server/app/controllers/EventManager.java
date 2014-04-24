@@ -736,7 +736,7 @@ public static Result incrementViewCount()
 	try{
 		Connection conn = DB.getConnection();
 		PreparedStatement stmt = conn.prepareStatement("UPDATE Event SET view_count = view_count +1 WHERE id = ?");
-		stmt.setInt(event_id, event_id);
+		stmt.setInt(1, event_id);
 		stmt.executeUpdate();
 		JSONObject json = new JSONObject();
 		json.put("response", "done");
