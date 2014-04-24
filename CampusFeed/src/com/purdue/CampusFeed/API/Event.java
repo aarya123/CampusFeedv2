@@ -17,6 +17,7 @@ public class Event implements Serializable {
     long id, time, status;
     String[] categories;
     int visibility;
+    int view_count, is_admin;
 
     public Event() {
         name = "";
@@ -69,6 +70,13 @@ public class Event implements Serializable {
         setDatetime(datetime);
         this.categories = categories;
         this.visibility = visibility;
+    }
+    
+    public Event(String eventName, String eventDescription, String eventLocation,
+    			long datetime, String[] categories, int visibility, int view_count, int is_admin) {
+    	this(eventName, eventDescription, eventLocation, datetime, categories, visibility);
+    	this.view_count = view_count;
+    	this.is_admin = is_admin;
     }
 
 
@@ -144,6 +152,14 @@ public class Event implements Serializable {
 
     public void setVisibility(int visibility) {
         this.visibility = visibility;
+    }
+    
+    public int getViewCount() {
+    	return view_count;
+    }
+    
+    public boolean isAdmin() {
+    	return is_admin != 0;
     }
 
 }
