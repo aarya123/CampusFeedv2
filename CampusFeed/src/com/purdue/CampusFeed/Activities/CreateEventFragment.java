@@ -2,6 +2,7 @@ package com.purdue.CampusFeed.Activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,8 +23,6 @@ import java.util.Calendar;
 public class CreateEventFragment extends Fragment {
     EditText dateSpinner, timeSpinner, nameText, descriptionText, locationText;
     int year, month, day, hour, minute;
-    boolean isEventAlreadyCreated;
-    
     /* Called when the user finishes selecting a date from the dialog */
     private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -37,6 +36,7 @@ public class CreateEventFragment extends Fragment {
             dateSpinner.setText(new StringBuilder().append(month + 1).append("-").append(day).append("-").append(year).append(" "));
         }
     };
+    boolean isEventAlreadyCreated;
     MultiAutoCompleteTextView multiAutoCompleteTextView;
     Event event;
     private DatePickerDialog datePickerDialog;
@@ -149,9 +149,9 @@ public class CreateEventFragment extends Fragment {
                 for (int i = 0; i < categories.length; i++)
                     categories[i] = categories[i].replace(" ", "");
                 if (event == null)
-                    new CreateEvent(getActivity()).execute(new Event(title, description, location, timestamp, categories, visibility));
+                    new CreateEvent(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Event(title, description, location, timestamp, categories, visibility));
                 else
-                    new CreateEvent(getActivity()).execute(new Event(title, description, location, timestamp, categories, visibility, event.getId()));
+                    new CreateEvent(getActivity()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Event(title, description, location, timestamp, categories, visibility, event.getId()));
                
                 if(isEventAlreadyCreated){
                 	Toast.makeText(getActivity(), "event modified", Toast.LENGTH_LONG).show();

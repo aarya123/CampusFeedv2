@@ -1,6 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -42,7 +43,7 @@ public class HomepageFragment extends Fragment {
                 }
             }
         });
-        new Top5Events(getActivity(), adapter).execute(Utils.categories);
+        new Top5Events(getActivity(), adapter).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, Utils.categories);
         return stickyListHeadersListView;
     }
 
