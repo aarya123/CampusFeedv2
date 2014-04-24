@@ -703,13 +703,15 @@ public static Result isAdmin()
 	ResultSet rs = stmt.executeQuery();
 	if(rs.next())
 	{
-	
-		if(rs.getInt(1)==user_id)
+		long user = rs.getLong(1);
+		if(user==user_id)
 		{
+			
 			return ok("is_admin");
 		}
 		else{
-			return ok("not_admin");
+			
+			return ok("not_admin"+"user_idjson= "+user_id + "user_db_id= "+user);
 		}
 	}
 	return ok("error");
