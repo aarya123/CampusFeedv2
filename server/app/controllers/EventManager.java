@@ -38,10 +38,10 @@ import views.html.*;
 
 public class EventManager extends Controller{
 	
-	public static final String EVENT_GET_SQL_UNRESTRICTED = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id";
-	public static final String EVENT_GET_SQL = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
+	public static final String EVENT_GET_SQL_UNRESTRICTED = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event.view_count as view_count, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id";
+	public static final String EVENT_GET_SQL = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event.view_count as view_count, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
 	
-	public static ArrayNode buildEventResults(Connection conn, ResultSet rs) throws SQLException {
+	public static ArrayNode buildEventResults(Connection conn, ResultSet rs, long userId) throws SQLException {
 		ArrayNode arr = JsonNodeFactory.instance.arrayNode();
 		while(rs.next()) {
 				ObjectNode eventRes = createEventJson(rs);
@@ -50,6 +50,18 @@ public class EventManager extends Controller{
 					stmtTag.execute();
 					ResultSet rsTag = stmtTag.getResultSet();
 					addCategoriesToEventJson(eventRes, rsTag);
+				}
+				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
+					stmtAdmin.setLong(1, rs.getLong("id"));
+					stmtAdmin.setLong(2, userId);
+					stmtAdmin.execute();
+					ResultSet rsAdmin = stmtAdmin.getResultSet();
+					if(rsAdmin.next()) {
+						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
+					}
+					else {
+						eventRes.put("is_admin", 0);
+					}
 				}
 				arr.add(eventRes);
 		}
@@ -332,6 +344,7 @@ private static ObjectNode createEventJson(ResultSet rs) throws SQLException {
 	searchResult.put("description", rs.getString("description"));
 	//searchResult.put("category", rs.getString("category"));
 	searchResult.put("visibility", rs.getInt("visibility"));
+	searchResult.put("view_count", rs.getInt("view_count"));
 	searchResult.put("rsvp", rs.getInt("rsvp"));
 	return searchResult;
 }
@@ -417,7 +430,7 @@ public static Result advSearch() {
 		System.out.println(sql);
 		stmt.execute();
 		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs));
+		return ok(buildEventResults(conn, rs, user_id));
 	}
 	catch(Exception e) {
 		e.printStackTrace();
@@ -448,11 +461,11 @@ public static Result listEvent() {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: page (int)"));
 	}
 	try(Connection conn = DB.getConnection()) {
-		try(PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " LIMIT 25 OFFSET ?")) {
+		try(PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + "ORDER BY view_count DESC LIMIT 25 OFFSET ?")) {
 			stmt.setLong(1, user_id);
     		stmt.setInt(2, page * 25);
     		ResultSet rs = stmt.executeQuery();
-    		return ok(buildEventResults(conn, rs));
+    		return ok(buildEventResults(conn, rs, user_id));
 		}
 	}
 	catch(SQLException e) {
@@ -592,6 +605,7 @@ public static ArrayList<String> get_user_ids()
 	}
 
 }
+
 public static Result allTags()
 {
 	
@@ -627,7 +641,7 @@ public static Result top5() {
 		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Tags.tag = ? ORDER BY Event.view_count DESC LIMIT 5");
 		stmt.setString(1, category);
 		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs));
+		return ok(buildEventResults(conn, rs, Application.getUserId(request)));
 		
 	}
 	catch(SQLException e) {
@@ -648,9 +662,10 @@ public static Result getEvent() {
 		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
 		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs).get(0));
+		return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
 	}
 	catch(Exception e) {
+		e.printStackTrace();
 		return ok(JsonNodeFactory.instance.objectNode().put("error", e.getMessage()));
 	}
 	
@@ -664,7 +679,6 @@ public static Result getEventAttendees()
 
 	try{
 		Connection conn = DB.getConnection();
-
 		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN  Event_has_User ON User.id=Event_has_User.user_id WHERE Event_has_User.event_id = ? ");
 		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
@@ -688,41 +702,43 @@ public static Result getEventAttendees()
 
 }
 
-public static Result isAdmin()
-{
-	JsonNode request  = request().body().asJson();
-	long event_id = request.get("event_id").asLong();
-	long user_id = Application.getUserId(request);
-	
-	// get the user_id
-	try{
 
-	Connection conn = DB.getConnection();
-	PreparedStatement stmt = conn.prepareStatement("SELECT user_id FROM Event_has_User WHERE event_id = ? AND is_admin=1 ");
-	stmt.setLong(1, event_id);
-	ResultSet rs = stmt.executeQuery();
-	if(rs.next())
-	{
-		long user = rs.getLong(1);
-		if(user==user_id)
-		{
-			
-			return ok("is_admin");
-		}
-		else{
-			
-			return ok("not_admin"+"user_idjson= "+user_id + "user_db_id= "+user);
-		}
+public static Result incrementViewCount()
+{
+	JsonNode request = request().body().asJson();
+	int event_id = request.get("event_id").asInt();
+	try{
+		Connection conn = DB.getConnection();
+		PreparedStatement stmt = conn.prepareStatement("UPDATE Event SET view_count = view_count +1 WHERE id = ?");
+		stmt.setInt(1, event_id);
+		stmt.executeUpdate();
+		JSONObject json = new JSONObject();
+		json.put("response", "done");
+		return ok(json.toString());
 	}
-	return ok("error");
-	
-	}catch(Exception e)
+	catch(Exception e)
 	{
 		return ok(e.toString());
 	}
+}
 
-
+// view count function
+public static Result getViewCount()
+{
+	JsonNode request  = request().body().asJson();
+	long event_id = request.get("event_id").asLong();
 	
+	try{
+	
+		
+		
+	}catch(Exception e)
+	{
+	
+	}
+	
+	
+	return null;
 }
 
 
