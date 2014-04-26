@@ -294,7 +294,19 @@ public class Api implements Closeable {
 
 
     }
-
+    //AttendeesOfEventsRequest
+    class AttendeesOfEventsRequest{
+        long eventId;
+        public AttendeesOfEventsRequest(long eventId)
+        {
+            this.eventId = eventId;
+        }
+    }
+    
+    //AttendeesOfEventsResponse, array of names
+    class AttendeesOfEventsResponse{
+        String[] names;
+    }
     //rsvp
     class RsvpResponse {
         String ok;
