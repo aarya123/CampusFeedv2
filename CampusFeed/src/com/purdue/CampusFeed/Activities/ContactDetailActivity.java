@@ -47,7 +47,7 @@ public class ContactDetailActivity extends FragmentActivity {
             Utils.enableStrictMode();
         }
         super.onCreate(savedInstanceState);
-        myEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
+        myEvent = (Event) getIntent().getParcelableExtra(getString(R.string.EVENT));
         
         // This activity expects to receive an intent that contains the uri of a contact
         if (getIntent() != null) {

@@ -68,7 +68,8 @@ public class EventPageFragment extends Fragment implements OnClickListener {
             public void onClick(View view) {
                 CreateEventFragment frag = new CreateEventFragment();
                 Bundle args = new Bundle();
-                args.putSerializable("event", myEvent);
+                args.putParcelable("event", myEvent);
+                //args.putSerializable("event", myEvent);
                 frag.setArguments(args);
                 getFragmentManager().beginTransaction().replace(R.id.basic_contentframe, frag).commit();
             }
