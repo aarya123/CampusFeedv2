@@ -26,10 +26,9 @@ public class Event implements Parcelable {
         }
     };
     String name, description, location;
-    long id, time, status;
+    long id, time;
     String[] categories;
-    int visibility;
-    int view_count, is_admin;
+    int visibility, rsvp, view_count, is_admin;
     Creator creator = new Creator("", "");
 
     public Event() {
@@ -38,7 +37,7 @@ public class Event implements Parcelable {
         location = "";
         time = 0;
         id = 0;
-        status = 0;
+        rsvp = 0;
         categories = new String[]{};
         visibility = PUBLIC;
     }
@@ -98,7 +97,7 @@ public class Event implements Parcelable {
         /*
         public final static int PRIVATE = 0, PUBLIC = 1;
         String name, description, location;
-        long id, time, status;
+        long id, time, rsvp;
         String[] categories;
         int visibility;
         int view_count, is_admin;
@@ -109,7 +108,7 @@ public class Event implements Parcelable {
         location = in.readString();
         id = in.readLong();
         time = in.readLong();
-        status = in.readLong();
+        rsvp = in.readInt();
         categories = new String[in.readInt()];
         in.readStringArray(categories);
         visibility = in.readInt();
@@ -152,10 +151,6 @@ public class Event implements Parcelable {
         return dTime.substring(0, dTime.length() - 3);
     }
 
-    public void setDatetime(long datetime) {
-        this.time = datetime;
-    }
-
     public void setDatetime(String datetime) {
         try {
             this.time = new SimpleDateFormat("M-d-yyyy k:m").parse(datetime).getTime() * 1000;
@@ -163,6 +158,10 @@ public class Event implements Parcelable {
             e.printStackTrace();
             this.time = 0;
         }
+    }
+
+    public void setDatetime(long datetime) {
+        this.time = datetime;
     }
 
     public long getDatetimeLong() {
@@ -212,23 +211,29 @@ public class Event implements Parcelable {
         return false;
     }
 
+    public int getRSVP() {
+        return rsvp;
+    }
+
+    public void setRSVP(int rsvp) {
+        this.rsvp = rsvp;
+    }
+
     public Creator getCreator() {
         return creator;
     }
 
-    @Override
     public int describeContents() {
         return 0;
     }
 
-    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
         dest.writeString(this.description);
         dest.writeString(this.location);
         dest.writeLong(this.id);
         dest.writeLong(this.time);
-        dest.writeLong(this.status);
+        dest.writeInt(this.rsvp);
         dest.writeInt(this.categories.length);
         if (this.categories.length > 0) {
             dest.writeStringArray(this.categories);

@@ -24,6 +24,7 @@ import com.purdue.CampusFeed.R;
 public class EventPageFragment extends Fragment implements OnClickListener {
     public Event myEvent;
     //private final GestureDetector gestureDetector;
+    Button declineButton, maybeButton, goingButton;
 
     public void setEvent(Event e) {
         this.myEvent = e;
@@ -34,9 +35,9 @@ public class EventPageFragment extends Fragment implements OnClickListener {
 
         final View fragmentView = inflater.inflate(R.layout.eventpage, container, false);
         Button inviteButton = (Button) fragmentView.findViewById(R.id.inviteButton);
-        Button goingButton = (Button) fragmentView.findViewById(R.id.goingButton);
-        Button maybeButton = (Button) fragmentView.findViewById(R.id.maybeButton);
-        Button declineButton = (Button) fragmentView.findViewById(R.id.declineButton);
+        goingButton = (Button) fragmentView.findViewById(R.id.goingButton);
+        maybeButton = (Button) fragmentView.findViewById(R.id.maybeButton);
+        declineButton = (Button) fragmentView.findViewById(R.id.declineButton);
         inviteButton.setOnClickListener(this);
         goingButton.setOnClickListener(this);
         maybeButton.setOnClickListener(this);
@@ -95,6 +96,7 @@ public class EventPageFragment extends Fragment implements OnClickListener {
             imageView.setImageResource(R.drawable.university_event_image);
         else
             imageView.setImageResource(R.drawable.stock_event_image);
+        setRSVPStatus();
         name.setText(myEvent.getEventName());
         dateAndTime.setText(myEvent.getDatetime());
         loc.setText(myEvent.getEventLocation());
@@ -109,7 +111,7 @@ public class EventPageFragment extends Fragment implements OnClickListener {
 
 
         String tags = "Event Tags: ";
-        for (int i = 0; i < myEvent.getCategories().length; i++){
+        for (int i = 0; i < myEvent.getCategories().length; i++) {
             tags += myEvent.getCategories()[i] + ", ";
         }
         tags = tags.substring(0, tags.length() - 2);
@@ -131,10 +133,10 @@ public class EventPageFragment extends Fragment implements OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Button goingButton = (Button) this.getView().findViewById(R.id.goingButton);
-        Button maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
-        Button declineButton = (Button) this.getView().findViewById(R.id.declineButton);
-
+        goingButton = (Button) this.getView().findViewById(R.id.goingButton);
+        maybeButton = (Button) this.getView().findViewById(R.id.maybeButton);
+        declineButton = (Button) this.getView().findViewById(R.id.declineButton);
+        final Api api = Api.getInstance(getActivity());
         switch (v.getId()) {
             case R.id.inviteButton:
                 Intent intent = new Intent(this.getActivity(), ContactsListActivity.class);
@@ -146,16 +148,17 @@ public class EventPageFragment extends Fragment implements OnClickListener {
                 goingButton.setTypeface(null, Typeface.BOLD);
                 maybeButton.setTypeface(null, Typeface.NORMAL);
                 declineButton.setTypeface(null, Typeface.NORMAL);
-                final Api api = Api.getInstance(getActivity());
 
                 new AsyncTask<Void, Void, String>() {
 
                     protected String doInBackground(Void... params) {
-                        return api.rsvpEvent(myEvent.getId());
+                        myEvent.setRSVP(0);
+                        api.rsvp(myEvent.getId(), 0);
+                        return "";
                     }
 
                     public void onPostExecute(String result) {
-                        Toast.makeText(getActivity(), "RSVP received, enjoy!", Toast.LENGTH_SHORT);
+                        Toast.makeText(getActivity(), "RSVP(going) received, enjoy!", Toast.LENGTH_SHORT);
                     }
 
                 }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -166,7 +169,19 @@ public class EventPageFragment extends Fragment implements OnClickListener {
                 goingButton.setTypeface(null, Typeface.NORMAL);
                 declineButton.setTypeface(null, Typeface.NORMAL);
 
-                Toast.makeText(getActivity(), "RSVP(maybe) received!", Toast.LENGTH_SHORT);
+                new AsyncTask<Void, Void, String>() {
+
+                    protected String doInBackground(Void... params) {
+                        myEvent.setRSVP(1);
+                        api.rsvp(myEvent.getId(), 1);
+                        return "";
+                    }
+
+                    public void onPostExecute(String result) {
+                        Toast.makeText(getActivity(), "RSVP(maybe) received!", Toast.LENGTH_SHORT);
+                    }
+
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 break;
             case R.id.declineButton:
@@ -174,10 +189,48 @@ public class EventPageFragment extends Fragment implements OnClickListener {
                 goingButton.setTypeface(null, Typeface.NORMAL);
                 maybeButton.setTypeface(null, Typeface.NORMAL);
 
-                Toast.makeText(getActivity(), "RSVP(decline) received!", Toast.LENGTH_SHORT);
+                new AsyncTask<Void, Void, String>() {
+
+                    protected String doInBackground(Void... params) {
+                        myEvent.setRSVP(2);
+                        api.rsvp(myEvent.getId(), 2);
+                        return "";
+                    }
+
+                    public void onPostExecute(String result) {
+                        Toast.makeText(getActivity(), "RSVP(decline) received!", Toast.LENGTH_SHORT);
+                    }
+
+                }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 break;
         }
     }
 
+    private void setRSVPStatus() {
+        final Api api = Api.getInstance(getActivity());
+        new AsyncTask<Integer, Void, Integer>() {
+            protected Integer doInBackground(Integer... integers) {
+                return api.getEvent(myEvent.getId()).getRSVP();
+            }
+
+            protected void onPostExecute(Integer status) {
+                if (status == -1) {
+                    return;
+                } else if (status == 0) {
+                    goingButton.setTypeface(null, Typeface.BOLD);
+                    maybeButton.setTypeface(null, Typeface.NORMAL);
+                    declineButton.setTypeface(null, Typeface.NORMAL);
+                } else if (status == 1) {
+                    maybeButton.setTypeface(null, Typeface.BOLD);
+                    goingButton.setTypeface(null, Typeface.NORMAL);
+                    declineButton.setTypeface(null, Typeface.NORMAL);
+                } else if (status == 2) {
+                    declineButton.setTypeface(null, Typeface.BOLD);
+                    goingButton.setTypeface(null, Typeface.NORMAL);
+                    maybeButton.setTypeface(null, Typeface.NORMAL);
+                }
+            }
+        }.execute();
+    }
 }
