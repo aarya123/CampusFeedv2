@@ -50,7 +50,6 @@ public class EventManager extends Controller{
 					stmtTag.execute();
 					ResultSet rsTag = stmtTag.getResultSet();
 					addCategoriesToEventJson(eventRes, rsTag);
-					rsTag.close();
 				}
 				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
 					stmtAdmin.setLong(1, rs.getLong("id"));
@@ -63,28 +62,6 @@ public class EventManager extends Controller{
 					else {
 						eventRes.put("is_admin", 0);
 					}
-					rsAdmin.close();
-				}
-				try(PreparedStatement stmtCreator = conn.prepareStatement("select user_id from Event_has_User where event_id = ? and is_admin != 0")) {
-					stmtCreator.setLong(1, rs.getLong("id"));
-					stmtCreator.execute();
-					ResultSet rsCreator = stmtCreator.getResultSet();
-					if(rsCreator.next()) {
-						try(PreparedStatement stmtCreatorInfo = conn.prepareStatement("select first_name, last_name from User where id = ?")) {
-							stmtCreatorInfo.setLong(1, rsCreator.getLong("user_id"));
-							stmtCreatorInfo.execute();
-							ResultSet rsCreatorInfo = stmtCreatorInfo.getResultSet();
-							if(rsCreatorInfo.next()) {
-								eventRes.put("creator", 
-										JsonNodeFactory.instance.objectNode()
-										.put("first_name", rsCreatorInfo.getString("first_name"))
-										.put("last_name", rsCreatorInfo.getString("last_name"))
-								);
-							}
-							rsCreatorInfo.close();
-						}
-					}
-					rsCreator.close();
 				}
 				arr.add(eventRes);
 		}
@@ -704,6 +681,8 @@ public static Result getEventAttendees()
 		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN  Event_has_User ON User.id=Event_has_User.user_id WHERE Event_has_User.event_id = ? ");
 		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
+		ArrayList<String> names = new ArrayList<String>();
+		JSONObject obj = new JSONObject();
 		JSONArray json_array = new JSONArray();
 		while(rs.next())
 		{
@@ -712,7 +691,8 @@ public static Result getEventAttendees()
 			json_array.put(first +" "+ rs.getString(2));
 			}
 		}
-		return ok(json_array.toString());
+		obj.put("names", json_array);
+		return ok(obj.toString());
 	}
 	catch(Exception e)
 	{
@@ -744,24 +724,6 @@ public static Result incrementViewCount()
 	}
 }
 
-// view count function
-public static Result getViewCount()
-{
-	JsonNode request  = request().body().asJson();
-	long event_id = request.get("event_id").asLong();
-	
-	try{
-	
-		
-		
-	}catch(Exception e)
-	{
-	
-	}
-	
-	
-	return null;
-}
 
 
 
