@@ -69,7 +69,8 @@ public class SingleFragmentActivity extends AnimationActivity implements
             CreateEventFragment fragment = new CreateEventFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
         } else if (fragToOpen.equals("EventPageFragment")) {
-            Event fragEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
+        	Event fragEvent = (Event) getIntent().getParcelableExtra(getString(R.string.EVENT));
+            //Event fragEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
             EventPageFragment fragment = new EventPageFragment();
             fragment.setEvent(fragEvent);
             // getFragmentManager().beginTransaction().setCustomAnimations(R.anim.sliderightin, R.anim.sliderightout);

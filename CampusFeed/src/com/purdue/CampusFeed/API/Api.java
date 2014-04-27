@@ -133,6 +133,18 @@ public class Api implements Closeable {
         UpdateResponse resp = (UpdateResponse) getResponse("POST", "update_event", gson.toJson(new UpdateEventRequest(event)), UpdateResponse.class);
         return resp != null;
     }
+    
+    public static class IncrementViewCountReq {
+    	public long event_id;
+    }
+    public static class IncrementViewCountResp {
+    	public String response;
+    }
+    public void incrementViewCount(Event event) {
+    	IncrementViewCountReq req = new IncrementViewCountReq();
+    	req.event_id = event.id;
+    	getResponse("POST", "incrementViewCount", gson.toJson(req), IncrementViewCountResp.class);
+    }
 
     public List<Event> top5(String category) {
         return (List<Event>) getResponse("POST", "top5", gson.toJson(new Top5Request(category)), new TypeToken<List<Event>>() {
@@ -166,6 +178,17 @@ public class Api implements Closeable {
             return "null";
         }
     }
+    
+    public String[] getEventAttendees(long eventId) {
+    	AttendeesOfEventsResponse attendeesResponse = (AttendeesOfEventsResponse) getResponse(
+                "POST", "getEventAttendees", gson.toJson(new AttendeesOfEventsRequest(eventId)), AttendeesOfEventsResponse.class);
+        if(attendeesResponse != null) {
+        	return attendeesResponse.names;
+        } else {
+        	return new String[0];
+        }
+    }
+    
 
     @Override
     public void close() throws IOException {
@@ -282,7 +305,19 @@ public class Api implements Closeable {
 
 
     }
-
+    //AttendeesOfEventsRequest
+    class AttendeesOfEventsRequest{
+        long event_id;
+        public AttendeesOfEventsRequest(long eventId)
+        {
+            this.event_id = eventId;
+        }
+    }
+    
+    //AttendeesOfEventsResponse, array of names
+    class AttendeesOfEventsResponse{
+        String[] names;
+    }
     //rsvp
     class RsvpResponse {
         String ok;

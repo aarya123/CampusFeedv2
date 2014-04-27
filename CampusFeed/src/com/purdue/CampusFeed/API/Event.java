@@ -2,6 +2,9 @@ package com.purdue.CampusFeed.API;
 
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +13,7 @@ import java.util.Date;
 /*
     TODO: probably make parcelable later instead of Serializable
  */
-public class Event implements Serializable {
+public class Event implements Parcelable{
 
     public final static int PRIVATE = 0, PUBLIC = 1;
     String name, description, location;
@@ -18,6 +21,7 @@ public class Event implements Serializable {
     String[] categories;
     int visibility;
     int view_count, is_admin;
+    Creator creator = new Creator("", "");
 
     public Event() {
         name = "";
@@ -28,6 +32,27 @@ public class Event implements Serializable {
         status = 0;
         categories = new String[]{};
         visibility = PUBLIC;
+    }
+    
+    public static class Creator {
+    	private String first_name;
+    	private String last_name;
+    	
+    	public Creator(String first_name, String last_name) {
+    		this.first_name = first_name;
+    		this.last_name = last_name;
+    	}
+    	public String getFirstName() {
+    		return first_name;
+    	}
+    	
+    	public String getLastName() {
+    		return last_name;
+    	}
+    	
+    	public String getName() {
+    		return first_name + " " + last_name;
+    	}
     }
 
     public Event(String eventName, String eventDescription,
@@ -73,13 +98,38 @@ public class Event implements Serializable {
     }
     
     public Event(String eventName, String eventDescription, String eventLocation,
-    			long datetime, String[] categories, int visibility, int view_count, int is_admin) {
+    			long datetime, String[] categories, int visibility, int view_count, int is_admin, Creator creator) {
     	this(eventName, eventDescription, eventLocation, datetime, categories, visibility);
     	this.view_count = view_count;
     	this.is_admin = is_admin;
+    	this.creator = creator;
     }
 
-
+    public Event(Parcel in) {
+    	//TODO implement parcelable constructor
+    	/*
+        public final static int PRIVATE = 0, PUBLIC = 1;
+        String name, description, location;
+        long id, time, status;
+        String[] categories;
+        int visibility;
+        int view_count, is_admin;
+        Creator creator = new Creator("", "");
+        */
+    	name = in.readString();
+        description = in.readString();
+        location = in.readString();
+        time = in.readLong();
+        id = in.readLong();
+        status = in.readLong();
+        categories = new String[in.readInt()];
+        in.readStringArray(categories);
+        visibility = in.readInt();
+        view_count = in.readInt();
+        is_admin = in.readInt();
+        creator.first_name = in.readString();
+        creator.last_name = in.readString();
+    }
     public static Event JSONToEvent(JSONObject json) {
         return new Event();
     }
@@ -161,5 +211,44 @@ public class Event implements Serializable {
     public boolean isAdmin() {
     	return is_admin != 0;
     }
+    
+    public Creator getCreator() {
+    	return creator;
+    }
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(this.name);
+		dest.writeString(this.description);
+		dest.writeString(this.location);
+		dest.writeLong(this.id);
+		dest.writeLong(this.time);
+		dest.writeLong(this.status);
+		dest.writeInt(this.categories.length);
+ 		if (this.categories.length > 0) {
+			dest.writeStringArray(this.categories);
+ 		}
+		dest.writeInt(this.visibility);
+		dest.writeInt(this.view_count);
+		dest.writeInt(this.is_admin);
+		dest.writeString(this.creator.first_name);
+		dest.writeString(this.creator.last_name);
+	}
+	
+	public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+		public Event createFromParcel(Parcel in) {
+			return new Event(in);
+		}
+
+		@Override
+		public Event[] newArray(int size) {
+			return null;
+		}
+	};
 
 }

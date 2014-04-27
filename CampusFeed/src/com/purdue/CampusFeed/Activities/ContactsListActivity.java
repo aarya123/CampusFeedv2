@@ -53,7 +53,7 @@ public class ContactsListActivity extends FragmentActivity implements
             Utils.enableStrictMode();
         }
         super.onCreate(savedInstanceState);
-        myEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
+        myEvent = (Event) getIntent().getParcelableExtra(getString(R.string.EVENT));
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
         setContentView(R.layout.invite_activity_main);

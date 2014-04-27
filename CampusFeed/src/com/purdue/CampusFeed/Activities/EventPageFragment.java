@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,16 +49,49 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Button editButton = (Button) getActivity().findViewById(R.id.editButton);
+        
+    	final Api api = Api.getInstance(getActivity());
+    	new AsyncTask<Void, Void, String[]>() {
+
+            protected String[] doInBackground(Void... params) {
+                return api.getEventAttendees(myEvent.getId());
+            }
+
+            public void onPostExecute(String[] result) {
+                TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
+                //eventAtt.setText("Attending: meeee");
+                for (String name : result) {
+                	eventAtt.append(name + ", ");
+                }
+                Log.e("rrrrrrrr", eventAtt.getText().toString());
+            }
+
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        
+        if (myEvent.isAdmin()) {
+
+
+        } else {
+        	editButton.setVisibility(View.INVISIBLE);
+        }
         //  EditText descriptionText = (EditText)getActivity().findViewById(R.id.eventdescription_eventpage);
         TextView name = (TextView) getActivity().findViewById(R.id.eventpage_name);
         TextView dateAndTime = (TextView) getActivity().findViewById(R.id.dateAndTime);
         TextView loc = (TextView) getActivity().findViewById(R.id.eventpage_location);
         TextView desc = (TextView) getActivity().findViewById(R.id.event_page_info);
+        TextView creator = (TextView) getActivity().findViewById(R.id.event_creator);
         TextView eventTags = (TextView) getActivity().findViewById(R.id.eventTags);
         name.setText(myEvent.getEventName());
         dateAndTime.setText(myEvent.getDatetime());
         loc.setText(myEvent.getEventLocation());
         desc.setText(myEvent.getEventDescription());
+        if (myEvent.getCreator().getName().equals("Scraper Scraper")) {
+        	creator.setText("Hosted by Purdue");
+        } else {
+        	creator.setText("Hosted by " + myEvent.getCreator().getName());
+        }
+        	
+        
         String tags = "Event Tags: ";
         for (int i = 0; i < myEvent.getCategories().length; i++)
             tags += myEvent.getCategories()[i] + ", ";
@@ -68,7 +102,8 @@ public class EventPageFragment extends Fragment implements OnClickListener {
             public void onClick(View view) {
                 CreateEventFragment frag = new CreateEventFragment();
                 Bundle args = new Bundle();
-                args.putSerializable("event", myEvent);
+                args.putParcelable("event", myEvent);
+                //args.putSerializable("event", myEvent);
                 frag.setArguments(args);
                 getFragmentManager().beginTransaction().replace(R.id.basic_contentframe, frag).commit();
             }
