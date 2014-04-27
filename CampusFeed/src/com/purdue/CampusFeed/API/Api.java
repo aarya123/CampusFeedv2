@@ -316,7 +316,7 @@ public class Api implements Closeable {
     
     //AttendeesOfEventsResponse, array of names
     class AttendeesOfEventsResponse{
-        String[] names;
+       public String[] names;
     }
     //rsvp
     class RsvpResponse {
