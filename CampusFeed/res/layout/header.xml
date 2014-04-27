@@ -5,6 +5,7 @@
           android:layout_height="wrap_content"
           android:gravity="center"
           android:textSize="17pt"
+          android:textColor="#000000"
           android:text="Event"
           android:id="@+id/headerText"
           android:background="@android:color/darker_gray"

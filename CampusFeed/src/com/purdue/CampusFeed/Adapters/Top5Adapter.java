@@ -1,6 +1,7 @@
 package com.purdue.CampusFeed.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,18 @@ public class Top5Adapter extends ArrayAdapter<Event> implements StickyListHeader
         //set header text as first char in name
         String headerText = "" + Utils.categories[((int) getHeaderId(position))];
         holder.text.setText(headerText);
+        if (headerText.equals("Recreation"))
+            holder.text.setBackgroundColor(Color.parseColor("#2ecc71"));
+        else if (headerText.equals("Charity"))
+            holder.text.setBackgroundColor(Color.parseColor("#3498db"));
+        else if (headerText.equals("Social"))
+            holder.text.setBackgroundColor(Color.parseColor("#ffa400"));
+        else if (headerText.equals("Education"))
+            holder.text.setBackgroundColor(Color.parseColor("#9b59b6"));
+        else if (headerText.equals("University Event"))
+            holder.text.setBackgroundColor(Color.parseColor("#e58974"));
+        else
+            holder.text.setBackgroundColor(Color.parseColor("#95a5a6"));
         return convertView;
     }
 
