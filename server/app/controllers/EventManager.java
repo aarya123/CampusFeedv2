@@ -309,6 +309,7 @@ public static Result rsvp_to_event()
 			insert.setInt(1, rsvp_status);
 			insert.setLong(2, event_id);
 			insert.setLong(3, user_id);
+			insert.execute();
 		}
 	}
 	catch(Exception e) {
