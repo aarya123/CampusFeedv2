@@ -219,10 +219,10 @@ public class Api implements Closeable {
     public class RsvpReq {
     	public Auth auth;
     	public long event_id;
-    	public int rsvp;
+    	public int rsvp_status;
     	public RsvpReq(long event_id, int rsvp) {
     		this.event_id = event_id;
-    		this.rsvp = rsvp;
+    		this.rsvp_status = rsvp;
     		auth = login;
     	}
     }
