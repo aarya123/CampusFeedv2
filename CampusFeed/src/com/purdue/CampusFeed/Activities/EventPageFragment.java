@@ -87,6 +87,8 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         desc.setText(myEvent.getEventDescription());
         if (myEvent.getCreator().getName().equals("Scraper Scraper")) {
         	creator.setText("Hosted by Purdue");
+        } else if (myEvent.getCreator().getName().equals(" ")) {
+        	creator.setText("Hosted by Purdue");
         } else {
         	creator.setText("Hosted by " + myEvent.getCreator().getName());
         }
