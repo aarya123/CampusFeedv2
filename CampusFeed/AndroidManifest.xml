@@ -102,8 +102,7 @@
                    android:resource="@xml/searchable"/>
     </activity>
     
-    <activity android:name="com.purdue.CampusFeed.Activities.SingleFragmentActivity"
-              android:parentActivityName="com.purdue.CampusFeed.Activities.MainActivity">
+    <activity android:name="com.purdue.CampusFeed.Activities.SingleFragmentActivity">
         <intent-filter>
         	<action android:name="android.intent.action.VIEW"/>
         	<category android:name="android.intent.category.DEFAULT"/>
