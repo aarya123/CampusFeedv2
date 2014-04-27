@@ -50,7 +50,6 @@ public class EventManager extends Controller{
 					stmtTag.execute();
 					ResultSet rsTag = stmtTag.getResultSet();
 					addCategoriesToEventJson(eventRes, rsTag);
-					rsTag.close();
 				}
 				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
 					stmtAdmin.setLong(1, rs.getLong("id"));
@@ -708,6 +707,8 @@ public static Result getEventAttendees()
 		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN  Event_has_User ON User.id=Event_has_User.user_id WHERE Event_has_User.event_id = ? ");
 		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
+		ArrayList<String> names = new ArrayList<String>();
+		JSONObject obj = new JSONObject();
 		JSONArray json_array = new JSONArray();
 		while(rs.next())
 		{
@@ -716,7 +717,8 @@ public static Result getEventAttendees()
 			json_array.put(first +" "+ rs.getString(2));
 			}
 		}
-		return ok(json_array.toString());
+		obj.put("names", json_array);
+		return ok(obj.toString());
 	}
 	catch(Exception e)
 	{
@@ -748,24 +750,6 @@ public static Result incrementViewCount()
 	}
 }
 
-// view count function
-public static Result getViewCount()
-{
-	JsonNode request  = request().body().asJson();
-	long event_id = request.get("event_id").asLong();
-	
-	try{
-	
-		
-		
-	}catch(Exception e)
-	{
-	
-	}
-	
-	
-	return null;
-}
 
 
 

@@ -1,15 +1,5 @@
 package com.purdue.CampusFeed.Activities;
 
-import java.util.ArrayList;
-
-import com.purdue.CampusFeed.R;
-import com.purdue.CampusFeed.API.AdvSearchQuery;
-import com.purdue.CampusFeed.API.Api;
-import com.purdue.CampusFeed.API.Event;
-import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
-
-import android.app.Activity;
-import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +13,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import com.purdue.CampusFeed.API.Event;
+import com.purdue.CampusFeed.Adapters.EventArrayAdapter;
+import com.purdue.CampusFeed.R;
+
+import java.util.ArrayList;
 
 public class SearchableActivity extends FragmentActivity {
 	

@@ -50,7 +50,7 @@ public class AnimationActivity extends FragmentActivity {
                     return null;
                 }
 
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }.execute();
     }
 
     //what to do when the session status changes (logged in or logged out)

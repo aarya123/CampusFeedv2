@@ -21,6 +21,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 
 import com.purdue.CampusFeed.BuildConfig;
 import com.purdue.CampusFeed.R;
@@ -53,10 +55,11 @@ public class ContactsListActivity extends FragmentActivity implements
             Utils.enableStrictMode();
         }
         super.onCreate(savedInstanceState);
-        myEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
+        myEvent = (Event) getIntent().getParcelableExtra(getString(R.string.EVENT));
         // Set main content view. On smaller screen devices this is a single pane view with one
         // fragment. One larger screen devices this is a two pane view with two fragments.
         setContentView(R.layout.invite_activity_main);
+        getActionBar().setHomeButtonEnabled(true);
 
         // Check if two pane bool is set based on resource directories
         isTwoPaneLayout = getResources().getBoolean(R.bool.has_two_panes);
@@ -89,6 +92,16 @@ public class ContactsListActivity extends FragmentActivity implements
             mContactDetailFragment = (ContactDetailFragment)
                     getSupportFragmentManager().findFragmentById(R.id.contact_detail);
         }
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            //Up/Home buton
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**

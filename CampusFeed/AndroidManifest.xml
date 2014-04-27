@@ -3,36 +3,29 @@
           package="com.purdue.CampusFeed"
           android:versionCode="1"
           android:versionName="1.0">
-
 	<uses-sdk
 			android:minSdkVersion="14"
 			android:targetSdkVersion="18"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.READ_CONTACTS"/>
 	<uses-permission android:name="android.permission.SEND_SMS"/>
-
 	<!-- GCM permissions -->
 	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
-
 	<permission android:name="com.example.gcm.permission.C2D_MESSAGE"
 	            android:protectionLevel="signature"/>
 	<uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE"/>
-
 	<application
 			android:allowBackup="true"
 			android:icon="@drawable/cf_launcher"
 			android:label="@string/app_name"
 			android:theme="@style/app_theme">
-
 		<meta-data android:name="com.google.android.gms.version"
 		           android:value="@integer/google_play_services_version"/>
-
 		<!-- enable the search dialog to send searches to SearchableActivity -->
 		<meta-data android:name="android.app.default_searchable"
 		           android:value="com.purdue.CampusFeed.Activities.SearchableActivity"/>
-
 		<!-- GCM receiver -->
 		<receiver
 				android:name="com.purdue.CampusFeed.Activities.GCMReceiver"
@@ -43,32 +36,20 @@
 			</intent-filter>
 		</receiver>
 		<service android:name="com.purdue.CampusFeed.Activities.GCMMessageHandler"/>
-
-
 		<activity
-				android:name="com.purdue.CampusFeed.Activities.MainActivity"
-				android:label="@string/app_name" android:screenOrientation="portrait">
-
+				android:name="com.purdue.CampusFeed.Activities.MainActivity" android:label="@string/app_name"
+				android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
-
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
-
-
 		</activity>
-
 		<meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
-
-		<activity android:name="com.facebook.LoginActivity" android:label="@string/app_name"
-		          android:screenOrientation="portrait"/>
-
-
+		<activity android:name="com.facebook.LoginActivity" android:label="@string/app_name"></activity>
 		<activity
 				android:name="com.purdue.CampusFeed.Activities.ContactsListActivity"
 				android:label="@string/activity_contacts_list"
-				android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait">
-
+				android:windowSoftInputMode="adjustResize">
 			<!-- Add intent-filter for search intent action and specify searchable configuration
 				 via meta-data tag. This allows this activity to receive search intents via the
 				 system hooks. In this sample this is only used on older OS versions (pre-Honeycomb)
@@ -79,11 +60,12 @@
 			</intent-filter>
 			<meta-data android:name="android.app.searchable"
 			           android:resource="@xml/searchable_contacts"/>
+			<meta-data android:name="android.support.PARENT_ACTIVITY"
+			           android:value="com.purdue.CampusFeed.Activities.MainActivity"/>
 		</activity>
 		<activity
 				android:name="com.purdue.CampusFeed.Activities.ContactDetailActivity"
-				android:label="@string/activity_contact_detail" android:screenOrientation="portrait">
-
+				android:label="@string/activity_contact_detail">
 			<!-- Define hierarchical parent of this activity, both via the system
 				 parentActivityName attribute (added in API Level 16) and via meta-data annotation.
 				 This allows use of the support library NavUtils class in a way that works over
@@ -93,21 +75,16 @@
 			<meta-data android:name="android.support.PARENT_ACTIVITY"
 			           android:value="com.purdue.CampusFeed.Activities.ContactsListActivity"/>
 		</activity>
-
 		<!--  for the search widget -->
 		<activity android:name="com.purdue.CampusFeed.Activities.SearchableActivity"
-		          android:launchMode="singleTask" android:screenOrientation="portrait">
-
+		          android:launchMode="singleTask">
 			<intent-filter>
 				<action android:name="android.intent.action.SEARCH"/>
 			</intent-filter>
-			<meta-data android:name="android.app.searchable"
-			           android:resource="@xml/searchable"/>
+			<meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
 		</activity>
-
 		<activity android:name="com.purdue.CampusFeed.Activities.SingleFragmentActivity"
 		          android:screenOrientation="portrait">
-
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 				<category android:name="android.intent.category.DEFAULT"/>
@@ -115,9 +92,8 @@
 				<data android:scheme="http" android:host="54.213.17.69" android:pathPattern="/invite.*"
 				      android:port="9000"/>
 			</intent-filter>
+			<meta-data android:name="android.support.PARENT_ACTIVITY"
+			           android:value="com.purdue.CampusFeed.Activities.MainActivity"/>
 		</activity>
-
-
 	</application>
-
 </manifest>

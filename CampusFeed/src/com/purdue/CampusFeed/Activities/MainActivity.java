@@ -10,10 +10,16 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.view.*;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+
 import com.purdue.CampusFeed.Adapters.NavigationArrayAdapter;
 import com.purdue.CampusFeed.R;
 import com.purdue.CampusFeed.Utils.Utils;
@@ -63,7 +69,7 @@ public class MainActivity extends AnimationActivity {
         //drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        //getActionBar().setHomeButtonEnabled(true);
 
         /* ActionBarDrawerToggle ties together the the proper interactions
             between the sliding drawer and the action bar app icon
@@ -119,7 +125,14 @@ public class MainActivity extends AnimationActivity {
                 fragToDisplay = fragments.get(Frag.BROWSE);
                 break;
             case 3:
-                fragToDisplay = fragments.get(Frag.CREATE);
+                //fragToDisplay = fragments.get(Frag.CREATE);
+                try {
+                    Intent intent = new Intent(this, SingleFragmentActivity.class);
+                    intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.d(Utils.TAG, e.getMessage());
+                }
                 break;
             case 4:
                 fragToDisplay = fragments.get(Frag.SEARCH);
@@ -128,8 +141,10 @@ public class MainActivity extends AnimationActivity {
                 fragToDisplay = fragments.get(Frag.HOME);
                 break;
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).addToBackStack(null).commit();
+        if(fragToDisplay != null)
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, fragToDisplay).addToBackStack(null).commit();
         drawerLayout.closeDrawer(Gravity.LEFT);
+        drawerList.setItemChecked(position, false);
     }
 
     protected void onPostCreate(Bundle savedInstanceState) {
