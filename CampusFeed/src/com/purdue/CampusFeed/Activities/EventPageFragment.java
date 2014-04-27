@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
@@ -48,6 +49,8 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d("Sean", "inside event page fragment");
+        myEvent.incrementViewCount();
         Button editButton = (Button) getActivity().findViewById(R.id.editButton);
 
         if (myEvent.isAdmin()) {
@@ -99,6 +102,9 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         loc.setText(myEvent.getEventLocation());
         desc.setText(myEvent.getEventDescription());
         if (myEvent.getCreator().getName().equals("Scraper Scraper")) {
+        	creator.setText("Hosted by Purdue");
+        } else if (myEvent.getCreator().getName().equals(" ")) {
+        	creator.setText("Hosted by Purdue");
             creator.setText("Hosted by Purdue");
         } else {
             creator.setText("Hosted by " + myEvent.getCreator().getName());

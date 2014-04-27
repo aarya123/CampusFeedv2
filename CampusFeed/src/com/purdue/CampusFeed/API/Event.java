@@ -1,9 +1,11 @@
 package com.purdue.CampusFeed.API;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +42,27 @@ public class Event implements Parcelable {
         status = 0;
         categories = new String[]{};
         visibility = PUBLIC;
+    }
+    
+    public static class Creator implements Serializable {
+    	private String first_name;
+    	private String last_name;
+    	
+    	public Creator(String first_name, String last_name) {
+    		this.first_name = first_name;
+    		this.last_name = last_name;
+    	}
+    	public String getFirstName() {
+    		return first_name;
+    	}
+    	
+    	public String getLastName() {
+    		return last_name;
+    	}
+    	
+    	public String getName() {
+    		return first_name + " " + last_name;
+    	}
     }
 
     public Event(String eventName, String eventDescription,
@@ -83,13 +106,13 @@ public class Event implements Parcelable {
         this.categories = categories;
         this.visibility = visibility;
     }
-
+    
     public Event(String eventName, String eventDescription, String eventLocation,
-                 long datetime, String[] categories, int visibility, int view_count, int is_admin, Creator creator) {
-        this(eventName, eventDescription, eventLocation, datetime, categories, visibility);
-        this.view_count = view_count;
-        this.is_admin = is_admin;
-        this.creator = creator;
+    			long datetime, String[] categories, int visibility, int view_count, int is_admin, Creator creator) {
+    	this(eventName, eventDescription, eventLocation, datetime, categories, visibility);
+    	this.view_count = view_count;
+    	this.is_admin = is_admin;
+    	this.creator = creator;
     }
 
     public Event(Parcel in) {
@@ -196,6 +219,8 @@ public class Event implements Parcelable {
         return view_count;
     }
 
+    public void incrementViewCount(){ view_count++; }
+    
     public boolean isAdmin() {
         return is_admin != 0;
     }
