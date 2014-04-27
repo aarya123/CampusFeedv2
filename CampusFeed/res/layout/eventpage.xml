@@ -15,7 +15,8 @@
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:id="@+id/eventpage_name"
-				android:text="Vikings Premiere"
+				android:text="Title"
+                android:textSize="32dp"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:layout_alignParentLeft="true"
 				android:layout_alignParentTop="true"/>

@@ -78,7 +78,7 @@ public class SingleFragmentActivity extends AnimationActivity implements
             // getFragmentManager().beginTransaction().setCustomAnimations(R.anim.sliderightin, R.anim.sliderightout);
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slideleftin, R.anim.slideleftout)
-                    .add(R.id.basic_contentframe, fragment).commit();
+                    .replace(R.id.basic_contentframe, fragment).commit();
         }
     }
 

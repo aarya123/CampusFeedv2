@@ -109,8 +109,9 @@ public class EventPageFragment extends Fragment implements OnClickListener {
 
 
         String tags = "Event Tags: ";
-        for (int i = 0; i < myEvent.getCategories().length; i++)
+        for (int i = 0; i < myEvent.getCategories().length; i++){
             tags += myEvent.getCategories()[i] + ", ";
+        }
         tags = tags.substring(0, tags.length() - 2);
         eventTags.setText(tags);
         editButton.setOnClickListener(new View.OnClickListener() {
