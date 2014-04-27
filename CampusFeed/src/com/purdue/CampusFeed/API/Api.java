@@ -215,6 +215,27 @@ public class Api implements Closeable {
             this.access_token = access_token;
         }
     }
+    
+    public class RsvpReq {
+    	public Auth auth;
+    	public long event_id;
+    	public int rsvp;
+    	public RsvpReq(long event_id, int rsvp) {
+    		this.event_id = event_id;
+    		this.rsvp = rsvp;
+    		auth = login;
+    	}
+    }
+    
+    public static class RsvpResp {
+    	public String ok;
+    	public String error;
+    }
+    
+    public void rsvp(long eventId, int rsvpStatus) {
+    	RsvpReq req = new RsvpReq(eventId, rsvpStatus);
+    	getResponse("POST", "rsvp", gson.toJson(req), RsvpResp.class);
+    }
 
     static class LoginResponse {
         public String access_token;
