@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
@@ -71,7 +70,7 @@ public class SingleFragmentActivity extends AnimationActivity implements
             CreateEventFragment fragment = new CreateEventFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
         } else if (fragToOpen.equals("EventPageFragment")) {
-        	Event fragEvent = (Event) getIntent().getParcelableExtra(getString(R.string.EVENT));
+            Event fragEvent = (Event) getIntent().getParcelableExtra(getString(R.string.EVENT));
             //Event fragEvent = (Event) getIntent().getSerializableExtra(getString(R.string.EVENT));
             EventPageFragment fragment = new EventPageFragment();
             fragment.setEvent(fragEvent);
@@ -82,8 +81,8 @@ public class SingleFragmentActivity extends AnimationActivity implements
         }
     }
 
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch(item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             //Up/Home buton
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
@@ -91,6 +90,7 @@ public class SingleFragmentActivity extends AnimationActivity implements
         }
         return super.onOptionsItemSelected(item);
     }
+
     public boolean onTouchEvent(MotionEvent event) {
         this.detector.onTouchEvent(event);
         return super.onTouchEvent(event);
@@ -127,10 +127,8 @@ public class SingleFragmentActivity extends AnimationActivity implements
 
     }
 
-    @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         boolean result = false;
-        Log.d("sean", "flung");
         try {
             float diffY = e2.getY() - e1.getY();
             float diffX = e2.getX() - e1.getX();
