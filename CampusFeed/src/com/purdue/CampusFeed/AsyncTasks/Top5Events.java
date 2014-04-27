@@ -27,7 +27,6 @@ public class Top5Events extends AsyncTask<String[], Integer, ArrayList<Event>> {
     protected ArrayList<Event> doInBackground(String[]... params) {
         ArrayList<Event> temp = new ArrayList<Event>();
         Api api = Api.getInstance(c);
-        Log.d(Utils.TAG, "Size " + params.length);
         for (String[] param : params) {
             for (int j = 0; j < param.length; j++) {
                 Log.d(Utils.TAG, param[j]);
