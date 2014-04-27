@@ -288,7 +288,7 @@ public static Result rsvp_to_event()
 		rsvp_status = request.get("rsvp_status").intValue();
 	}
 	catch(Exception ex) {
-		return ok("error", "usage: event_id, rsvp_status");
+		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: event_id, rsvp_status"));
 	}
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_User WHERE user_id=? AND event_id=?");
