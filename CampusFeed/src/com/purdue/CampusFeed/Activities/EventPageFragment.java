@@ -5,12 +5,12 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.purdue.CampusFeed.API.Api;
@@ -49,20 +49,20 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Button editButton = (Button) getActivity().findViewById(R.id.editButton);
-        
+
         if (myEvent.isAdmin()) {
-        	final Api api = Api.getInstance(getActivity());
-        	new AsyncTask<Void, Void, String[]>() {
+            final Api api = Api.getInstance(getActivity());
+            new AsyncTask<Void, Void, String[]>() {
 
                 protected String[] doInBackground(Void... params) {
                     return api.getEventAttendees(myEvent.getId());
                 }
 
                 public void onPostExecute(String[] result) {
-                	TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
+                    TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
                     String names = " ";
                     for (String name : result) {
-                    	names += name + ", ";
+                        names += name + ", ";
                     }
                     names = names.substring(0, names.length() - 2);
                     eventAtt.append(names);
@@ -70,9 +70,9 @@ public class EventPageFragment extends Fragment implements OnClickListener {
 
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-        	editButton.setVisibility(View.INVISIBLE);
-        	TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
-        	eventAtt.setVisibility(View.INVISIBLE);
+            editButton.setVisibility(View.INVISIBLE);
+            TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
+            eventAtt.setVisibility(View.INVISIBLE);
         }
         //  EditText descriptionText = (EditText)getActivity().findViewById(R.id.eventdescription_eventpage);
         TextView name = (TextView) getActivity().findViewById(R.id.eventpage_name);
@@ -81,17 +81,30 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         TextView desc = (TextView) getActivity().findViewById(R.id.event_page_info);
         TextView creator = (TextView) getActivity().findViewById(R.id.event_creator);
         TextView eventTags = (TextView) getActivity().findViewById(R.id.eventTags);
+        ImageView imageView = (ImageView) getActivity().findViewById(R.id.imageView);
+        if (myEvent.hasTag("Recreation"))
+            imageView.setImageResource(R.drawable.recreation_event_image);
+        else if (myEvent.hasTag("Charity"))
+            imageView.setImageResource(R.drawable.charity_event_image);
+        else if (myEvent.hasTag("Social"))
+            imageView.setImageResource(R.drawable.social_event_image);
+        else if (myEvent.hasTag("Education"))
+            imageView.setImageResource(R.drawable.education_event_image);
+        else if (myEvent.hasTag("University Event"))
+            imageView.setImageResource(R.drawable.university_event_image);
+        else
+            imageView.setImageResource(R.drawable.stock_event_image);
         name.setText(myEvent.getEventName());
         dateAndTime.setText(myEvent.getDatetime());
         loc.setText(myEvent.getEventLocation());
         desc.setText(myEvent.getEventDescription());
         if (myEvent.getCreator().getName().equals("Scraper Scraper")) {
-        	creator.setText("Hosted by Purdue");
+            creator.setText("Hosted by Purdue");
         } else {
-        	creator.setText("Hosted by " + myEvent.getCreator().getName());
+            creator.setText("Hosted by " + myEvent.getCreator().getName());
         }
-        	
-        
+
+
         String tags = "Event Tags: ";
         for (int i = 0; i < myEvent.getCategories().length; i++)
             tags += myEvent.getCategories()[i] + ", ";
