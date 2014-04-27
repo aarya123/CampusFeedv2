@@ -15,6 +15,7 @@ import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.Utils.Utils;
 
 /**
  * Created by Sean on 3/30/14.
@@ -177,30 +178,32 @@ public class SingleFragmentActivity extends AnimationActivity implements
     public void loadRedirectionFragment(String data) {
         final int eventId = Integer.parseInt(data.substring(getString(R.string.redirection_url).length()));
         final Api api = Api.getInstance(getBaseContext());
-        if (api.getLogin() != null) {
-            new AsyncTask<Void, Void, Event>() {
+        if (Utils.getLoginCredentials(this))
+            new AsyncTask<Void, Void, Void>() {
 
                 @Override
-                protected Event doInBackground(Void... params) {
-                    return api.getEvent(eventId);
+                protected Void doInBackground(Void... params) {
+                    if (!api.isLoggedIn())
+                        Log.i("TEST", "" + api.login(Utils.facebook_userID, Utils.facebook_accessToken));
+                    return null;
                 }
 
-                @Override
-                public void onPostExecute(Event result) {
-                    if (result == null) {
-                        Log.e("tag", "NULLLLLLLLLLL");
-                    }
-                    EventPageFragment fragment = new EventPageFragment();
-                    fragment.setEvent(result);
-                    getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
+            }.execute();
+        new AsyncTask<Void, Void, Event>() {
+            protected Event doInBackground(Void... params) {
+                return api.getEvent(eventId);
+            }
+
+            public void onPostExecute(Event result) {
+                if (result == null) {
+                    Log.e("tag", "NULLLLLLLLLLL");
                 }
+                EventPageFragment fragment = new EventPageFragment();
+                fragment.setEvent(result);
+                getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
+            }
+        }.execute();
 
-            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        } else {
-            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-            startActivity(intent);
-        }
     }
 
     @Override
