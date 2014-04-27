@@ -299,7 +299,8 @@ public static Result rsvp_to_event()
 		if(rs.next()) {
 			PreparedStatement update = conn.prepareStatement("update Event_has_User set rsvp = ? where user_id = ? and event_id = ?");
 			update.setInt(1, rsvp_status);
-			update.setLong(2, event_id);
+			update.setLong(2, user_id);
+			update.setLong(3, event_id);
 			update.execute();
 		}
 		else
