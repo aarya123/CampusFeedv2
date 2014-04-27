@@ -296,7 +296,6 @@ public static Result rsvp_to_event()
 		stmt.setLong(2, event_id);
 		stmt.execute();
 		ResultSet rs = stmt.getResultSet();
-		int rsvp=-1;
 		if(rs.next()) {
 			PreparedStatement update = conn.prepareStatement("update Event_has_User set rsvp = ? where user_id = ? and event_id = ?");
 			update.setInt(1, rsvp_status);
@@ -313,6 +312,7 @@ public static Result rsvp_to_event()
 		}
 	}
 	catch(Exception e) {
+		e.printStackTrace();
 		return ok(JsonNodeFactory.instance.objectNode().put("error", e.toString()));
 	}
 	return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
