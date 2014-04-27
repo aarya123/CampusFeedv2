@@ -5,10 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.MenuItem;
 import android.view.MotionEvent;
+
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
@@ -29,8 +32,8 @@ public class SingleFragmentActivity extends AnimationActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.basic_framelayout);
         detector = new GestureDetectorCompat(this, this);
-        Log.d("sean", "onCreate() EventPage Activity");
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         //Log.e("tag", getIntent().getData().toString());
         if (getIntent().hasExtra("update")) {
@@ -59,7 +62,6 @@ public class SingleFragmentActivity extends AnimationActivity implements
             args.putParcelable("query", query);
             listFragment.setArguments(args);
             getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, listFragment).commit();
-            Log.i("added", title);
             return;
         }
 
@@ -77,13 +79,20 @@ public class SingleFragmentActivity extends AnimationActivity implements
             getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(R.anim.slideleftin, R.anim.slideleftout)
                     .add(R.id.basic_contentframe, fragment).commit();
-            Log.d("sean", "transitioned to EventPage fragment");
         }
     }
 
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            //Up/Home buton
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     public boolean onTouchEvent(MotionEvent event) {
         this.detector.onTouchEvent(event);
-        Log.d("sean", "touch event detected");
         return super.onTouchEvent(event);
     }
 

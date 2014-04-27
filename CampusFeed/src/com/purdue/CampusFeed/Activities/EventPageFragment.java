@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
@@ -31,7 +32,6 @@ public class EventPageFragment extends Fragment implements OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         final View fragmentView = inflater.inflate(R.layout.eventpage, container, false);
         Button inviteButton = (Button) fragmentView.findViewById(R.id.inviteButton);
         Button goingButton = (Button) fragmentView.findViewById(R.id.goingButton);
@@ -48,6 +48,8 @@ public class EventPageFragment extends Fragment implements OnClickListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d("Sean", "inside event page fragment");
+        myEvent.incrementViewCount();
         Button editButton = (Button) getActivity().findViewById(R.id.editButton);
         
         if (myEvent.isAdmin()) {

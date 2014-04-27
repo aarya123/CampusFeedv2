@@ -30,11 +30,12 @@ public class Event implements Parcelable{
         time = 0;
         id = 0;
         status = 0;
+        view_count = 0;
         categories = new String[]{};
         visibility = PUBLIC;
     }
     
-    public static class Creator {
+    public static class Creator implements Serializable {
     	private String first_name;
     	private String last_name;
     	
@@ -207,6 +208,7 @@ public class Event implements Parcelable{
     public int getViewCount() {
     	return view_count;
     }
+    public void incrementViewCount(){ view_count++; }
     
     public boolean isAdmin() {
     	return is_admin != 0;

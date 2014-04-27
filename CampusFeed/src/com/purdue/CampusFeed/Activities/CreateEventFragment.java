@@ -159,6 +159,7 @@ public class CreateEventFragment extends Fragment {
                 else{
                 	Toast.makeText(getActivity(), "event created", Toast.LENGTH_LONG).show();
                 }
+                getActivity().finish();
             }
         });
     }
