@@ -281,9 +281,15 @@ public static Result rsvp_to_event()
 	long user_id =Application.getUserId(request);
 	// main thing, only need event_id
 	
-	long event_id = request.get("event_id").longValue();
-	// check if user has already rsvp'd
-	boolean should_add = false;
+	long event_id;
+	int rsvp_status;
+	try {
+		event_id = request.get("event_id").longValue();
+		rsvp_status = request.get("rsvp_status").intValue();
+	}
+	catch(Exception ex) {
+		return ok("error", "usage: event_id, rsvp_status");
+	}
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_User WHERE user_id=? AND event_id=?");
 		stmt.setLong(1, user_id);
@@ -292,63 +298,23 @@ public static Result rsvp_to_event()
 		ResultSet rs = stmt.getResultSet();
 		int rsvp=-1;
 		if(rs.next()) {
-			rsvp= rs.getInt("rsvp");
+			PreparedStatement update = conn.prepareStatement("update Event_has_User set rsvp = ? where user_id = ? and event_id = ?");
+			update.setInt(1, rsvp_status);
+			update.setLong(2, event_id);
+			update.execute();
 		}
 		else
 		{
-			should_add=true;
+			PreparedStatement insert = conn.prepareStatement("insert into Event_has_User (rsvp, event_id, user_id) values (?, ?, ?)");
+			insert.setInt(1, rsvp_status);
+			insert.setLong(2, event_id);
+			insert.setLong(3, user_id);
 		}
-		if(rsvp==1){
-			return ok("duplicate");
-		}else
-		if(rsvp!=1 && should_add!=true)
-		{
-			// then only need to update, incase if undo rsvp or something.
-			try(Connection conn2 = DB.getConnection()) {
-				PreparedStatement stmt2 = conn2.prepareStatement("UPDATE `CampusFeed`.`Event_has_User` SET `rsvp` = '1' WHERE `event_has_user`.`event_id` = ? AND `event_has_user`.`user_id` = ?");
-				stmt2.setLong(2, user_id);
-				stmt2.setLong(1, event_id);
-				stmt2.executeUpdate();
-				
-				
-			}
-			catch(SQLException e) {
-				e.printStackTrace();
-
-				return ok("success");
-			}
-			
-		}
-		
-		
-		
 	}
-	catch(SQLException e) {
-		e.printStackTrace();
-
-		return ok();
+	catch(Exception e) {
+		return ok(JsonNodeFactory.instance.objectNode().put("error", e.toString()));
 	}
-	if(should_add){
-	// main thing, add to rsvp 
-	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement("INSERT INTO CampusFeed.Event_has_User (user_id,event_id,rsvp,is_admin) VALUES (?,?,1,0)");
-		stmt.setLong(1, user_id);
-		stmt.setLong(2, event_id);
-		stmt.executeUpdate();
-		
-		
-	}
-	catch(SQLException e) {
-		e.printStackTrace();
-
-		return ok("success");
-	}
-	
-	}
-	
-	
-	
-	return ok("success");
+	return ok(JsonNodeFactory.instance.objectNode().put("ok", "ok"));
 }
 
 /**
