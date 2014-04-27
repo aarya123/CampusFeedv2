@@ -681,15 +681,17 @@ public static Result getEventAttendees()
 		PreparedStatement stmt = conn.prepareStatement("SELECT User.first_name, User.last_name from User INNER JOIN  Event_has_User ON User.id=Event_has_User.user_id WHERE Event_has_User.event_id = ? ");
 		stmt.setLong(1, event_id);
 		ResultSet rs = stmt.executeQuery();
-		JSONArray json_array = new JSONArray();
+		ArrayList<String> names = new ArrayList<String>();
+		
 		while(rs.next())
 		{
 			String first = rs.getString(1);
 			if(!first.equals("Scraper")){
-			json_array.put(first +" "+ rs.getString(2));
+			names.add(first +" "+ rs.getString(2));
 			}
 		}
-		return ok(json_array.toString());
+		JsonNode names_json=	JsonNodeFactory.instance.objectNode().put("names", names.toString());
+		return ok(names_json);
 	}
 	catch(Exception e)
 	{
@@ -721,24 +723,6 @@ public static Result incrementViewCount()
 	}
 }
 
-// view count function
-public static Result getViewCount()
-{
-	JsonNode request  = request().body().asJson();
-	long event_id = request.get("event_id").asLong();
-	
-	try{
-	
-		
-		
-	}catch(Exception e)
-	{
-	
-	}
-	
-	
-	return null;
-}
 
 
 
