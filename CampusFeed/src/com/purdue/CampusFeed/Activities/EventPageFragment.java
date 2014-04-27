@@ -50,29 +50,29 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         super.onActivityCreated(savedInstanceState);
         Button editButton = (Button) getActivity().findViewById(R.id.editButton);
         
-    	final Api api = Api.getInstance(getActivity());
-    	new AsyncTask<Void, Void, String[]>() {
-
-            protected String[] doInBackground(Void... params) {
-                return api.getEventAttendees(myEvent.getId());
-            }
-
-            public void onPostExecute(String[] result) {
-                TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
-                //eventAtt.setText("Attending: meeee");
-                for (String name : result) {
-                	eventAtt.append(name + ", ");
-                }
-                Log.e("rrrrrrrr", eventAtt.getText().toString());
-            }
-
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        
         if (myEvent.isAdmin()) {
+        	final Api api = Api.getInstance(getActivity());
+        	new AsyncTask<Void, Void, String[]>() {
 
+                protected String[] doInBackground(Void... params) {
+                    return api.getEventAttendees(myEvent.getId());
+                }
 
+                public void onPostExecute(String[] result) {
+                	TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
+                    String names = " ";
+                    for (String name : result) {
+                    	names += name + ", ";
+                    }
+                    names = names.substring(0, names.length() - 2);
+                    eventAtt.append(names);
+                }
+
+            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
         	editButton.setVisibility(View.INVISIBLE);
+        	TextView eventAtt = (TextView) getActivity().findViewById(R.id.event_attendees);
+        	eventAtt.setVisibility(View.INVISIBLE);
         }
         //  EditText descriptionText = (EditText)getActivity().findViewById(R.id.eventdescription_eventpage);
         TextView name = (TextView) getActivity().findViewById(R.id.eventpage_name);

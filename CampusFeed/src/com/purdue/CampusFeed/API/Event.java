@@ -119,8 +119,8 @@ public class Event implements Parcelable{
     	name = in.readString();
         description = in.readString();
         location = in.readString();
-        time = in.readLong();
         id = in.readLong();
+        time = in.readLong();
         status = in.readLong();
         categories = new String[in.readInt()];
         in.readStringArray(categories);
