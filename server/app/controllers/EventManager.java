@@ -69,7 +69,6 @@ public class EventManager extends Controller{
 					stmtCreator.execute();
 					ResultSet rsCreator = stmtCreator.getResultSet();
 					if(rsCreator.next()) {
-						System.out.println("id " + rsCreator.getLong("user_id"));
 						try(PreparedStatement stmtCreatorInfo = conn.prepareStatement("select first_name, last_name from User where id = ?")) {
 							stmtCreatorInfo.setLong(1, rsCreator.getLong("user_id"));
 							stmtCreatorInfo.execute();
@@ -83,9 +82,6 @@ public class EventManager extends Controller{
 							}
 							rsCreatorInfo.close();
 						}
-					}
-					else {
-						System.out.println("NO next " + rs.getLong("id"));
 					}
 					rsCreator.close();
 				}
