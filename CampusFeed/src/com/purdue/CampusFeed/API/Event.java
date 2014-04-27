@@ -49,6 +49,10 @@ public class Event implements Parcelable{
     	public String getLastName() {
     		return last_name;
     	}
+    	
+    	public String getName() {
+    		return first_name + " " + last_name;
+    	}
     }
 
     public Event(String eventName, String eventDescription,

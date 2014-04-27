@@ -178,6 +178,17 @@ public class Api implements Closeable {
             return "null";
         }
     }
+    
+    public String[] getEventAttendees(long eventId) {
+    	AttendeesOfEventsResponse attendeesResponse = (AttendeesOfEventsResponse) getResponse(
+                "POST", "getEventAttendees", gson.toJson(new AttendeesOfEventsRequest(eventId)), AttendeesOfEventsResponse.class);
+        if(attendeesResponse != null) {
+        	return attendeesResponse.names;
+        } else {
+        	return new String[0];
+        }
+    }
+    
 
     @Override
     public void close() throws IOException {
@@ -296,10 +307,10 @@ public class Api implements Closeable {
     }
     //AttendeesOfEventsRequest
     class AttendeesOfEventsRequest{
-        long eventId;
+        long event_id;
         public AttendeesOfEventsRequest(long eventId)
         {
-            this.eventId = eventId;
+            this.event_id = eventId;
         }
     }
     
