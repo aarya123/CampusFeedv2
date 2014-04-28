@@ -647,11 +647,22 @@ public static Result getEvent() {
 	catch(Exception e) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: event_id (long)"));
 	}
+	long user_id;
+	user_id = Application.getUserId(request);
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
-		stmt.setLong(1, event_id);
-		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
+		if(user_id != -1) {
+			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
+			stmt.setLong(1, event_id);
+			ResultSet rs = stmt.executeQuery();
+			return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
+		}
+		else {
+			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " WHERE Event.id = ? AND Event_has_User.user_id = ?");
+			stmt.setLong(1, event_id);
+			stmt.setLong(2, user_id);
+			ResultSet rs = stmt.executeQuery();
+			return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
+		}
 	}
 	catch(Exception e) {
 		e.printStackTrace();
