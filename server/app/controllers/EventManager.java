@@ -291,7 +291,6 @@ public static Result rsvp_to_event()
 	catch(Exception ex) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: event_id, rsvp_status"));
 	}
-	System.out.println("rsvp " + user_id + " status " + rsvp_status);
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_User WHERE user_id=? AND event_id=?");
 		stmt.setLong(1, user_id);
@@ -651,7 +650,6 @@ public static Result getEvent() {
 	}
 	long user_id;
 	user_id = Application.getUserId(request);
-	System.out.println("user_id " + user_id);
 	try(Connection conn = DB.getConnection()) {
 		if(user_id != -1) {
 			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
