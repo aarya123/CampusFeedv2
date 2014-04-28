@@ -39,7 +39,7 @@ import views.html.*;
 public class EventManager extends Controller{
 	
 	public static final String EVENT_GET_SQL_UNRESTRICTED = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event.view_count as view_count, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id";
-	public static final String EVENT_GET_SQL = "select Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event.view_count as view_count, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
+	public static final String EVENT_GET_SQL = "select distinct Event.id as id, Event.name as name, Event.location as location, UNIX_TIMESTAMP(Event.time) as time, Event.description as description, Event.visibility as visibility, Event.view_count as view_count, Event_has_User.rsvp as rsvp from Event inner join Event_has_Tags on Event.id = Event_has_Tags.Event_id inner join Tags on Event_has_Tags.Tags_id = Tags.id inner join Event_has_User on Event.id = Event_has_User.event_id WHERE (Event.visibility = 1 OR (Event_has_User.user_id = ? AND Event_has_User.rsvp = 1))";
 	
 	public static ArrayNode buildEventResults(Connection conn, ResultSet rs, long userId) throws SQLException {
 		ArrayNode arr = JsonNodeFactory.instance.arrayNode();
@@ -51,16 +51,18 @@ public class EventManager extends Controller{
 					ResultSet rsTag = stmtTag.getResultSet();
 					addCategoriesToEventJson(eventRes, rsTag);
 				}
-				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
+				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin, rsvp from Event_has_User where event_id = ? and user_id = ?")) {
 					stmtAdmin.setLong(1, rs.getLong("id"));
 					stmtAdmin.setLong(2, userId);
 					stmtAdmin.execute();
 					ResultSet rsAdmin = stmtAdmin.getResultSet();
 					if(rsAdmin.next()) {
 						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
+						eventRes.put("rsvp", rsAdmin.getInt("rsvp"));
 					}
 					else {
 						eventRes.put("is_admin", 0);
+						eventRes.put("rsvp", "-1");
 					}
 					rsAdmin.close();
 				}
