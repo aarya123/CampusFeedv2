@@ -649,6 +649,7 @@ public static Result getEvent() {
 	}
 	long user_id;
 	user_id = Application.getUserId(request);
+	System.out.println("user_id " + user_id);
 	try(Connection conn = DB.getConnection()) {
 		if(user_id != -1) {
 			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
