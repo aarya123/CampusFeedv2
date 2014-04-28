@@ -280,7 +280,6 @@ public static Result rsvp_to_event()
 	// get the user id
 	long user_id =Application.getUserId(request);
 	// main thing, only need event_id
-	
 	long event_id;
 	int rsvp_status;
 	try {
@@ -290,6 +289,7 @@ public static Result rsvp_to_event()
 	catch(Exception ex) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: event_id, rsvp_status"));
 	}
+	System.out.println("rsvp " + user_id + " status " + rsvp_status);
 	try(Connection conn = DB.getConnection()) {
 		PreparedStatement stmt = conn.prepareStatement("SELECT rsvp FROM CampusFeed.Event_has_User WHERE user_id=? AND event_id=?");
 		stmt.setLong(1, user_id);
