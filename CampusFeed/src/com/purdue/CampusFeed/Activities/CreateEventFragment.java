@@ -75,8 +75,10 @@ public class CreateEventFragment extends Fragment {
         isEventAlreadyCreated = false;
        
         //code for modifying an event
-        if (getArguments() != null)
-            event = (Event) getArguments().getSerializable("event");
+        if (getArguments() != null){
+            //event = (Event) getArguments().getSerializable("event");
+            event = (Event) getArguments().get("event");
+        }
         if (event != null) {
         	isEventAlreadyCreated = true;
         	
@@ -84,6 +86,13 @@ public class CreateEventFragment extends Fragment {
             descriptionText.setText(event.getEventDescription());
             locationText.setText(event.getEventLocation());
             String[] date = event.getDatetime().split(" ");
+            StringBuilder tagBuilder = new StringBuilder();
+            for(int i = 0; i<event.getCategories().length; i++){
+                if(!event.getCategories()[i].equals("")){
+                    tagBuilder.append(event.getCategories()[i]);
+                }
+            }
+            multiAutoCompleteTextView.setText(tagBuilder.toString());
             dateSpinner.setText(date[0]);
             timeSpinner.setText(date[1]);
         }
@@ -106,6 +115,7 @@ public class CreateEventFragment extends Fragment {
         }
         datePickerDialog = new DatePickerDialog(getActivity(), datePickerListener, year, month, day);
         timePickerDialog = new TimePickerDialog(getActivity(), timePickerListener, hour, minute, true);
+
         /* Called when dateSpinner is clicked */
         dateSpinner.setOnClickListener(new View.OnClickListener() {
             @Override
