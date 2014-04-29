@@ -658,9 +658,8 @@ public static Result getEvent() {
 			return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
 		}
 		else {
-			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " WHERE Event.id = ? AND Event_has_User.user_id = ?");
+			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " WHERE Event.id = ?");
 			stmt.setLong(1, event_id);
-			stmt.setLong(2, user_id);
 			ResultSet rs = stmt.executeQuery();
 			return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
 		}
