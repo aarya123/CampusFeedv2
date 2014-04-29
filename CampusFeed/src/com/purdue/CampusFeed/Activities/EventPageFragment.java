@@ -38,6 +38,32 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         goingButton = (Button) fragmentView.findViewById(R.id.goingButton);
         maybeButton = (Button) fragmentView.findViewById(R.id.maybeButton);
         declineButton = (Button) fragmentView.findViewById(R.id.declineButton);
+        int rsvpStatus = myEvent.getRSVP();
+        
+        //set the appropriate boldness of the buttons depending on the users RSVP status
+        switch(rsvpStatus){
+        	case 0:	//guess: going
+        		goingButton.setTypeface(null, Typeface.BOLD);
+        		maybeButton.setTypeface(null, Typeface.NORMAL);
+        		declineButton.setTypeface(null, Typeface.NORMAL);
+        		break;
+        	case 1: //guess: maybe
+        		goingButton.setTypeface(null, Typeface.NORMAL);
+        		maybeButton.setTypeface(null, Typeface.BOLD);
+        		declineButton.setTypeface(null, Typeface.NORMAL);
+        		break;
+        	case 2: //guess: decline
+        		goingButton.setTypeface(null, Typeface.NORMAL);
+        		maybeButton.setTypeface(null, Typeface.NORMAL);
+        		declineButton.setTypeface(null, Typeface.BOLD);
+        		break;
+        	case 3: //guess: nothing
+        		goingButton.setTypeface(null, Typeface.NORMAL);
+        		maybeButton.setTypeface(null, Typeface.NORMAL);
+        		declineButton.setTypeface(null, Typeface.NORMAL);
+        		break;
+        }
+        
         inviteButton.setOnClickListener(this);
         goingButton.setOnClickListener(this);
         maybeButton.setOnClickListener(this);
@@ -185,6 +211,7 @@ public class EventPageFragment extends Fragment implements OnClickListener {
 
                 break;
             case R.id.declineButton:
+            	myEvent.setRSVP(3);
                 declineButton.setTypeface(null, Typeface.BOLD);
                 goingButton.setTypeface(null, Typeface.NORMAL);
                 maybeButton.setTypeface(null, Typeface.NORMAL);
