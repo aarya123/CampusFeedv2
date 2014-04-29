@@ -1,5 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
+import java.util.ArrayList;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +13,8 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.Toast;
+
 import com.purdue.CampusFeed.API.AdvSearchQuery;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
@@ -48,6 +52,28 @@ public class SingleFragmentActivity extends AnimationActivity implements
 
         if (getIntent().getData() != null) {
             String data = getIntent().getData().toString();
+            //Toast.makeText(getApplication(), data, Toast.LENGTH_LONG).show();
+            
+            //check if this fragment was called from a link tag in an event page
+            if(data.startsWith("com.purdue.CampusFeed")){
+            	String[] linkMessage = data.split(":"); //linkMessage[1] will now contain the required category
+            	
+            	//create the advanced search query
+            	AdvSearchQuery query = new AdvSearchQuery();
+            	ArrayList<String> category = new ArrayList<String>();
+            	category.add(linkMessage[1]);
+            	query.settags(category);
+            	
+            	//open a new fragment with the above search query
+            	EventListFragment listFragment = new EventListFragment();
+                Bundle args = new Bundle();
+                args.putParcelable("query", query);
+                listFragment.setArguments(args);
+                getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, listFragment).commit();
+            	
+            	//Toast.makeText(getApplication(), linkMessage[0]+" $$$ "+linkMessage[1], Toast.LENGTH_LONG).show();
+            	return;
+            }
             if (data.startsWith(getString(R.string.redirection_url))) {
                 loadRedirectionFragment(data);
                 return;
