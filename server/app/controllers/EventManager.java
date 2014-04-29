@@ -51,16 +51,18 @@ public class EventManager extends Controller{
 					ResultSet rsTag = stmtTag.getResultSet();
 					addCategoriesToEventJson(eventRes, rsTag);
 				}
-				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin from Event_has_User where event_id = ? and user_id = ?")) {
+				try(PreparedStatement stmtAdmin = conn.prepareStatement("select is_admin, rsvp from Event_has_User where event_id = ? and user_id = ?")) {
 					stmtAdmin.setLong(1, rs.getLong("id"));
 					stmtAdmin.setLong(2, userId);
 					stmtAdmin.execute();
 					ResultSet rsAdmin = stmtAdmin.getResultSet();
 					if(rsAdmin.next()) {
 						eventRes.put("is_admin", rsAdmin.getInt("is_admin"));
+						eventRes.put("rsvp", rsAdmin.getInt("rsvp"));
 					}
 					else {
 						eventRes.put("is_admin", 0);
+						eventRes.put("rsvp", "-1");
 					}
 					rsAdmin.close();
 				}
@@ -280,7 +282,6 @@ public static Result rsvp_to_event()
 	// get the user id
 	long user_id =Application.getUserId(request);
 	// main thing, only need event_id
-	
 	long event_id;
 	int rsvp_status;
 	try {
@@ -647,11 +648,22 @@ public static Result getEvent() {
 	catch(Exception e) {
 		return ok(JsonNodeFactory.instance.objectNode().put("error", "usage: event_id (long)"));
 	}
+	long user_id;
+	user_id = Application.getUserId(request);
 	try(Connection conn = DB.getConnection()) {
-		PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
-		stmt.setLong(1, event_id);
-		ResultSet rs = stmt.executeQuery();
-		return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
+		if(user_id != -1) {
+			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL_UNRESTRICTED + " WHERE Event.id = ?");
+			stmt.setLong(1, event_id);
+			ResultSet rs = stmt.executeQuery();
+			return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
+		}
+		else {
+			PreparedStatement stmt = conn.prepareStatement(EVENT_GET_SQL + " WHERE Event.id = ? AND Event_has_User.user_id = ?");
+			stmt.setLong(1, event_id);
+			stmt.setLong(2, user_id);
+			ResultSet rs = stmt.executeQuery();
+			return ok(buildEventResults(conn, rs, Application.getUserId(request)).get(0));
+		}
 	}
 	catch(Exception e) {
 		e.printStackTrace();
