@@ -37,7 +37,7 @@ public class Event implements Parcelable {
         location = "";
         time = 0;
         id = 0;
-        rsvp = 0;
+        rsvp = 3;
         categories = new String[]{};
         visibility = PUBLIC;
     }
