@@ -1,5 +1,7 @@
 package com.purdue.CampusFeed.Activities;
 
+import java.util.ArrayList;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -50,6 +52,28 @@ public class SingleFragmentActivity extends AnimationActivity implements
 
         if (getIntent().getData() != null) {
             String data = getIntent().getData().toString();
+            //Toast.makeText(getApplication(), data, Toast.LENGTH_LONG).show();
+            
+            //check if this fragment was called from a link tag in an event page
+            if(data.startsWith("com.purdue.CampusFeed")){
+            	String[] linkMessage = data.split(":"); //linkMessage[1] will now contain the required category
+            	
+            	//create the advanced search query
+            	AdvSearchQuery query = new AdvSearchQuery();
+            	ArrayList<String> category = new ArrayList<String>();
+            	category.add(linkMessage[1]);
+            	query.settags(category);
+            	
+            	//open a new fragment with the above search query
+            	EventListFragment listFragment = new EventListFragment();
+                Bundle args = new Bundle();
+                args.putParcelable("query", query);
+                listFragment.setArguments(args);
+                getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, listFragment).commit();
+            	
+            	//Toast.makeText(getApplication(), linkMessage[0]+" $$$ "+linkMessage[1], Toast.LENGTH_LONG).show();
+            	return;
+            }
             if (data.startsWith(getString(R.string.redirection_url))) {
                 loadRedirectionFragment(data);
                 return;
@@ -87,11 +111,8 @@ public class SingleFragmentActivity extends AnimationActivity implements
             fragment.setEvent(fragEvent);
             // getFragmentManager().beginTransaction().setCustomAnimations(R.anim.sliderightin, R.anim.sliderightout);
             android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            if( getCallingActivity().toString().equals("MainActivity") ){
-                Toast.makeText(this, "Calling activty is MainActivity", Toast.LENGTH_SHORT).show();
-                    ft.setCustomAnimations(R.anim.slideleftin, R.anim.slideleftout);
-            }
-                    ft.replace(R.id.basic_contentframe, fragment).commit();
+            ft.setCustomAnimations(R.anim.slideleftin, R.anim.slideleftout);
+            ft.replace(R.id.basic_contentframe, fragment).commit();
         }
     }
 

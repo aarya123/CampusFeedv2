@@ -5,6 +5,8 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
@@ -138,14 +141,35 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         }
 
 
-        String tags = "Event Tags: ";
-        for (int i = 0; i < myEvent.getCategories().length; i++) {
-            if(!myEvent.getCategories()[i].equals("")){
-                tags += myEvent.getCategories()[i] += ", ";
-            }
+        //create array of links
+        int numOfCategories = myEvent.getCategories().length;
+        String[] tags= new String[numOfCategories+1];
+        tags[0] = "<b>Event tags: </b>";
+        for (int i = 1; i < numOfCategories+1; i++) {
+        	if(!myEvent.getCategories()[i-1].equals("")){
+        		tags[i] = "<a href=\"com.purdue.CampusFeed:" + myEvent.getCategories()[i-1] + "\">" + myEvent.getCategories()[i-1] + "</a>";
+        		if(i!= numOfCategories)
+        			tags[i] += ", ";
+        	}
+        	else
+        		tags[i] = "";
         }
-        tags = tags.substring(0, tags.length() - 2);
-        eventTags.setText(tags);
+        //tags = tags.substring(0, tags.length() - 2);
+        
+        //concatenate all the links
+        String finalTag = "";
+        for (int i = 0; i < tags.length; i++){
+        	if(!tags[i].equals("")){
+        		finalTag += tags[i];
+        	}
+        }
+        
+        //toast test
+        //Toast.makeText(getActivity(), finalTag, Toast.LENGTH_LONG).show();
+    
+        eventTags.setText(Html.fromHtml(finalTag));
+        eventTags.setMovementMethod(LinkMovementMethod.getInstance());
+        
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
