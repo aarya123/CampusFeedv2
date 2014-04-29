@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.Utils.Utils;
 
 /**
  * Created by Sean on 2/26/14.
@@ -147,12 +149,23 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateEventFragment frag = new CreateEventFragment();
+                try {
+                    Bundle args = new Bundle();
+                    args.putParcelable("event", myEvent);
+                    Intent intent = new Intent(getActivity(), SingleFragmentActivity.class);
+                    intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
+                    intent.putExtra("eventBundle", args);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.d(Utils.TAG, e.getMessage());
+                }
+
+              /*  CreateEventFragment frag = new CreateEventFragment();
                 Bundle args = new Bundle();
                 args.putParcelable("event", myEvent);
                 //args.putSerializable("event", myEvent);
                 frag.setArguments(args);
-                getFragmentManager().beginTransaction().replace(R.id.basic_contentframe, frag).commit();
+                getFragmentManager().beginTransaction().replace(R.id.basic_contentframe, frag).commit();*/
             }
         });
 
