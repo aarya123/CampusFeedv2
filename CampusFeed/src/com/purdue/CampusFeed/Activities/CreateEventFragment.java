@@ -76,7 +76,7 @@ public class CreateEventFragment extends Fragment {
        
         //code for modifying an event
         if (getArguments() != null)
-            event = (Event) getArguments().getSerializable("event");
+            event = (Event) getArguments().getParcelable("event");
         if (event != null) {
         	isEventAlreadyCreated = true;
         	
