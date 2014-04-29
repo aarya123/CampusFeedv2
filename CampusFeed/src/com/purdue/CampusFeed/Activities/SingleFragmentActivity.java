@@ -95,6 +95,14 @@ public class SingleFragmentActivity extends AnimationActivity implements
         String fragToOpen = (String) getIntent().getStringExtra(getString(R.string.START_FRAGMENT));
         if (fragToOpen.equals("CreateEventFragment")) {
             CreateEventFragment fragment = new CreateEventFragment();
+            Bundle eventBundle;
+            if(getIntent().getBundleExtra("eventBundle") != null){
+                eventBundle = getIntent().getBundleExtra("eventBundle");
+                //Bundle args = new Bundle();
+                //args.putParcelable("event", event);
+                //args.putSerializable("event", myEvent);
+                fragment.setArguments(eventBundle);
+            }
             getSupportFragmentManager().beginTransaction().add(R.id.basic_contentframe, fragment).commit();
         } else if (fragToOpen.equals("EventPageFragment")) {
             Event fragEvent = (Event) getIntent().getParcelableExtra(getString(R.string.EVENT));
@@ -102,9 +110,9 @@ public class SingleFragmentActivity extends AnimationActivity implements
             EventPageFragment fragment = new EventPageFragment();
             fragment.setEvent(fragEvent);
             // getFragmentManager().beginTransaction().setCustomAnimations(R.anim.sliderightin, R.anim.sliderightout);
-            getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.slideleftin, R.anim.slideleftout)
-                    .replace(R.id.basic_contentframe, fragment).commit();
+            android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.slideleftin, R.anim.slideleftout);
+            ft.replace(R.id.basic_contentframe, fragment).commit();
         }
     }
 

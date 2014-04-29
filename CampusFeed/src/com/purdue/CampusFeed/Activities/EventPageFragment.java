@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.purdue.CampusFeed.API.Api;
 import com.purdue.CampusFeed.API.Event;
 import com.purdue.CampusFeed.R;
+import com.purdue.CampusFeed.Utils.Utils;
 
 /**
  * Created by Sean on 2/26/14.
@@ -144,20 +146,26 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         String[] tags= new String[numOfCategories+1];
         tags[0] = "<b>Event tags: </b>";
         for (int i = 1; i < numOfCategories+1; i++) {
-            tags[i] = "<a href=\"com.purdue.CampusFeed:" + myEvent.getCategories()[i-1] + "\">" + myEvent.getCategories()[i-1] + "</a>";
-            if(i!= numOfCategories)
-            	tags[i] += ", ";
+        	if(!myEvent.getCategories()[i-1].equals("")){
+        		tags[i] = "<a href=\"com.purdue.CampusFeed:" + myEvent.getCategories()[i-1] + "\">" + myEvent.getCategories()[i-1] + "</a>";
+        		if(i!= numOfCategories)
+        			tags[i] += ", ";
+        	}
+        	else
+        		tags[i] = "";
         }
         //tags = tags.substring(0, tags.length() - 2);
         
         //concatenate all the links
         String finalTag = "";
         for (int i = 0; i < tags.length; i++){
-        	finalTag += tags[i];
+        	if(!tags[i].equals("")){
+        		finalTag += tags[i];
+        	}
         }
         
         //toast test
-        Toast.makeText(getActivity(), finalTag, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), finalTag, Toast.LENGTH_LONG).show();
     
         eventTags.setText(Html.fromHtml(finalTag));
         eventTags.setMovementMethod(LinkMovementMethod.getInstance());
@@ -165,12 +173,23 @@ public class EventPageFragment extends Fragment implements OnClickListener {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateEventFragment frag = new CreateEventFragment();
+                try {
+                    Bundle args = new Bundle();
+                    args.putParcelable("event", myEvent);
+                    Intent intent = new Intent(getActivity(), SingleFragmentActivity.class);
+                    intent.putExtra(getString(R.string.START_FRAGMENT), "CreateEventFragment");
+                    intent.putExtra("eventBundle", args);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Log.d(Utils.TAG, e.getMessage());
+                }
+
+              /*  CreateEventFragment frag = new CreateEventFragment();
                 Bundle args = new Bundle();
                 args.putParcelable("event", myEvent);
                 //args.putSerializable("event", myEvent);
                 frag.setArguments(args);
-                getFragmentManager().beginTransaction().replace(R.id.basic_contentframe, frag).commit();
+                getFragmentManager().beginTransaction().replace(R.id.basic_contentframe, frag).commit();*/
             }
         });
 

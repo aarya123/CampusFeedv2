@@ -38,6 +38,7 @@ public class AnimationActivity extends FragmentActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slideleftin, R.anim.slideleftout);
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
         final Api api = Api.getInstance(this);
